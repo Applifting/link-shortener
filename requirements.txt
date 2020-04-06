@@ -1,0 +1,4 @@
+sanic
+mysql-connector
+requests
+flake8

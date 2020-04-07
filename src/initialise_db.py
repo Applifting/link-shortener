@@ -6,27 +6,38 @@ top-level directory of this distribution.
 
 Creates and populates a new table with links and their endpoints.
 '''
-import mysql.connector
+import asyncio
+import aiomysql
 
 
-mydb = mysql.connector.connect(
-    host='db',
-    user='user',
-    passwd='password',
-    database='db'
-)
-mycursor = mydb.cursor()
+async def initialise_database():
+    conn = await aiomysql.connect(
+        host='db',
+        port=3306,
+        user='user',
+        password='password',
+        db='db',
+        loop=loop
+    )
+    db_cursor = await conn.cursor()
+    await db_cursor.execute(
+        'CREATE TABLE IF NOT EXISTS links (endpoint TEXT, url TEXT)'
+    )
+    query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
+    data = [
+        ('google', 'https://www.google.com/'),
+        ('pomuzemesi', 'https://staging.pomuzeme.si'),
+        ('epark', 'https://www.eparkomat.com/app/'),
+        ('vlk', 'http://www.vlk.cz'),
+        ('kodex', 'https://github.com/Applifting/culture'),
+        ('meta', 'https://github.com/Applifting/link-shortener')
+    ]
+    await db_cursor.executemany(query, data)
+    await conn.commit()
 
-mycursor.execute('CREATE TABLE IF NOT EXISTS links (endpoint TEXT, url TEXT)')
+    await db_cursor.close()
+    conn.close()
 
-query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
-values = [
-    ('google', 'https://www.google.com/'),
-    ('pomuzemesi', 'https://staging.pomuzeme.si'),
-    ('epark', 'https://www.eparkomat.com/app/'),
-    ('vlk', 'http://www.vlk.cz'),
-    ('kodex', 'https://github.com/Applifting/culture'),
-    ('meta', 'https://github.com/Applifting/link-shortener'),
-]
-mycursor.executemany(query, values)
-mydb.commit()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(initialise_database())

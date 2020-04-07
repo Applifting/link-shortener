@@ -5,9 +5,15 @@ ENV PYTHONUNBUFFERED 1
 RUN mkdir /app
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# COPY requirements.txt requirements.txt
+COPY pyproject.toml pyproject.toml
+
+# RUN pip install --upgrade pip
+# RUN pip install -r requirements.txt
+
+RUN pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install
 
 COPY . .
 

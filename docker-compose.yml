@@ -2,6 +2,7 @@ version: '3'
 
 services:
   db:
+    container_name: 'MySQL'
     image: mysql:5.7
     restart: always
     environment:
@@ -12,13 +13,17 @@ services:
     ports:
       - '3306:3306'
   web:
-    # container_name: 'web'
+    container_name: 'sanic'
     build: '.'
+    restart: on-failure
     ports:
       - '8000:8000'
     volumes:
       - '.:/app'
     command: >
-      sh -c "python src/server.py"
+      sh -c "python src/initialise_db.py &&
+             python src/server.py"
     depends_on:
+      - 'db'
+    links:
       - 'db'

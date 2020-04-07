@@ -1,4 +1,4 @@
 sanic
 mysql-connector
-requests
+PyPika
 flake8

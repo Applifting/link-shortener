@@ -12,5 +12,5 @@ Redirects to a url corresponding to its respective endpoint
 
 To do:
 
-- Use an SQL builder tool (pypika, SQLAlchemy Core)
-- Hide environment variables
+- Create engine within the before-server-start listener
+- Hide environment variables (before production)

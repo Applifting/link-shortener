@@ -1,4 +1,0 @@
-sanic
-mysql-connector
-PyPika
-flake8

@@ -2,11 +2,17 @@
 
 How to use:
 
-- Run 'docker-compose build' and 'docker-compose up'
-- Use endpoints defined in the initialise_db.py file to get redirected
-to a respective url
+- Run 'docker-compose build', then 'docker-compose up'
+
+GET /api/links
+Responds with a JSON formatted list of all links in the database
+
+/<link_endpoint>
+Redirects to the url corresponding to the respective endpoint
 
 To do:
 
-- Change mysql.connector to aiomysql
 - Use an SQL builder tool (pypika, SQLAlchemy Core)
+- Hide environment variables
+- Use Listeners to initialise a populate the database
+- Use a connection pool instead of connection

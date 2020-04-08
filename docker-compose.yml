@@ -21,8 +21,7 @@ services:
     volumes:
       - '.:/app'
     command: >
-      sh -c "python src/initialise_db.py &&
-             python src/server.py"
+      sh -c "python src/server.py"
     depends_on:
       - 'db'
     links:

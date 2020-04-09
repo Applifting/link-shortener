@@ -54,14 +54,7 @@ async def initialise_db(app, loop):
         await db_cursor.executemany(query, data)
         await conn.commit()
 
-        await db_cursor.close()
-        conn.close()
-
-
-@app.route('/api/links', methods=['GET'])
-async def get_links(request):
-    try:
-        loop = get_event_loop()
+        global engine
         engine = await create_engine(
             host='db',
             port=3306,
@@ -70,6 +63,16 @@ async def get_links(request):
             db='db',
             loop=loop
         )
+
+        await db_cursor.close()
+        conn.close()
+
+
+@app.route('/api/links', methods=['GET'])
+async def get_links(request):
+    try:
+        loop = get_event_loop()
+        global engine
         async with engine.acquire() as conn:
             data = []
             queryset = await conn.execute(table.select())
@@ -91,14 +94,7 @@ async def get_links(request):
 async def redirect_link(request, link_endpoint):
     try:
         loop = get_event_loop()
-        engine = await create_engine(
-            host='db',
-            port=3306,
-            user='user',
-            password='password',
-            db='db',
-            loop=loop
-        )
+        global engine
         async with engine.acquire() as conn:
             sel = select([table]).where(
                 table.columns['endpoint'] == link_endpoint

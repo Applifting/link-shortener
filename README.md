@@ -10,7 +10,10 @@ Responds with a JSON formatted list of all links in the database
 /<link_endpoint>
 Redirects to a url corresponding to its respective endpoint
 
-To do:
+To do for current pull request:
 
-- Create engine within the before-server-start listener
-- Hide environment variables (before production)
+-
+
+To do before production:
+
+- Hide environment variables

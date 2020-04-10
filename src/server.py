@@ -3,18 +3,16 @@ Copyright (C) 2020 Link Shortener Authors
 Licensed under the MIT (Expat) License. See the LICENSE file found in the
 top-level directory of this distribution.
 '''
-from asyncio import get_event_loop
+from sanic import Sanic, response
+from sanic.response import json
 
 from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
 from sqlalchemy import MetaData, Table, Column, String
-# from sqlalchemy.sql import select
+from sqlalchemy.schema import CreateTable
 
 from json import dumps
-
-from sanic import Sanic, response
-from sanic.response import json
 
 
 app = Sanic(__name__)
@@ -36,7 +34,8 @@ async def initialise_db(app, loop):
         user='user',
         password='password',
         db='db',
-        loop=loop
+        loop=loop,
+        autocommit=True
     )
     app.engine = await create_engine(
         host='db',
@@ -49,10 +48,8 @@ async def initialise_db(app, loop):
     async with pool.acquire() as conn:
         db_cursor = await conn.cursor()
 
-        await db_cursor.execute(
-            'CREATE TABLE IF NOT EXISTS links (endpoint TEXT, url TEXT)'
-        )
-        query = 'INSERT INTO links (endpoint, url) VALUE (%s, %s)'
+        await db_cursor.execute(str(CreateTable(table)))
+        query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
         data = [
             ('pomuzemesi', 'https://staging.pomuzeme.si'),
             ('vlk', 'http://www.vlk.cz'),
@@ -60,12 +57,16 @@ async def initialise_db(app, loop):
             ('meta', 'https://github.com/Applifting/link-shortener')
         ]
         await db_cursor.executemany(query, data)
-        await conn.commit()
-
         await db_cursor.close()
 
     pool.terminate()
     await pool.wait_closed()
+
+
+@app.listener('after_server_stop')
+async def close_engine(app, loop):
+    app.engine.terminate()
+    await app.engine.wait_closed()
 
 
 @app.route('/api/links', methods=['GET'])
@@ -79,7 +80,6 @@ async def get_links(request):
                     'endpoint': row.endpoint,
                     'url': row.url
                 })
-
             return json(dumps(data), status=200)
 
     except Exception as error:
@@ -91,17 +91,12 @@ async def get_links(request):
 async def redirect_link(request, link_endpoint):
     try:
         async with app.engine.acquire() as conn:
-            # sel = select([table]).where(
-            #     table.columns['endpoint'] == link_endpoint
-            # )
-            # query = await conn.execute(sel)
             query = await conn.execute(
                 table.select().where(
                     table.columns['endpoint'] == link_endpoint
                 )
             )
             url = await query.fetchone()
-
             return response.redirect(url[1])
 
     except Exception as error:

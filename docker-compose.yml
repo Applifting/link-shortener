@@ -21,7 +21,7 @@ services:
     volumes:
       - '.:/app'
     command: >
-      sh -c "python src/server.py"
+      sh -c "python src/wait_for_db.py && python src/server.py"
     depends_on:
       - 'db'
     links:

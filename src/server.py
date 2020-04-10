@@ -71,7 +71,7 @@ async def initialise_db(app, loop):
 @app.route('/api/links', methods=['GET'])
 async def get_links(request):
     try:
-        loop = get_event_loop()
+        # loop = get_event_loop()
         global engine
         async with engine.acquire() as conn:
             data = []
@@ -93,7 +93,7 @@ async def get_links(request):
 @app.route('/<link_endpoint>')
 async def redirect_link(request, link_endpoint):
     try:
-        loop = get_event_loop()
+        # loop = get_event_loop()
         global engine
         async with engine.acquire() as conn:
             sel = select([table]).where(

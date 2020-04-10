@@ -63,7 +63,10 @@ async def initialise_db(app, loop):
         await conn.commit()
 
         await db_cursor.close()
-        conn.close()
+        # conn.close()
+
+    pool.terminate()
+    await pool.wait_closed()
 
 
 @app.route('/api/links', methods=['GET'])
@@ -78,7 +81,6 @@ async def get_links(request):
                     'url': row.url
                 })
 
-            conn.close()
             return json(dumps(data), status=200)
 
     except Exception as error:
@@ -96,7 +98,6 @@ async def redirect_link(request, link_endpoint):
             query = await conn.execute(sel)
             url = await query.fetchone()
 
-            conn.close()
             return response.redirect(url[1])
 
     except Exception as error:

@@ -47,16 +47,19 @@ async def initialise_db(app, loop):
     )
     async with pool.acquire() as conn:
         db_cursor = await conn.cursor()
+        try:
+            await db_cursor.execute(str(CreateTable(table)))
+            query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
+            data = [
+                ('pomuzemesi', 'https://staging.pomuzeme.si'),
+                ('vlk', 'http://www.vlk.cz'),
+                ('kodex', 'https://github.com/Applifting/culture'),
+                ('meta', 'https://github.com/Applifting/link-shortener')
+            ]
+            await db_cursor.executemany(query, data)
+        except Exception as error:
+            print(str(error) + '\n' + 'Table is probably already cached')
 
-        await db_cursor.execute(str(CreateTable(table)))
-        query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
-        data = [
-            ('pomuzemesi', 'https://staging.pomuzeme.si'),
-            ('vlk', 'http://www.vlk.cz'),
-            ('kodex', 'https://github.com/Applifting/culture'),
-            ('meta', 'https://github.com/Applifting/link-shortener')
-        ]
-        await db_cursor.executemany(query, data)
         await db_cursor.close()
 
     pool.terminate()

@@ -9,7 +9,7 @@ from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
 from sqlalchemy import MetaData, Table, Column, String
-from sqlalchemy.sql import select
+# from sqlalchemy.sql import select
 
 from json import dumps
 
@@ -63,7 +63,6 @@ async def initialise_db(app, loop):
         await conn.commit()
 
         await db_cursor.close()
-        # conn.close()
 
     pool.terminate()
     await pool.wait_closed()
@@ -92,10 +91,15 @@ async def get_links(request):
 async def redirect_link(request, link_endpoint):
     try:
         async with app.engine.acquire() as conn:
-            sel = select([table]).where(
-                table.columns['endpoint'] == link_endpoint
+            # sel = select([table]).where(
+            #     table.columns['endpoint'] == link_endpoint
+            # )
+            # query = await conn.execute(sel)
+            query = await conn.execute(
+                table.select().where(
+                    table.columns['endpoint'] == link_endpoint
+                )
             )
-            query = await conn.execute(sel)
             url = await query.fetchone()
 
             return response.redirect(url[1])

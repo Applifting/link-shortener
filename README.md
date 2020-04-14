@@ -12,8 +12,9 @@ Redirects to a url corresponding to its respective endpoint
 
 To do for current pull request:
 
--
+- 
 
 To do before production:
 
 - Hide environment variables
+- Change wait_for_db from sleep to pinging the db

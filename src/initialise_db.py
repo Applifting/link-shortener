@@ -12,7 +12,7 @@ from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy.schema import CreateTable
 
 
-initdb_blueprint = Blueprint('listeners')
+initdb_blueprint = Blueprint('intitialise_db')
 
 metadata = MetaData()
 initdb_blueprint.table = Table(

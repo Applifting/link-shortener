@@ -10,8 +10,10 @@ sanic = '^19.9'
 aiomysql = '^0.0.20'
 asyncio = '^3.4.3'
 sqlalchemy = '^1.3.16'
+Sanic-Auth = '^0.2.0'
 sanic-session = '^0.6.0'
 sanic-oauth = '^0.4.0'
+python-decouple = '^3.3'
 
 [tool.poetry.dev-dependencies]
 flake8 = '^3.7'

@@ -8,13 +8,13 @@ from sanic.response import json
 
 from json import dumps
 
-from listeners import listener_blueprint
+from initialise_db import initdb_blueprint
 
 
 app = Sanic(__name__)
-app.blueprint(listener_blueprint)
+app.blueprint(initdb_blueprint)
 
-table = listener_blueprint.table
+table = initdb_blueprint.table
 
 
 @app.route('/api/links', methods=['GET'])

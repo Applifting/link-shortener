@@ -12,10 +12,10 @@ from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy.schema import CreateTable
 
 
-listener_blueprint = Blueprint('listeners')
+initdb_blueprint = Blueprint('listeners')
 
 metadata = MetaData()
-listener_blueprint.table = Table(
+initdb_blueprint.table = Table(
     'links',
     metadata,
     Column('endpoint', String(255)),
@@ -23,7 +23,7 @@ listener_blueprint.table = Table(
 )
 
 
-@listener_blueprint.listener('before_server_start')
+@initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):
     pool = await create_pool(
         host='db',
@@ -45,7 +45,7 @@ async def initialise_db(app, loop):
     async with pool.acquire() as conn:
         db_cursor = await conn.cursor()
         try:
-            await db_cursor.execute(str(CreateTable(listener_blueprint.table)))
+            await db_cursor.execute(str(CreateTable(initdb_blueprint.table)))
             query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
             data = [
                 ('pomuzemesi', 'https://staging.pomuzeme.si'),
@@ -64,7 +64,7 @@ async def initialise_db(app, loop):
     await pool.wait_closed()
 
 
-@listener_blueprint.listener('after_server_stop')
+@initdb_blueprint.listener('after_server_stop')
 async def close_engine(app, loop):
     app.engine.terminate()
     await app.engine.wait_closed()

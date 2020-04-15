@@ -8,7 +8,7 @@ from sanic import Blueprint
 from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
-from sqlalchemy import MetaData, Table, Column, String
+from sqlalchemy import MetaData, Table, Column, String, Integer, Sequence
 from sqlalchemy.schema import CreateTable
 
 
@@ -18,10 +18,32 @@ metadata = MetaData()
 initdb_blueprint.table = Table(
     'links',
     metadata,
-    Column('endpoint', String(255)),
-    Column('url', String(255))
+    Column('owner', String(50)),
+    Column('endpoint', String(20), unique=True),
+    Column('url', String(300))
 )
-
+initial_data = [
+    (
+        'vojtech.janousek@applifting.cz',
+        'pomuzemesi',
+        'https://staging.pomuzeme.si'
+    ),
+    (
+        'vojtech.janousek@applifting.cz',
+        'vlk',
+        'http://www.vlk.cz'
+    ),
+    (
+        'radek.holy@applifting.cz',
+        'kodex',
+        'https://github.com/Applifting/culture'
+    ),
+    (
+        'radek.holy@applifting.cz',
+        'meta',
+        'https://github.com/Applifting/link-shortener'
+    )
+]
 
 @initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):
@@ -46,14 +68,10 @@ async def initialise_db(app, loop):
         db_cursor = await conn.cursor()
         try:
             await db_cursor.execute(str(CreateTable(initdb_blueprint.table)))
-            query = 'INSERT INTO links (endpoint, url) VALUES (%s, %s)'
-            data = [
-                ('pomuzemesi', 'https://staging.pomuzeme.si'),
-                ('vlk', 'http://www.vlk.cz'),
-                ('kodex', 'https://github.com/Applifting/culture'),
-                ('meta', 'https://github.com/Applifting/link-shortener')
-            ]
-            await db_cursor.executemany(query, data)
+            await db_cursor.executemany(
+                'INSERT INTO links (owner, endpoint, url) VALUES (%s, %s, %s)',
+                initial_data
+            )
 
         except Exception as error:
             print(str(error) + '\n' + 'Table is probably already cached')

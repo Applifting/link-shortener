@@ -78,14 +78,13 @@ async def user_profile(request, user):
 async def get_links(request):
     try:
         async with app.engine.acquire() as conn:
-            data = []
+            data = ''
             queryset = await conn.execute(table.select())
             for row in await queryset.fetchall():
-                data.append({
-                    'endpoint': row.endpoint,
-                    'url': row.url
-                })
-            return json(dumps(data), status=200)
+                data += 'Owner: {} \nEndpoint: {} \nURL: {} \n\n'.format(
+                    row.owner, row.endpoint, row.url
+                )
+            return text(data, status=200)
 
     except Exception as error:
         print(error)

@@ -127,7 +127,10 @@ async def redirect_link(request, link_endpoint):
                 )
             )
             url = await query.fetchone()
-            return response.redirect(url[2])
+            if url[3]:
+                return response.redirect(url[2])
+            else:
+                return json({'message': 'link is inactive'}, status=400)
 
     except Exception as error:
         print(error)

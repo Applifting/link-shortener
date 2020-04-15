@@ -5,8 +5,11 @@ How to use:
 - Configure settings.ini with your Client ID and Secret key
 - Run 'docker-compose build', then 'docker-compose up'
 
-**GET /api/links**
-Responds with a JSON formatted list of all links in the database
+**GET /**
+Displays a list of all active links and their owners
+
+**GET /my_links**
+Authenticates the user, then displays a list of all the user's links
 
 **/<link_endpoint>**
 Redirects to a url corresponding to its respective endpoint

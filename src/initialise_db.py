@@ -8,7 +8,7 @@ from sanic import Blueprint
 from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
-from sqlalchemy import MetaData, Table, Column, String, Integer, Sequence
+from sqlalchemy import MetaData, Table, Column, String, Integer, Boolean
 from sqlalchemy.schema import CreateTable
 
 
@@ -20,28 +20,45 @@ initdb_blueprint.table = Table(
     metadata,
     Column('owner', String(50)),
     Column('endpoint', String(20), unique=True),
-    Column('url', String(300))
+    Column('url', String(300)),
+    Column('is_active', Boolean, default=True)
 )
 initial_data = [
     (
         'vojtech.janousek@applifting.cz',
         'pomuzemesi',
-        'https://staging.pomuzeme.si'
+        'https://staging.pomuzeme.si',
+        True
     ),
     (
         'vojtech.janousek@applifting.cz',
         'vlk',
-        'http://www.vlk.cz'
+        'http://www.vlk.cz',
+        True
+    ),
+    (
+        'vojtech.janousek@applifting.cz',
+        'tunak',
+        'https://www.britannica.com/animal/tuna-fish',
+        False
     ),
     (
         'radek.holy@applifting.cz',
         'kodex',
-        'https://github.com/Applifting/culture'
+        'https://github.com/Applifting/culture',
+        True
     ),
     (
         'radek.holy@applifting.cz',
         'meta',
-        'https://github.com/Applifting/link-shortener'
+        'https://github.com/Applifting/link-shortener',
+        True
+    ),
+    (
+        'radek.holy@applifting.cz',
+        'nope',
+        'https://www.youtube.com/watch?v=gvdf5n-zI14',
+        False
     )
 ]
 
@@ -69,7 +86,8 @@ async def initialise_db(app, loop):
         try:
             await db_cursor.execute(str(CreateTable(initdb_blueprint.table)))
             await db_cursor.executemany(
-                'INSERT INTO links (owner, endpoint, url) VALUES (%s, %s, %s)',
+                'INSERT INTO links (owner, endpoint, url, is_active) \
+                 VALUES (%s, %s, %s, %s)',
                 initial_data
             )
 

@@ -75,13 +75,17 @@ async def user_profile(request, user):
 # ----------------------------------------------------------------------------
 
 @app.route('/', methods=['GET'])
-async def get_links(request):
+async def get_active_links(request):
     try:
         async with app.engine.acquire() as conn:
             data = ''
-            queryset = await conn.execute(table.select())
+            queryset = await conn.execute(
+                table.select().where(
+                    table.columns['is_active'] == True
+                )
+            )
             for row in await queryset.fetchall():
-                data += 'Owner: {} \nEndpoint: {} \nURL: {} \n\n'.format(
+                data += 'Owner: {}\nEndpoint: {} \nURL: {} \n\n'.format(
                     row.owner, row.endpoint, row.url
                 )
             return text(data, status=200)
@@ -103,8 +107,8 @@ async def owner_specific_links(request, user):
                 )
             )
             for row in await queryset.fetchall():
-                data += 'Endpoint: {} \nURL: {} \n'.format(
-                    row.endpoint, row.url
+                data += 'Endpoint: {} \nURL: {} \nActive: {}\n\n'.format(
+                    row.endpoint, row.url, row.is_active
                 )
             return text(data, status=200)
 

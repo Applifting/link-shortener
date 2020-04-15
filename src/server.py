@@ -91,6 +91,28 @@ async def get_links(request):
         return json({'message': 'getting links failed'}, status=500)
 
 
+@app.route('/my_links', methods=['GET'])
+@login_required
+async def owner_specific_links(request, user):
+    try:
+        async with app.engine.acquire() as conn:
+            data = 'User: {}\n\n'.format(user.email)
+            queryset = await conn.execute(
+                table.select().where(
+                    table.columns['owner'] == user.email
+                )
+            )
+            for row in await queryset.fetchall():
+                data += 'Endpoint: {} \nURL: {} \n'.format(
+                    row.endpoint, row.url
+                )
+            return text(data, status=200)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'getting your links failed'}, status=500)
+
+
 @app.route('/<link_endpoint>', methods=['GET'])
 async def redirect_link(request, link_endpoint):
     try:
@@ -101,7 +123,7 @@ async def redirect_link(request, link_endpoint):
                 )
             )
             url = await query.fetchone()
-            return response.redirect(url[1])
+            return response.redirect(url[2])
 
     except Exception as error:
         print(error)

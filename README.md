@@ -2,6 +2,7 @@
 
 How to use:
 
+- Configure settings.ini with your Client ID and Secret key
 - Run 'docker-compose build', then 'docker-compose up'
 
 GET /api/links
@@ -12,7 +13,7 @@ Redirects to a url corresponding to its respective endpoint
 
 To do for current pull request:
 
-- 
+-
 
 To do before production:
 

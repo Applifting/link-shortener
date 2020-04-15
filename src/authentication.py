@@ -23,4 +23,5 @@ async def close_aiohttp_session(sanic_app, _loop) -> None:
 
 @auth_blueprint.route('/redirect', methods=['GET'])
 async def redirected_page(request):
-    return response.text('Successfully logged in!')
+    print(request.data)
+    return response.text('successfully redirected')

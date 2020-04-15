@@ -9,8 +9,7 @@ from json import dumps
 from decouple import config
 
 from sanic import Sanic, response
-from sanic.response import json, text, HTTPResponse
-from sanic.request import Request
+from sanic.response import json, text
 
 from sanic_oauth.blueprint import oauth_blueprint, login_required
 
@@ -47,13 +46,29 @@ async def add_session_to_request(request):
 
 @app.middleware('response')
 async def save_session(request, response):
+    '''
+    See SESSION_ERROR in Documentation.
+    '''
+    try:
+        user_info = request['session']['user_info']
+        try:
+            request['session']['user_info'] = dict(
+                [(attr, getattr(user_info, attr))
+                  for attr in user_info.default_attrs]
+            )
+        except AttributeError:
+            pass
+    except KeyError:
+        pass
+
     await request.app.session_interface.save(request, response)
 
 
-@app.route('/logtest')
+@app.route('/profile')
 @login_required
-async def login_test(_request: Request, user) -> HTTPResponse:
-    return text("Hello world")
+async def user_profile(request, user):
+    data = 'User: {}'.format(user.email)
+    return response.text(data)
 
 # ----------------------------------------------------------------------------
 # MAIN ROUTES

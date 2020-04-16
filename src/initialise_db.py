@@ -7,57 +7,67 @@ from sanic import Blueprint
 from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
-from sqlalchemy import MetaData, Table, Column, String, Integer, Boolean
+from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy.schema import CreateTable
 
 
 initdb_blueprint = Blueprint('intitialise_db')
 
 metadata = MetaData()
-initdb_blueprint.table = Table(
-    'links',
+initdb_blueprint.active_table = Table(
+    'active_links',
     metadata,
     Column('owner', String(50)),
-    Column('endpoint', String(20)),
-    Column('url', String(300)),
-    Column('is_active', Boolean, default=True)
+    Column('owner_id', String(50)),
+    Column('endpoint', String(20), unique=True),
+    Column('url', String(300))
 )
-initial_data = [
+initdb_blueprint.inactive_table = Table(
+    'inactive_links',
+    metadata,
+    Column('owner', String(50)),
+    Column('owner_id', String(50)),
+    Column('endpoint', String(20)),
+    Column('url', String(300))
+)
+active_data = [
     (
         'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
         'pomuzemesi',
-        'https://staging.pomuzeme.si',
-        True
+        'https://staging.pomuzeme.si'
     ),
     (
         'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
         'vlk',
-        'http://www.vlk.cz',
-        True
+        'http://www.vlk.cz'
     ),
+    (
+        'radek.holy@applifting.cz',
+        'unknown',
+        'kodex',
+        'https://github.com/Applifting/culture'
+    ),
+    (
+        'radek.holy@applifting.cz',
+        'unknown',
+        'meta',
+        'https://github.com/Applifting/link-shortener'
+    )
+]
+inactive_data = [
     (
         'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
         'tunak',
-        'https://www.britannica.com/animal/tuna-fish',
-        False
+        'https://www.britannica.com/animal/tuna-fish'
     ),
     (
         'radek.holy@applifting.cz',
-        'kodex',
-        'https://github.com/Applifting/culture',
-        True
-    ),
-    (
-        'radek.holy@applifting.cz',
-        'meta',
-        'https://github.com/Applifting/link-shortener',
-        True
-    ),
-    (
-        'radek.holy@applifting.cz',
+        'unknown',
         'nope',
-        'https://www.youtube.com/watch?v=gvdf5n-zI14',
-        False
+        'https://www.youtube.com/watch?v=gvdf5n-zI14'
     )
 ]
 
@@ -83,15 +93,25 @@ async def initialise_db(app, loop):
     async with pool.acquire() as conn:
         db_cursor = await conn.cursor()
         try:
-            await db_cursor.execute(str(CreateTable(initdb_blueprint.table)))
+            await db_cursor.execute(
+                str(CreateTable(initdb_blueprint.active_table))
+            )
+            await db_cursor.execute(
+                str(CreateTable(initdb_blueprint.inactive_table))
+            )
             await db_cursor.executemany(
-                'INSERT INTO links (owner, endpoint, url, is_active) \
+                'INSERT INTO active_links (owner, owner_id, endpoint, url) \
                  VALUES (%s, %s, %s, %s)',
-                initial_data
+                active_data
+            )
+            await db_cursor.executemany(
+                'INSERT INTO inactive_links (owner, owner_id, endpoint, url) \
+                 VALUES (%s, %s, %s, %s)',
+                inactive_data
             )
 
         except Exception as error:
-            print(str(error) + '\n' + 'Table is probably already cached')
+            print(str(error) + '\n' + 'Tables are probably already cached')
 
         await db_cursor.close()
 

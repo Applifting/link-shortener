@@ -10,6 +10,7 @@ Displays a list of all active links and their owners
 
 **GET /my_links**
 Authenticates the user, then displays a list of all the user's links
+Based on the user's Google id
 
 **/<link_endpoint>**
 Redirects to a url corresponding to its respective endpoint

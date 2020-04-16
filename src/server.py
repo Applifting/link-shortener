@@ -23,6 +23,9 @@ from commands.template_generators import all_links_page_generator
 
 app = Sanic(__name__)
 
+app.static('/home.png', '/app/static/home.png', name='home')
+app.static('/house1.png', '/app/static/house1.png', name='house1')
+app.static('/house2.png', '/app/static/house2.png', name='house2')
 app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)

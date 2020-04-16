@@ -13,7 +13,7 @@ template_blueprint = Blueprint('templates')
 async def about_template(request):
     try:
         base = open('src/templates/base.html', 'r').read()
-        about = open('src/templates/about.html', 'r').read()
+        about = open('src/templates/about/about.html', 'r').read()
         return html(base + about)
 
     except Exception as error:

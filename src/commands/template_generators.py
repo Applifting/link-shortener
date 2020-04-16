@@ -9,8 +9,8 @@ def all_links_page_generator(queryset):
     '''
     page = ''
     base = open('src/templates/base.html', 'r').read()
-    all_links = open('src/templates/all_links.html', 'r').read()
-    appendix = open('src/templates/all_links_appendix.html', 'r').read()
+    all_links = open('src/templates/all/all_links.html', 'r').read()
+    appendix = open('src/templates/all/all_links_appendix.html', 'r').read()
     page += base + all_links
     for row in queryset:
         page += table_row_generator(row[0], row[1], row[2])

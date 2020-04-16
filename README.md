@@ -14,9 +14,6 @@ Authenticates the user, then displays a list of all the user's links
 **/<link_endpoint>**
 Redirects to a url corresponding to its respective endpoint
 
-To do for current pull request:
-
--
 
 To do before production:
 

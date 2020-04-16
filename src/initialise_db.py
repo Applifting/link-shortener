@@ -1,7 +1,6 @@
 '''
-Copyright (C) 2020 Link Shortener Authors
-Licensed under the MIT (Expat) License. See the LICENSE file found in the
-top-level directory of this distribution.
+Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
+Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from sanic import Blueprint
 
@@ -19,7 +18,7 @@ initdb_blueprint.table = Table(
     'links',
     metadata,
     Column('owner', String(50)),
-    Column('endpoint', String(20), unique=True),
+    Column('endpoint', String(20)),
     Column('url', String(300)),
     Column('is_active', Boolean, default=True)
 )

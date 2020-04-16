@@ -1,7 +1,6 @@
 '''
-Copyright (C) 2020 Link Shortener Authors
-Licensed under the MIT (Expat) License. See the LICENSE file found in the
-top-level directory of this distribution.
+Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
+Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import aiohttp
 

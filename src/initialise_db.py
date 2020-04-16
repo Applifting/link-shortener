@@ -44,6 +44,18 @@ active_data = [
         'http://www.vlk.cz'
     ),
     (
+        'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
+        'manatee',
+        'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg'
+    ),
+    (
+        'radek.holy@applifting.cz',
+        'unknown',
+        'dollar',
+        'https://i.kym-cdn.com/entries/icons/facebook/000/013/285/gangsta-animals.jpg'
+    ),
+    (
         'radek.holy@applifting.cz',
         'unknown',
         'kodex',

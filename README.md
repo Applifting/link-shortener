@@ -20,3 +20,4 @@ To do before production:
 
 - Hide environment variables
 - Change wait_for_db from sleep to pinging the db
+- Change href links from localhost to fueled.by

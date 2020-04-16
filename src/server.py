@@ -8,7 +8,7 @@ from json import dumps
 from decouple import config
 
 from sanic import Sanic, response
-from sanic.response import json, text
+from sanic.response import json, text, html
 
 from sanic_oauth.blueprint import oauth_blueprint, login_required
 
@@ -16,6 +16,9 @@ from sanic_session import InMemorySessionInterface
 
 from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
+from templates import template_blueprint
+
+from commands.template_generators import all_links_page_generator
 
 
 app = Sanic(__name__)
@@ -23,6 +26,7 @@ app = Sanic(__name__)
 app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)
+app.blueprint(template_blueprint)
 
 actives = initdb_blueprint.active_table
 inactives = initdb_blueprint.inactive_table
@@ -80,18 +84,20 @@ async def user_profile(request, user):
 async def get_active_links(request):
     try:
         async with app.engine.acquire() as conn:
-            data = ''
-            # queryset = await conn.execute(
-            #     table.select().where(
-            #         table.columns['is_active'] == True
-            #     )
-            # )
+            data = []
             queryset = await conn.execute(actives.select())
             for row in await queryset.fetchall():
-                data += 'Owner: {}\nEndpoint: {} \nURL: {} \n\n'.format(
-                    row.owner, row.endpoint, row.url
-                )
-            return text(data, status=200)
+                data.append((row.endpoint, row.owner, row.url))
+
+            return html(all_links_page_generator(data), status=200)
+
+            # data = ''
+            # queryset = await conn.execute(actives.select())
+            # for row in await queryset.fetchall():
+            #     data += 'Owner: {}\nEndpoint: {} \nURL: {} \n\n'.format(
+            #         row.owner, row.endpoint, row.url
+            #     )
+            # return text(data, status=200)
 
     except Exception as error:
         print(error)

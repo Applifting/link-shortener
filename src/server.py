@@ -18,7 +18,7 @@ from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
 from templates import template_blueprint
 
-from commands.template_generators import all_links_page_generator
+from commands import template_generators
 
 
 app = Sanic(__name__)
@@ -92,7 +92,10 @@ async def get_active_links(request):
             for row in await queryset.fetchall():
                 data.append((row.endpoint, row.owner, row.url))
 
-            return html(all_links_page_generator(data), status=200)
+            return html(
+                template_generators.all_links_page_generator(data),
+                status=200
+            )
 
             # data = ''
             # queryset = await conn.execute(actives.select())
@@ -112,26 +115,48 @@ async def get_active_links(request):
 async def owner_specific_links(request, user):
     try:
         async with app.engine.acquire() as conn:
-            data = 'User: {}\n\n'.format(user.email)
+            ac_data, in_data = [], []
             ac_queryset = await conn.execute(
                 actives.select().where(
                     actives.columns['owner_id'] == user.id
                 )
             )
-            for row in await ac_queryset.fetchall():
-                data += 'Endpoint: {} \nURL: {} \nActive\n\n'.format(
-                    row.endpoint, row.url
-                )
             in_queryset = await conn.execute(
                 inactives.select().where(
                     inactives.columns['owner_id'] == user.id
                 )
             )
+            for row in await ac_queryset.fetchall():
+                ac_data.append((row.endpoint, row.url))
+
             for row in await in_queryset.fetchall():
-                data += 'Endpoint: {} \nURL: {} \nInactive\n\n'.format(
-                    row.endpoint, row.url
-                )
-            return text(data, status=200)
+                in_data.append((row.endpoint, row.url))
+
+            return html(
+                template_generators.my_links_page_generator(ac_data, in_data),
+                status=200
+            )
+
+            # data = 'User: {}\n\n'.format(user.email)
+            # ac_queryset = await conn.execute(
+            #     actives.select().where(
+            #         actives.columns['owner_id'] == user.id
+            #     )
+            # )
+            # for row in await ac_queryset.fetchall():
+            #     data += 'Endpoint: {} \nURL: {} \nActive\n\n'.format(
+            #         row.endpoint, row.url
+            #     )
+            # in_queryset = await conn.execute(
+            #     inactives.select().where(
+            #         inactives.columns['owner_id'] == user.id
+            #     )
+            # )
+            # for row in await in_queryset.fetchall():
+            #     data += 'Endpoint: {} \nURL: {} \nInactive\n\n'.format(
+            #         row.endpoint, row.url
+            #     )
+            # return text(data, status=200)
 
     except Exception as error:
         print(error)

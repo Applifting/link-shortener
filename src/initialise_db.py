@@ -18,7 +18,7 @@ initdb_blueprint.active_table = Table(
     'active_links',
     metadata,
     Column('owner', String(50)),
-    Column('owner_id', String(50)),
+    Column('owner_id', String(255)),
     Column('endpoint', String(20), unique=True),
     Column('url', String(300))
 )
@@ -26,7 +26,7 @@ initdb_blueprint.inactive_table = Table(
     'inactive_links',
     metadata,
     Column('owner', String(50)),
-    Column('owner_id', String(50)),
+    Column('owner_id', String(255)),
     Column('endpoint', String(20)),
     Column('url', String(300))
 )

@@ -1,0 +1,75 @@
+
+    <div class="container">
+      <h1>Greetings!</h1>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+        pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+        officia deserunt mollit anim id est laborum.
+      </p>
+      <br>
+      <h3>How can I filter links/endpoints by their initial?</h3>
+      <p>
+        Use your browser's lookup function (ctrl+f or cmd+f) and search for
+        'fueled.by/<letter>' - for example fueled.by/a
+      </p>
+      <br>
+      <h3>Why did my page refresh when I hit a button?</h3>
+      <p>
+        As the creator is JavaScript illiterate, this site is 99% server-side.
+      </p>
+
+      <br><br>
+      <div class="container construct-body">
+        <table width="100%">
+          <tr>
+            <td width="33%"><span id="firstHouse"><img src="house1.png" width="250" height="250" alt="Not found"></span></td>
+            <td width="33%"><span id="secondHouse"><img src="house2.png" width="250" height="250" alt="Not found"></span></td>
+            <td width="34%"><span id="thirdHouse"><img src="home.png" width="250" height="250" alt="Not found"></span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    var options = ["hidden", "hidden", "visible"];
+    var i = 2;
+    var j = 1;
+    var k = 0;
+
+    function firstHouseBuildingGif() {
+      document.getElementById("firstHouse").style.visibility = options[i];
+      i++;
+
+      if (i > options.length - 1) {
+        i = 0;
+      }
+    }
+
+    function secondHouseBuildingGif() {
+      document.getElementById("secondHouse").style.visibility = options[j];
+      j++;
+
+      if (j > options.length - 1) {
+        j = 0;
+      }
+    }
+
+    function thirdHouseBuildingGif() {
+      document.getElementById("thirdHouse").style.visibility = options[k];
+      k++;
+
+      if (k > options.length - 1) {
+        k = 0;
+      }
+    }
+
+    setInterval(firstHouseBuildingGif, 1000);
+    setInterval(secondHouseBuildingGif, 1000);
+    setInterval(thirdHouseBuildingGif, 1000);
+  </script>
+</html>

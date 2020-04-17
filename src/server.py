@@ -17,6 +17,7 @@ from sanic_session import InMemorySessionInterface
 from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
 from templates import template_blueprint
+from forms import forms_blueprint
 
 from commands import template_generators
 
@@ -30,6 +31,9 @@ app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)
 app.blueprint(template_blueprint)
+app.blueprint(forms_blueprint)
+
+app.config['WTF_CSRF_SECRET_KEY'] = config('WTF_CSRF_SECRET_KEY')
 
 actives = initdb_blueprint.active_table
 inactives = initdb_blueprint.inactive_table

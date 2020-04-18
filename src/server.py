@@ -18,22 +18,22 @@ from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
 from templates import template_blueprint
 from forms import forms_blueprint
+from routes import route_blueprint
 
 from commands import template_generators
 
 
 app = Sanic(__name__)
 
-app.static('/home.png', '/app/static/home.png', name='home')
-app.static('/house1.png', '/app/static/house1.png', name='house1')
-app.static('/house2.png', '/app/static/house2.png', name='house2')
 app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)
 app.blueprint(template_blueprint)
 app.blueprint(forms_blueprint)
+app.blueprint(route_blueprint)
 
-app.config['WTF_CSRF_SECRET_KEY'] = config('WTF_CSRF_SECRET_KEY')
+app.static('/', './static')
+app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')
 
 actives = initdb_blueprint.active_table
 inactives = initdb_blueprint.inactive_table
@@ -76,16 +76,46 @@ async def save_session(request, response):
 
     await request.app.session_interface.save(request, response)
 
-
-@app.route('/profile')
-@login_required
-async def user_profile(request, user):
-    data = 'User: {}'.format(user.email)
-    return response.text(data)
-
 # ----------------------------------------------------------------------------
 # MAIN ROUTES
 # ----------------------------------------------------------------------------
+
+@app.route('/db_all', methods=['GET'])
+async def db_check(request):
+    try:
+        async with app.engine.acquire() as conn:
+            data = []
+            queryset1 = await conn.execute(actives.select())
+            for row in await queryset1.fetchall():
+                data.append(
+                    (
+                        row.id,
+                        row.identifier,
+                        row.owner,
+                        row.owner_id,
+                        row.endpoint,
+                        row.url
+                    )
+                )
+            queryset2 = await conn.execute(inactives.select())
+            for row in await queryset2.fetchall():
+                data.append(
+                    (
+                        row.id,
+                        row.identifier,
+                        row.owner,
+                        row.owner_id,
+                        row.endpoint,
+                        row.url
+                    )
+                )
+            return json(dumps(data), status=200)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'getting links failed'}, status=500)
+
+
 
 @app.route('/', methods=['GET'])
 async def get_active_links(request):
@@ -100,14 +130,6 @@ async def get_active_links(request):
                 template_generators.all_links_page_generator(data),
                 status=200
             )
-
-            # data = ''
-            # queryset = await conn.execute(actives.select())
-            # for row in await queryset.fetchall():
-            #     data += 'Owner: {}\nEndpoint: {} \nURL: {} \n\n'.format(
-            #         row.owner, row.endpoint, row.url
-            #     )
-            # return text(data, status=200)
 
     except Exception as error:
         print(error)
@@ -140,27 +162,6 @@ async def owner_specific_links(request, user):
                 template_generators.my_links_page_generator(ac_data, in_data),
                 status=200
             )
-
-            # data = 'User: {}\n\n'.format(user.email)
-            # ac_queryset = await conn.execute(
-            #     actives.select().where(
-            #         actives.columns['owner_id'] == user.id
-            #     )
-            # )
-            # for row in await ac_queryset.fetchall():
-            #     data += 'Endpoint: {} \nURL: {} \nActive\n\n'.format(
-            #         row.endpoint, row.url
-            #     )
-            # in_queryset = await conn.execute(
-            #     inactives.select().where(
-            #         inactives.columns['owner_id'] == user.id
-            #     )
-            # )
-            # for row in await in_queryset.fetchall():
-            #     data += 'Endpoint: {} \nURL: {} \nInactive\n\n'.format(
-            #         row.endpoint, row.url
-            #     )
-            # return text(data, status=200)
 
     except Exception as error:
         print(error)

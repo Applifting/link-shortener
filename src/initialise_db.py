@@ -2,13 +2,12 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import uuid
-
 from sanic import Blueprint
 
+from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
-from sqlalchemy import MetaData, Table, Column, String, Integer
+from sqlalchemy import MetaData, Table, Column, String
 from sqlalchemy.schema import CreateTable
 
 
@@ -18,8 +17,6 @@ metadata = MetaData()
 initdb_blueprint.active_table = Table(
     'active_links',
     metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('identifier', String(36)),
     Column('owner', String(50)),
     Column('owner_id', String(255)),
     Column('endpoint', String(20), unique=True),
@@ -28,8 +25,6 @@ initdb_blueprint.active_table = Table(
 initdb_blueprint.inactive_table = Table(
     'inactive_links',
     metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('identifier', String(36)),
     Column('owner', String(50)),
     Column('owner_id', String(255)),
     Column('endpoint', String(20)),
@@ -37,42 +32,36 @@ initdb_blueprint.inactive_table = Table(
 )
 active_data = [
     (
-        str(uuid.uuid1())[:36],
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'pomuzemesi',
         'https://staging.pomuzeme.si'
     ),
     (
-        str(uuid.uuid1())[:36],
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'vlk',
         'http://www.vlk.cz'
     ),
     (
-        str(uuid.uuid1())[:36],
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg'
     ),
     (
-        str(uuid.uuid1())[:36],
         'radek.holy@applifting.cz',
         'unknown',
         'dollar',
         'https://i.kym-cdn.com/entries/icons/facebook/000/013/285/gangsta-animals.jpg'
     ),
     (
-        str(uuid.uuid1())[:36],
         'radek.holy@applifting.cz',
         'unknown',
         'kodex',
         'https://github.com/Applifting/culture'
     ),
     (
-        str(uuid.uuid1())[:36],
         'radek.holy@applifting.cz',
         'unknown',
         'meta',
@@ -81,14 +70,12 @@ active_data = [
 ]
 inactive_data = [
     (
-        str(uuid.uuid1())[:36],
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'tunak',
         'https://www.britannica.com/animal/tuna-fish'
     ),
     (
-        str(uuid.uuid1())[:36],
         'radek.holy@applifting.cz',
         'unknown',
         'nope',
@@ -96,9 +83,17 @@ inactive_data = [
     )
 ]
 
-
 @initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):
+    pool = await create_pool(
+        host='db',
+        port=3306,
+        user='user',
+        password='password',
+        db='db',
+        loop=loop,
+        autocommit=True
+    )
     app.engine = await create_engine(
         host='db',
         port=3306,
@@ -107,38 +102,33 @@ async def initialise_db(app, loop):
         db='db',
         loop=loop
     )
-    async with app.engine.acquire() as conn:
+    async with pool.acquire() as conn:
+        db_cursor = await conn.cursor()
         try:
-            trans = await conn.begin()
-            await conn.execute(
-                str(CreateTable(
-                        initdb_blueprint.active_table).compile(app.engine)
-                    )
+            await db_cursor.execute(
+                str(CreateTable(initdb_blueprint.active_table))
             )
-            await conn.execute(
-                str(CreateTable(
-                        initdb_blueprint.inactive_table).compile(app.engine)
-                    )
+            await db_cursor.execute(
+                str(CreateTable(initdb_blueprint.inactive_table))
             )
-            for values in active_data:
-                await conn.execute(
-                    'INSERT INTO active_links \
-                     (identifier, owner, owner_id, endpoint, url) \
-                     VALUES (%s, %s, %s, %s, %s)',
-                    values
-                )
-            for values in inactive_data:
-                await conn.execute(
-                    'INSERT INTO inactive_links \
-                     (identifier, owner, owner_id, endpoint, url) \
-                     VALUES (%s, %s, %s, %s, %s)',
-                    values
-                )
-            await trans.commit()
-            await trans.close()
+            await db_cursor.executemany(
+                'INSERT INTO active_links (owner, owner_id, endpoint, url) \
+                 VALUES (%s, %s, %s, %s)',
+                active_data
+            )
+            await db_cursor.executemany(
+                'INSERT INTO inactive_links (owner, owner_id, endpoint, url) \
+                 VALUES (%s, %s, %s, %s)',
+                inactive_data
+            )
 
         except Exception as error:
-            print(str(error) + '\n' + 'Table are already cached')
+            print(str(error) + '\n' + 'Tables are probably already cached')
+
+        await db_cursor.close()
+
+    pool.terminate()
+    await pool.wait_closed()
 
 
 @initdb_blueprint.listener('after_server_stop')

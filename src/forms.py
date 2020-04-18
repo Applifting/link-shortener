@@ -31,17 +31,23 @@ async def create_link(request):
 
     content = f"""
     <div class="container">
-    <form action="" method="POST" width="50%">
-      <h1>Create a new link</h1>
+    <form action="" method="POST">
+      <h1 id="form-header">Create a new link</h1>
       {'<br>'.join(form.csrf_token.errors)}
       {form.csrf_token}
       {'<br>'.join(form.endpoint.errors)}
       <br>
-      Endpoint: {form.endpoint(size=20, placeholder="")}
-      <br>
-      URL: {form.url(size=20, placeholder="")}
-      <br>
+      <ul>
+      <li>
+      {form.endpoint(size=20, placeholder="Endpoint")}
+      </li>
+      <li>
+      {form.url(size=20, placeholder="URL")}
+      </li>
+      <li>
       {form.submit}
+      </li>
+      </ul>
     </form>
     """
     base = open('src/templates/base.html', 'r').read()

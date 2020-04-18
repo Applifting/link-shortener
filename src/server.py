@@ -80,6 +80,43 @@ async def save_session(request, response):
 # MAIN ROUTES
 # ----------------------------------------------------------------------------
 
+@app.route('/db_all', methods=['GET'])
+async def db_check(request):
+    try:
+        async with app.engine.acquire() as conn:
+            data = []
+            queryset1 = await conn.execute(actives.select())
+            for row in await queryset1.fetchall():
+                data.append(
+                    (
+                        row.id,
+                        row.identifier,
+                        row.owner,
+                        row.owner_id,
+                        row.endpoint,
+                        row.url
+                    )
+                )
+            queryset2 = await conn.execute(inactives.select())
+            for row in await queryset2.fetchall():
+                data.append(
+                    (
+                        row.id,
+                        row.identifier,
+                        row.owner,
+                        row.owner_id,
+                        row.endpoint,
+                        row.url
+                    )
+                )
+            return json(dumps(data), status=200)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'getting links failed'}, status=500)
+
+
+
 @app.route('/', methods=['GET'])
 async def get_active_links(request):
     try:

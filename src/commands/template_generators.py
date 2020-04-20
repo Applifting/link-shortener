@@ -15,7 +15,7 @@ def all_links_page_generator(queryset):
     appendix = open('src/templates/all/all_links_appendix.html', 'r').read()
     page += base + all_links
     for row in queryset:
-        page += all_table_row_generator(row[0], row[1], row[2])
+        page += all_table_row_generator(row[0], row[1], row[2], row[3])
 
     page += appendix
     return page
@@ -62,7 +62,7 @@ def my_table_row_generator(endpoint, url, active):
     return table_row
 
 
-def all_table_row_generator(endpoint, owner, url):
+def all_table_row_generator(id, endpoint, owner, url):
     '''
     Generates an HTML representation of a table row populated with
     input attributes.
@@ -72,6 +72,8 @@ def all_table_row_generator(endpoint, owner, url):
                  <td>{}</td> \
                  <td><a href="{}">{}</a></td> \
                  <td>fueled.by/{}</td> \
-                 </tr>'.format(endpoint, owner, url, url, endpoint)
+                 <td><a href="http://localhost:8000/edit/active/{}"> \
+                 <img src="edit.png" heigh="20" width="20"></a></td> \
+                 </tr>'.format(endpoint, owner, url, url, endpoint, id)
 
     return table_row

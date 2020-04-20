@@ -32,6 +32,7 @@ app.blueprint(view_blueprint)
 app.blueprint(api_retrieve_blueprint)
 
 app.static('/links/plus.png', '/app/static/plus.png', name='plus_png')
+app.static('/links/edit.png', '/app/static/edit.png', name='edit_png')
 app.static('/static', './static')
 app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')
 

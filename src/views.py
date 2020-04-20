@@ -24,7 +24,7 @@ async def all_active_links(request):
             data = []
             queryset = await conn.execute(actives.select())
             for row in await queryset.fetchall():
-                data.append((row.endpoint, row.owner, row.url))
+                data.append((row.id, row.endpoint, row.owner, row.url))
 
             return html(
                 template_generators.all_links_page_generator(data),

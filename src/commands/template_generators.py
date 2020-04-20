@@ -32,32 +32,54 @@ def my_links_page_generator(active_queryset, inactive_queryset):
     appendix = open('src/templates/my/my_links_appendix.html', 'r').read()
     page += base + my_links
     for row in active_queryset:
-        page += my_table_row_generator(row[0], row[1], True)
+        page += my_table_row_generator(row[0], row[1], row[2], True)
 
     for row in inactive_queryset:
-        page += my_table_row_generator(row[0], row[1], False)
+        page += my_table_row_generator(row[0], row[1], row[2], False)
 
     page += appendix
     return page
 
 
-def my_table_row_generator(endpoint, url, active):
+def my_table_row_generator(id, endpoint, url, active):
     '''
     Generates an HTML representation of a table row populated with
     input attributes.
     '''
-    switch = 'red'
-    status = 'Inactive'
-    if active:
-        switch = 'green'
-        status = 'Active'
+    # switch = 'red'
+    # status = 'Inactive'
+    # if active:
+    #     switch = 'green'
+    #     status = 'Active'
+    #
+    # table_row = '<tr> \
+    #              <td>/{}</td> \
+    #              <td><a href="{}">{}</a></td> \
+    #              <td>fueled.by/{}</td> \
+    #              <td style="color: {};">{}</td> \
+    #              </tr>'.format(endpoint, url, url, endpoint, switch, status)
+    #
+    # return table_row
 
-    table_row = '<tr> \
-                 <td>/{}</td> \
-                 <td><a href="{}">{}</a></td> \
-                 <td>fueled.by/{}</td> \
-                 <td style="color: {};">{}</td> \
-                 </tr>'.format(endpoint, url, url, endpoint, switch, status)
+    if active:
+        table_row = '<tr> \
+                     <td>/{}</td> \
+                     <td><a href="{}">{}</a></td> \
+                     <td>fueled.by/{}</td> \
+                     <td style="color: green;">Active</td> \
+                     <td><a href="http://localhost:8000/edit/active/{}"> \
+                     <img src="edit.png" heigh="20" width="20"></a></td> \
+                     </tr>'.format(endpoint, url, url, endpoint, id)
+
+    else:
+        table_row = '<tr> \
+                     <td>/{}</td> \
+                     <td><a href="{}">{}</a></td> \
+                     <td>fueled.by/{}</td> \
+                     <td style="color: red;">Inactive</td> \
+                     <td><a href="http://localhost:8000/edit/inactive/{}"> \
+                     <img src="edit.png" heigh="20" width="20"></a></td> \
+                     </tr>'.format(endpoint, url, url, endpoint, id)
 
     return table_row
 

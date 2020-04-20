@@ -53,10 +53,10 @@ async def owner_specific_links(request, user):
                 )
             )
             for row in await ac_queryset.fetchall():
-                ac_data.append((row.endpoint, row.url))
+                ac_data.append((row.id, row.endpoint, row.url))
 
             for row in await in_queryset.fetchall():
-                in_data.append((row.endpoint, row.url))
+                in_data.append((row.id, row.endpoint, row.url))
 
             return html(
                 template_generators.my_links_page_generator(ac_data, in_data),

@@ -46,21 +46,6 @@ def my_table_row_generator(id, endpoint, url, active):
     Generates an HTML representation of a table row populated with
     input attributes.
     '''
-    # switch = 'red'
-    # status = 'Inactive'
-    # if active:
-    #     switch = 'green'
-    #     status = 'Active'
-    #
-    # table_row = '<tr> \
-    #              <td>/{}</td> \
-    #              <td><a href="{}">{}</a></td> \
-    #              <td>fueled.by/{}</td> \
-    #              <td style="color: {};">{}</td> \
-    #              </tr>'.format(endpoint, url, url, endpoint, switch, status)
-    #
-    # return table_row
-
     if active:
         table_row = '<tr> \
                      <td>/{}</td> \

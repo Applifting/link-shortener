@@ -14,7 +14,7 @@ from sanic_session import InMemorySessionInterface
 from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
 from templates import template_blueprint
-from forms import forms_blueprint
+from forms import form_blueprint
 from views import view_blueprint
 
 from api.retrieve import api_retrieve_blueprint
@@ -26,13 +26,14 @@ app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)
 app.blueprint(template_blueprint)
-app.blueprint(forms_blueprint)
+app.blueprint(form_blueprint)
 app.blueprint(view_blueprint)
 
 app.blueprint(api_retrieve_blueprint)
 
 app.static('/links/plus.png', '/app/static/plus.png', name='plus_png')
 app.static('/links/edit.png', '/app/static/edit.png', name='edit_png')
+app.static('/edit/active/delete.png', '/app/static/delete.png', name='del_png')
 app.static('/static', './static')
 app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')
 

@@ -17,7 +17,7 @@ from wtforms.validators import DataRequired
 from initialise_db import initdb_blueprint
 
 
-forms_blueprint = Blueprint('forms')
+form_blueprint = Blueprint('forms')
 
 actives = initdb_blueprint.active_table
 inactives = initdb_blueprint.inactive_table
@@ -29,11 +29,16 @@ class CreateForm(SanicForm):
     submit = SubmitField('Create')
 
 
-@forms_blueprint.route('/create', methods=['GET', 'POST'])
+class UpdateForm(SanicForm):
+    url = StringField('URL', validators=[DataRequired()])
+    submit = SubmitField('Update')
+
+
+@form_blueprint.route('/create', methods=['GET', 'POST'])
 @login_required
 async def create_link(request, user):
     form = CreateForm(request)
-    if request.method == 'POST' and form.validate():
+    if (request.method == 'POST') and form.validate():
         data = [(
             str(uuid.uuid1())[:36],
             user.email,
@@ -52,7 +57,6 @@ async def create_link(request, user):
                 )
                 await trans.commit()
                 await trans.close()
-
                 return redirect('/')
 
         except Exception as error:
@@ -85,3 +89,89 @@ async def create_link(request, user):
     appendix = open('src/templates/forms/create_form.html', 'r').read()
 
     return html(base + content + appendix)
+
+
+@form_blueprint.route('/edit/active/<link_id>')
+@login_required
+async def update_active_link(request, user, link_id):
+    form = UpdateForm(request)
+    if (request.method == 'POST') and form.validate():
+        try:
+            async with request.app.engine.acquire() as conn:
+                trans = await conn.begin()
+                await conn.execute(
+                    'UPDATE active_links SET url = %s \
+                     WHERE id = %s',
+                    [(form.url.data, link_id)]
+                )
+                await trans.commit()
+                await trans.close()
+                return redirect('/links/me')
+
+        except Exception as error:
+            print(error)
+            await trans.close()
+            return json({'message': 'updating link failed'}, status=500)
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            query = await conn.execute(
+                actives.select().where(
+                    actives.columns['id'] == link_id
+                )
+            )
+            row = await query.fetchone()
+
+            content = f"""
+            <div class="container">
+            <form action="" method="POST">
+              <h1 id="form-header">/{row.endpoint}</h1>
+              {'<br>'.join(form.csrf_token.errors)}
+              {form.csrf_token}
+              {'<br>'.join(form.url.errors)}
+              <br><br>
+              <ul>
+              <li>
+              <a href="http://localhost:8000/deactivate/{link_id}">
+              <button type="button" class="btn btn-outline-danger">
+                Deactivate
+              </button>
+              </a>
+              </li>
+              <br>
+              <li>
+              {form.url(size=50, placeholder=row.url)}
+              </li>
+              <br>
+              <li>
+              {form.submit}
+              <a href="http://localhost:8000/links/me">Cancel</a>
+              </li>
+              <br>
+              <li>
+              <a href="http://localhost:8000/delete/{link_id}">
+              <img src="delete.png" width="50" height="50" alt="Not found">
+              </a>
+              </li>
+              </ul>
+            </form>
+            """
+            base = open('src/templates/base.html', 'r').read()
+            appendix = open('src/templates/forms/create_form.html', 'r').read()
+
+            return html(base + content + appendix)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'getting update form failed'}, status=500)
+
+
+@form_blueprint.route('/edit/inactive/<link_id>')
+@login_required
+async def update_inactive_link(request, user, link_id):
+    try:
+        return json({'inactive link id': link_id}, status=200)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'updating inactive link failed'}, status=500)

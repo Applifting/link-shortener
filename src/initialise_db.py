@@ -62,7 +62,7 @@ active_data = [
         'radek.holy@applifting.cz',
         'unknown',
         'dollar',
-        'https://i.kym-cdn.com/entries/icons/facebook/000/013/285/gangsta-animals.jpg'
+        'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg'
     ),
     (
         str(uuid.uuid1())[:36],
@@ -138,6 +138,7 @@ async def initialise_db(app, loop):
             await trans.close()
 
         except Exception as error:
+            await trans.close()
             print(str(error) + '\n' + 'Table are already cached')
 
 

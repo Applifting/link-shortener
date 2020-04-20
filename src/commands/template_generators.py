@@ -2,6 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+
+
 def all_links_page_generator(queryset):
     '''
     Generates an HTML representation of a table of all active links

@@ -9,8 +9,8 @@ from sanic.response import html, json
 template_blueprint = Blueprint('templates')
 
 
-@template_blueprint.route('/about')
-async def about_template(request):
+@template_blueprint.route('/')
+async def about_page(request):
     try:
         base = open('src/templates/base.html', 'r').read()
         about = open('src/templates/about/about.html', 'r').read()

@@ -31,7 +31,8 @@ app.blueprint(view_blueprint)
 
 app.blueprint(api_retrieve_blueprint)
 
-app.static('/', './static')
+app.static('/links/plus.png', '/app/static/plus.png', name='plus_png')
+app.static('/static', './static')
 app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')
 
 actives = initdb_blueprint.active_table

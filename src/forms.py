@@ -2,16 +2,25 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+import uuid
+
 from sanic import Blueprint
-from sanic.response import redirect, html
+from sanic.response import redirect, html, json
+
+from sanic_oauth.blueprint import login_required
 
 from sanic_wtf import SanicForm
 
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
+from initialise_db import initdb_blueprint
+
 
 forms_blueprint = Blueprint('forms')
+
+actives = initdb_blueprint.active_table
+inactives = initdb_blueprint.inactive_table
 
 
 class CreateForm(SanicForm):
@@ -21,13 +30,35 @@ class CreateForm(SanicForm):
 
 
 @forms_blueprint.route('/create', methods=['GET', 'POST'])
-async def create_link(request):
+@login_required
+async def create_link(request, user):
     form = CreateForm(request)
     if request.method == 'POST' and form.validate():
-        endpoint = form.endpoint.data
-        url = form.url.data
-        print('New link: Endpoint = {}, URL = {}'.format(endpoint, url))
-        return redirect('/')
+        data = [(
+            str(uuid.uuid1())[:36],
+            user.email,
+            user.id,
+            form.endpoint.data,
+            form.url.data
+        )]
+        try:
+            async with request.app.engine.acquire() as conn:
+                trans = await conn.begin()
+                await conn.execute(
+                    'INSERT INTO active_links \
+                     (identifier, owner, owner_id, endpoint, url) \
+                     VALUES (%s, %s, %s, %s, %s)',
+                    data
+                )
+                await trans.commit()
+                await trans.close()
+
+                return redirect('/')
+
+        except Exception as error:
+            print(error)
+            await trans.close()
+            return json({'message': 'creating a new link failed'}, status=500)
 
     content = f"""
     <div class="container">

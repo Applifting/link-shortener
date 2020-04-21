@@ -57,12 +57,28 @@ async def create_link(request, user):
                 )
                 await trans.commit()
                 await trans.close()
-                return redirect('/')
+                return redirect('/links/me')
 
-        except Exception as error:
-            print(error)
-            await trans.close()
-            return json({'message': 'creating a new link failed'}, status=500)
+        except InvalidRequestError:
+            try:
+                await conn.execute(
+                    'INSERT INTO inactive_links \
+                     (identifier, owner, owner_id, endpoint, url) \
+                     VALUES (%s, %s, %s, %s, %s)',
+                    data
+                )
+                await trans.commit()
+                await trans.close()
+                return json(
+                    {'message': 'endpoint already exists, created as inactive'},
+                    status=201
+                    )
+            except Exception:
+                await trans.close()
+                return json(
+                    {'message': 'creating a new link failed'},
+                    status=500
+                )
 
     content = f"""
     <div class="container">

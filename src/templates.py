@@ -23,4 +23,4 @@ async def about_page(request):
 
 @template_blueprint.route('/', methods=['GET'])
 async def landing_page(request):
-    return redirect('/links/all')
+    return redirect('/links/about')

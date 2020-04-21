@@ -3,7 +3,7 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from sanic import Blueprint
-from sanic.response import html, json
+from sanic.response import html, json, redirect
 
 from sanic_oauth.blueprint import login_required
 
@@ -68,14 +68,21 @@ async def owner_specific_links(request, user):
         return json({'message': 'getting your links failed'}, status=500)
 
 
-@view_blueprint.route('/delete/active/<link_id>', methods=['GET'])
+@view_blueprint.route('/delete/<status>/<link_id>', methods=['GET'])
 @login_required
-async def delete_active_link(request, user, link_id):
+async def delete_link(request, user, status, link_id):
+    if (status == 'active'):
+        table = 'active_links'
+    elif (status == 'inactive'):
+        table = 'inactive_links'
+    else:
+        return json({'message': 'Path does not exist'}, status=400)
+
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
             await conn.execute(
-                'DELETE FROM active_links WHERE id = %s',
+                'DELETE FROM {} WHERE id = %s'.format(table),
                 link_id
             )
             await trans.commit()

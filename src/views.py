@@ -89,7 +89,7 @@ async def delete_link(request, user, status, link_id):
             await trans.close()
             return redirect('/links/me')
 
-    except Exception as error:
+    except Exception:
         await trans.close()
         return json({'message': 'deleting link failed'}, status=500)
 

@@ -11,6 +11,8 @@ from sanic_oauth.blueprint import login_required
 
 from sanic_wtf import SanicForm
 
+from sqlalchemy.exc import InvalidRequestError
+
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
@@ -70,7 +72,7 @@ async def create_link(request, user):
                 await trans.commit()
                 await trans.close()
                 return json(
-                    {'message': 'endpoint already exists, created as inactive'},
+                    {'message': 'endpoint already exists, created inactive'},
                     status=201
                     )
             except Exception:
@@ -118,7 +120,7 @@ async def update_active_link(request, user, link_id):
                 await trans.close()
                 return redirect('/links/me')
 
-        except Exception as error:
+        except Exception:
             await trans.close()
             return json({'message': 'updating link failed'}, status=500)
 
@@ -150,7 +152,7 @@ async def update_active_link(request, user, link_id):
 
             return html(base + content + appendix)
 
-    except Exception as error:
+    except Exception:
         return json({'message': 'getting update form failed'}, status=500)
 
 
@@ -171,7 +173,7 @@ async def update_inactive_link(request, user, link_id):
                 await trans.close()
                 return redirect('/links/me')
 
-        except Exception as error:
+        except Exception:
             await trans.close()
             return json({'message': 'updating link failed'}, status=500)
 
@@ -203,5 +205,5 @@ async def update_inactive_link(request, user, link_id):
 
             return html(base + content + appendix)
 
-    except Exception as error:
+    except Exception:
         return json({'message': 'getting update form failed'}, status=500)

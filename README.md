@@ -6,7 +6,13 @@ How to use:
 - Run 'docker-compose build', then 'docker-compose up'
 
 **/**
-Landing page - About
+Landing page - Redirects to About
+
+**/links/about**
+Displays information about the page
+
+**/<link_endpoint>**
+Redirects to a url corresponding to its respective endpoint
 
 **/links/all**
 Displays a list of all active links and their owners
@@ -15,10 +21,31 @@ Displays a list of all active links and their owners
 Authenticates the user, then displays a list of all the user's links
 Based on the user's Google id
 
-**/<link_endpoint>**
-Redirects to a url corresponding to its respective endpoint
+**/create**
+A form for creating a new link. If an active link with the same endpoint
+already exists, the new link will be created as inactive
 
-**/db_all** (development only)
+**/edit/active/<link_id>**
+A form for updating the URL of an active link pointed to via the id
+specified within of the endpoint
+
+**/edit/inactive/<link_id>**
+A form for updating the URL of an inactive link pointed to via the id
+specified within of the endpoint
+
+**/deactivate/<link_id>**
+Deactivates an active link pointed to via the id specified
+within of the endpoint
+
+**/activate/<link_id>**
+Activates an inactive link pointed to via the id specified
+within of the endpoint
+
+**/delete/<status>/<link_id>** Status = {'active', 'inactive'}
+Deletes a link with a status and id specified by the respective parameters
+within the endpoint
+
+**/get_links** (API)
 Displays a JSON formatted data from the database - health check for development
 
 

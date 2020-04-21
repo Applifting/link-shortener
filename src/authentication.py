@@ -20,10 +20,3 @@ async def init_aiohttp_session(sanic_app, _loop) -> None:
 @auth_blueprint.listener('after_server_stop')
 async def close_aiohttp_session(sanic_app, _loop) -> None:
     await sanic_app.async_session.close()
-
-
-@auth_blueprint.route('/profile')
-@login_required
-async def user_profile(request, user):
-    data = 'User: {}'.format(user.email)
-    return response.text(data)

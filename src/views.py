@@ -90,4 +90,32 @@ async def delete_link(request, user, status, link_id):
             return redirect('/links/me')
 
     except Exception as error:
-        return json({'message': 'deleting link failed'})
+        await trans.close()
+        return json({'message': 'deleting link failed'}, status=500)
+
+
+@view_blueprint.route('/activate/<link_id>', methods=['GET'])
+@login_required
+async def activate_link(request, user, link_id):
+    try:
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            await conn.execute(
+                'INSERT INTO active_links \
+                 (identifier, owner, owner_id, endpoint, url) \
+                 SELECT identifier, owner, owner_id, endpoint, url \
+                 FROM inactive_links WHERE id = %s',
+                link_id
+            )
+            await conn.execute(
+                'DELETE FROM inactive_links WHERE id = %s',
+                link_id
+            )
+            await trans.commit()
+            await trans.close()
+            return redirect('/links/me')
+
+    except Exception as error:
+        print(error)
+        await trans.close()
+        return json({'message': 'activating link failed'}, status=500)

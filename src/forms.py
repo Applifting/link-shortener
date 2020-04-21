@@ -60,6 +60,7 @@ async def create_link(request, user):
                 return redirect('/')
 
         except Exception as error:
+            print(error)
             await trans.close()
             return json({'message': 'creating a new link failed'}, status=500)
 

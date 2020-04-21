@@ -91,7 +91,7 @@ async def create_link(request, user):
     return html(base + content + appendix)
 
 
-@form_blueprint.route('/edit/active/<link_id>')
+@form_blueprint.route('/edit/active/<link_id>', methods=['GET', 'POST'])
 @login_required
 async def update_active_link(request, user, link_id):
     form = UpdateForm(request)
@@ -131,28 +131,9 @@ async def update_active_link(request, user, link_id):
               {'<br>'.join(form.url.errors)}
               <br><br>
               <ul>
-              <li>
-              <a href="http://localhost:8000/deactivate/{link_id}">
-              <button type="button" class="btn btn-outline-danger">
-                Deactivate
-              </button>
-              </a>
-              </li>
+              <li>{form.url(size=50, placeholder=row.url)}</li>
               <br>
-              <li>
-              {form.url(size=50, placeholder=row.url)}
-              </li>
-              <br>
-              <li>
-              {form.submit}
-              <a href="http://localhost:8000/links/me">Cancel</a>
-              </li>
-              <br>
-              <li>
-              <a href="http://localhost:8000/delete/{link_id}">
-              <img src="delete.png" width="50" height="50" alt="Not found">
-              </a>
-              </li>
+              <li>{form.submit}</li>
               </ul>
             </form>
             """

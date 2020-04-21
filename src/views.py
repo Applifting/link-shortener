@@ -66,3 +66,13 @@ async def owner_specific_links(request, user):
     except Exception as error:
         print(error)
         return json({'message': 'getting your links failed'}, status=500)
+
+
+@view_blueprint.route('/delete/active/<link_id>', methods=['GET'])
+@login_required
+async def delete_active_link(request, user, link_id):
+    try:
+        return json({'link id': link_id}, status=200)
+    except Exception as error:
+        print(error)
+        return json({'message': 'deleting link failed'}, status=500)

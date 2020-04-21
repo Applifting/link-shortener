@@ -51,20 +51,26 @@ def my_table_row_generator(id, endpoint, url, active):
                      <td>/{}</td> \
                      <td><a href="{}">{}</a></td> \
                      <td>fueled.by/{}</td> \
-                     <td style="color: green;">Active</td> \
+                     <td><a href="http://localhost:8000/deactivate/{}"> \
+                     <img src="on.png" heigh="20" width="20"></a></td> \
                      <td><a href="http://localhost:8000/edit/active/{}"> \
                      <img src="edit.png" heigh="20" width="20"></a></td> \
-                     </tr>'.format(endpoint, url, url, endpoint, id)
+                     <td><a href="http://localhost:8000/delete/active/{}"> \
+                     <img src="delete.png" heigh="20" width="20"></a></td> \
+                     </tr>'.format(endpoint, url, url, endpoint, id, id, id)
 
     else:
         table_row = '<tr> \
                      <td>/{}</td> \
                      <td><a href="{}">{}</a></td> \
                      <td>fueled.by/{}</td> \
-                     <td style="color: red;">Inactive</td> \
+                     <td><a href="http://localhost:8000/activate/{}"> \
+                     <img src="off.png" heigh="20" width="20"></a></td> \
                      <td><a href="http://localhost:8000/edit/inactive/{}"> \
                      <img src="edit.png" heigh="20" width="20"></a></td> \
-                     </tr>'.format(endpoint, url, url, endpoint, id)
+                     <td><a href="http://localhost:8000/delete/inactive/{}"> \
+                     <img src="delete.png" heigh="20" width="20"></a></td> \
+                     </tr>'.format(endpoint, url, url, endpoint, id, id, id)
 
     return table_row
 
@@ -81,6 +87,8 @@ def all_table_row_generator(id, endpoint, owner, url):
                  <td>fueled.by/{}</td> \
                  <td><a href="http://localhost:8000/edit/active/{}"> \
                  <img src="edit.png" heigh="20" width="20"></a></td> \
-                 </tr>'.format(endpoint, owner, url, url, endpoint, id)
+                 <td><a href="http://localhost:8000/delete/active/{}"> \
+                 <img src="delete.png" heigh="20" width="20"></a></td> \
+                 </tr>'.format(endpoint, owner, url, url, endpoint, id, id)
 
     return table_row

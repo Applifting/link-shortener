@@ -73,15 +73,9 @@ async def create_link(request, user):
       {'<br>'.join(form.endpoint.errors)}
       <br>
       <ul>
-      <li>
-      {form.endpoint(size=20, placeholder="Endpoint")}
-      </li>
-      <li>
-      {form.url(size=20, placeholder="URL")}
-      </li>
-      <li>
-      {form.submit}
-      </li>
+      <li>{form.endpoint(size=20, placeholder="Endpoint")}</li>
+      <li>{form.url(size=20, placeholder="URL")}</li>
+      <li>{form.submit}</li>
       </ul>
     </form>
     """
@@ -129,10 +123,9 @@ async def update_active_link(request, user, link_id):
               {'<br>'.join(form.csrf_token.errors)}
               {form.csrf_token}
               {'<br>'.join(form.url.errors)}
-              <br><br>
+              <br>
               <ul>
               <li>{form.url(size=50, placeholder=row.url)}</li>
-              <br>
               <li>{form.submit}</li>
               </ul>
             </form>

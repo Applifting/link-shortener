@@ -72,7 +72,15 @@ async def owner_specific_links(request, user):
 @login_required
 async def delete_active_link(request, user, link_id):
     try:
-        return json({'link id': link_id}, status=200)
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            await conn.execute(
+                'DELETE FROM active_links WHERE id = %s',
+                link_id
+            )
+            await trans.commit()
+            await trans.close()
+            return redirect('/links/me')
+
     except Exception as error:
-        print(error)
-        return json({'message': 'deleting link failed'}, status=500)
+        return json({'message': 'deleting link failed'})

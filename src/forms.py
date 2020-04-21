@@ -60,7 +60,6 @@ async def create_link(request, user):
                 return redirect('/')
 
         except Exception as error:
-            print(error)
             await trans.close()
             return json({'message': 'creating a new link failed'}, status=500)
 
@@ -156,7 +155,6 @@ async def update_inactive_link(request, user, link_id):
                 return redirect('/links/me')
 
         except Exception as error:
-            print(error)
             await trans.close()
             return json({'message': 'updating link failed'}, status=500)
 
@@ -189,5 +187,4 @@ async def update_inactive_link(request, user, link_id):
             return html(base + content + appendix)
 
     except Exception as error:
-        print(error)
         return json({'message': 'getting update form failed'}, status=500)

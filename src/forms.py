@@ -103,7 +103,6 @@ async def update_active_link(request, user, link_id):
                 return redirect('/links/me')
 
         except Exception as error:
-            print(error)
             await trans.close()
             return json({'message': 'updating link failed'}, status=500)
 
@@ -136,16 +135,59 @@ async def update_active_link(request, user, link_id):
             return html(base + content + appendix)
 
     except Exception as error:
-        print(error)
         return json({'message': 'getting update form failed'}, status=500)
 
 
-@form_blueprint.route('/edit/inactive/<link_id>')
+@form_blueprint.route('/edit/inactive/<link_id>', methods=['GET', 'POST'])
 @login_required
 async def update_inactive_link(request, user, link_id):
+    form = UpdateForm(request)
+    if (request.method == 'POST') and form.validate():
+        try:
+            async with request.app.engine.acquire() as conn:
+                trans = await conn.begin()
+                await conn.execute(
+                    'UPDATE inactive_links SET url = %s \
+                     WHERE id = %s',
+                    [(form.url.data, link_id)]
+                )
+                await trans.commit()
+                await trans.close()
+                return redirect('/links/me')
+
+        except Exception as error:
+            print(error)
+            await trans.close()
+            return json({'message': 'updating link failed'}, status=500)
+
     try:
-        return json({'inactive link id': link_id}, status=200)
+        async with request.app.engine.acquire() as conn:
+            query = await conn.execute(
+                inactives.select().where(
+                    inactives.columns['id'] == link_id
+                )
+            )
+            row = await query.fetchone()
+
+            content = f"""
+            <div class="container">
+            <form action="" method="POST">
+              <h1 id="form-header">/{row.endpoint}</h1>
+              {'<br>'.join(form.csrf_token.errors)}
+              {form.csrf_token}
+              {'<br>'.join(form.url.errors)}
+              <br>
+              <ul>
+              <li>{form.url(size=50, placeholder=row.url)}</li>
+              <li>{form.submit}</li>
+              </ul>
+            </form>
+            """
+            base = open('src/templates/base.html', 'r').read()
+            appendix = open('src/templates/forms/create_form.html', 'r').read()
+
+            return html(base + content + appendix)
 
     except Exception as error:
         print(error)
-        return json({'message': 'updating inactive link failed'}, status=500)
+        return json({'message': 'getting update form failed'}, status=500)

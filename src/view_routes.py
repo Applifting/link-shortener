@@ -49,6 +49,7 @@ async def about_page(request):
 
 
 @view_blueprint.route('/links/all', methods=['GET'])
+@login_required
 async def all_active_links(request):
     try:
         async with request.app.engine.acquire() as conn:

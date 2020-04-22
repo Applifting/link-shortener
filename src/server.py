@@ -11,11 +11,12 @@ from sanic_oauth.blueprint import oauth_blueprint
 
 from sanic_session import InMemorySessionInterface
 
+from models import actives, inactives
+
 from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
 from form_routes import form_blueprint
 from view_routes import view_blueprint
-
 from api.retrieve import api_retrieve_blueprint
 
 
@@ -31,9 +32,6 @@ app.blueprint(api_retrieve_blueprint)
 
 app.static('/links/', './static/')
 app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')
-
-actives = initdb_blueprint.active_table
-inactives = initdb_blueprint.inactive_table
 
 # ----------------------------------------------------------------------------
 # AUTHENTICATION

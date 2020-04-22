@@ -7,13 +7,10 @@ from json import dumps
 from sanic import Blueprint
 from sanic.response import json
 
-from initialise_db import initdb_blueprint
+from models import actives, inactives
 
 
 api_retrieve_blueprint = Blueprint('retrieve')
-
-actives = initdb_blueprint.active_table
-inactives = initdb_blueprint.inactive_table
 
 
 @api_retrieve_blueprint.route('/get_links', methods=['GET'])

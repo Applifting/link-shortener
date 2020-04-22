@@ -7,14 +7,11 @@ from sanic.response import html, json, redirect
 
 from sanic_oauth.blueprint import login_required
 
+from models import actives, inactives
 from commands import template_generators
-from initialise_db import initdb_blueprint
 
 
 view_blueprint = Blueprint('views')
-
-actives = initdb_blueprint.active_table
-inactives = initdb_blueprint.inactive_table
 
 
 @view_blueprint.route('/links/about', methods=['GET'])

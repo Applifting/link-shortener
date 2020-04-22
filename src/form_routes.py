@@ -16,13 +16,10 @@ from sqlalchemy.exc import InvalidRequestError
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
-from initialise_db import initdb_blueprint
+from models import actives, inactives
 
 
 form_blueprint = Blueprint('forms')
-
-actives = initdb_blueprint.active_table
-inactives = initdb_blueprint.inactive_table
 
 
 class CreateForm(SanicForm):

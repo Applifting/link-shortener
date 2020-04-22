@@ -8,33 +8,14 @@ from sanic import Blueprint
 
 from aiomysql.sa import create_engine
 
-from sqlalchemy import MetaData, Table, Column, String, Integer
 from sqlalchemy.schema import CreateTable
+
+from models import actives, inactives
 
 
 initdb_blueprint = Blueprint('intitialise_db')
 
-metadata = MetaData()
-initdb_blueprint.active_table = Table(
-    'active_links',
-    metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('identifier', String(36)),
-    Column('owner', String(50)),
-    Column('owner_id', String(255)),
-    Column('endpoint', String(20), unique=True),
-    Column('url', String(300))
-)
-initdb_blueprint.inactive_table = Table(
-    'inactive_links',
-    metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('identifier', String(36)),
-    Column('owner', String(50)),
-    Column('owner_id', String(255)),
-    Column('endpoint', String(20)),
-    Column('url', String(300))
-)
+
 active_data = [
     (
         str(uuid.uuid1())[:36],
@@ -110,16 +91,9 @@ async def initialise_db(app, loop):
     async with app.engine.acquire() as conn:
         try:
             trans = await conn.begin()
-            await conn.execute(
-                str(CreateTable(
-                        initdb_blueprint.active_table).compile(app.engine)
-                    )
-            )
-            await conn.execute(
-                str(CreateTable(
-                        initdb_blueprint.inactive_table).compile(app.engine)
-                    )
-            )
+
+            await conn.execute(str(CreateTable(actives).compile(app.engine)))
+            await conn.execute(str(CreateTable(inactives).compile(app.engine)))
             for values in active_data:
                 await conn.execute(
                     'INSERT INTO active_links \

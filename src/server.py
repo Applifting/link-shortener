@@ -5,13 +5,10 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from decouple import config
 
 from sanic import Sanic
-from sanic.response import redirect, json
 
 from sanic_oauth.blueprint import oauth_blueprint
 
 from sanic_session import InMemorySessionInterface
-
-from models import actives, inactives
 
 from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
@@ -22,12 +19,15 @@ from api.retrieve import api_retrieve_blueprint
 
 app = Sanic(__name__)
 
+# ----------------------------------------------------------------------------
+# CONFIGURATION
+# ----------------------------------------------------------------------------
+
 app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)
 app.blueprint(form_blueprint)
 app.blueprint(view_blueprint)
-
 app.blueprint(api_retrieve_blueprint)
 
 app.static('/links/', './static/')
@@ -72,27 +72,6 @@ async def save_session(request, response):
         pass
 
     await request.app.session_interface.save(request, response)
-
-# ----------------------------------------------------------------------------
-# MAIN ROUTE
-# ----------------------------------------------------------------------------
-
-
-@app.route('/<link_endpoint>', methods=['GET'])
-async def redirect_link(request, link_endpoint):
-    try:
-        async with app.engine.acquire() as conn:
-            query = await conn.execute(
-                actives.select().where(
-                    actives.columns['endpoint'] == link_endpoint
-                )
-            )
-            url = await query.fetchone()
-            return redirect(url.url)
-
-    except Exception as error:
-        print(error)
-        return json({'message': 'link inactive or does not exist'}, status=400)
 
 
 if (__name__ == '__main__'):

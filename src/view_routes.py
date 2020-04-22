@@ -14,6 +14,27 @@ from commands import template_generators
 view_blueprint = Blueprint('views')
 
 
+@view_blueprint.route('/<link_endpoint>', methods=['GET'])
+async def redirect_link(request, link_endpoint):
+    try:
+        async with request.app.engine.acquire() as conn:
+            query = await conn.execute(
+                actives.select().where(
+                    actives.columns['endpoint'] == link_endpoint
+                )
+            )
+            link_data = await query.fetchone()
+            return redirect(link_data.url)
+
+    except Exception:
+        return json({'message': 'link inactive or does not exist'}, status=400)
+
+
+@view_blueprint.route('/', methods=['GET'])
+async def landing_page(request):
+    return redirect('/links/about')
+
+
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     try:
@@ -23,11 +44,6 @@ async def about_page(request):
 
     except Exception:
         return json({'message': 'getting route failed'}, status=500)
-
-
-@view_blueprint.route('/', methods=['GET'])
-async def landing_page(request):
-    return redirect('/links/about')
 
 
 @view_blueprint.route('/links/all', methods=['GET'])

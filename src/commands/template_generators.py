@@ -51,11 +51,11 @@ def my_table_row_generator(id, endpoint, url, active):
                      <td>/{}</td> \
                      <td><a href="{}">{}</a></td> \
                      <td>fueled.by/{}</td> \
-                     <td><a href="http://localhost:8000/deactivate/{}"> \
+                     <td><a href="/deactivate/{}"> \
                      <img src="on.png" heigh="20" width="20"></a></td> \
-                     <td><a href="http://localhost:8000/edit/active/{}"> \
+                     <td><a href="/edit/active/{}"> \
                      <img src="edit.png" heigh="20" width="20"></a></td> \
-                     <td><a href="http://localhost:8000/delete/active/{}"> \
+                     <td><a href="/delete/active/{}"> \
                      <img src="delete.png" heigh="20" width="20"></a></td> \
                      </tr>'.format(endpoint, url, url, endpoint, id, id, id)
 
@@ -64,11 +64,11 @@ def my_table_row_generator(id, endpoint, url, active):
                      <td>/{}</td> \
                      <td><a href="{}">{}</a></td> \
                      <td>fueled.by/{}</td> \
-                     <td><a href="http://localhost:8000/activate/{}"> \
+                     <td><a href="/activate/{}"> \
                      <img src="off.png" heigh="20" width="20"></a></td> \
-                     <td><a href="http://localhost:8000/edit/inactive/{}"> \
+                     <td><a href="/edit/inactive/{}"> \
                      <img src="edit.png" heigh="20" width="20"></a></td> \
-                     <td><a href="http://localhost:8000/delete/inactive/{}"> \
+                     <td><a href="/delete/inactive/{}"> \
                      <img src="delete.png" heigh="20" width="20"></a></td> \
                      </tr>'.format(endpoint, url, url, endpoint, id, id, id)
 
@@ -85,9 +85,9 @@ def all_table_row_generator(id, endpoint, owner, url):
                  <td>{}</td> \
                  <td><a href="{}">{}</a></td> \
                  <td>fueled.by/{}</td> \
-                 <td><a href="http://localhost:8000/edit/active/{}"> \
+                 <td><a href="/edit/active/{}"> \
                  <img src="edit.png" heigh="20" width="20"></a></td> \
-                 <td><a href="http://localhost:8000/delete/active/{}"> \
+                 <td><a href="/delete/active/{}"> \
                  <img src="delete.png" heigh="20" width="20"></a></td> \
                  </tr>'.format(endpoint, owner, url, url, endpoint, id, id)
 

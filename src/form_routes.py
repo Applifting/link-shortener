@@ -38,22 +38,31 @@ class UpdateForm(SanicForm):
 async def create_link(request, user):
     form = CreateForm(request)
     if (request.method == 'POST') and form.validate():
-        data = [(
-            str(uuid.uuid1())[:36],
-            user.email,
-            user.id,
-            form.endpoint.data,
-            form.url.data
-        )]
+        # data = [(
+        #     str(uuid.uuid1())[:36],
+        #     user.email,
+        #     user.id,
+        #     form.endpoint.data,
+        #     form.url.data
+        # )]
         try:
             async with request.app.engine.acquire() as conn:
                 trans = await conn.begin()
                 await conn.execute(
-                    'INSERT INTO active_links \
-                     (identifier, owner, owner_id, endpoint, url) \
-                     VALUES (%s, %s, %s, %s, %s)',
-                    data
+                    actives.insert().values(
+                        identifier=str(uuid.uuid1())[:36],
+                        owner=user.email,
+                        owner_id=user.id,
+                        endpoint=form.endpoint.data,
+                        url=form.url.data
+                    )
                 )
+                # await conn.execute(
+                #     'INSERT INTO active_links \
+                #      (identifier, owner, owner_id, endpoint, url) \
+                #      VALUES (%s, %s, %s, %s, %s)',
+                #     data
+                # )
                 await trans.commit()
                 await trans.close()
                 return redirect('/links/me')
@@ -61,10 +70,13 @@ async def create_link(request, user):
         except InvalidRequestError:
             try:
                 await conn.execute(
-                    'INSERT INTO inactive_links \
-                     (identifier, owner, owner_id, endpoint, url) \
-                     VALUES (%s, %s, %s, %s, %s)',
-                    data
+                    inactives.insert().values(
+                        identifier=str(uuid.uuid1())[:36],
+                        owner=user.email,
+                        owner_id=user.id,
+                        endpoint=form.endpoint.data,
+                        url=form.url.data
+                    )
                 )
                 await trans.commit()
                 await trans.close()

@@ -96,24 +96,30 @@ async def initialise_db(app, loop):
             await conn.execute(str(CreateTable(inactives).compile(app.engine)))
             for values in active_data:
                 await conn.execute(
-                    'INSERT INTO active_links \
-                     (identifier, owner, owner_id, endpoint, url) \
-                     VALUES (%s, %s, %s, %s, %s)',
-                    values
+                    actives.insert().values(
+                        identifier=values[0],
+                        owner=values[1],
+                        owner_id=values[2],
+                        endpoint=values[3],
+                        url=values[4]
+                    )
                 )
             for values in inactive_data:
                 await conn.execute(
-                    'INSERT INTO inactive_links \
-                     (identifier, owner, owner_id, endpoint, url) \
-                     VALUES (%s, %s, %s, %s, %s)',
-                    values
+                    inactives.insert().values(
+                        identifier=values[0],
+                        owner=values[1],
+                        owner_id=values[2],
+                        endpoint=values[3],
+                        url=values[4]
+                    )
                 )
             await trans.commit()
             await trans.close()
 
         except Exception as error:
             await trans.close()
-            print(str(error) + '\n' + 'Table are already cached')
+            print(str(error) + '\n' + 'Tables are already cached')
 
 
 @initdb_blueprint.listener('after_server_stop')

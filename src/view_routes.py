@@ -17,6 +17,22 @@ actives = initdb_blueprint.active_table
 inactives = initdb_blueprint.inactive_table
 
 
+@view_blueprint.route('/links/about', methods=['GET'])
+async def about_page(request):
+    try:
+        base = open('src/templates/base.html', 'r').read()
+        about = open('src/templates/about/about.html', 'r').read()
+        return html(base + about)
+
+    except Exception:
+        return json({'message': 'getting route failed'}, status=500)
+
+
+@view_blueprint.route('/', methods=['GET'])
+async def landing_page(request):
+    return redirect('/links/about')
+
+
 @view_blueprint.route('/links/all', methods=['GET'])
 async def all_active_links(request):
     try:

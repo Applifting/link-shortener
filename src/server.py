@@ -13,9 +13,8 @@ from sanic_session import InMemorySessionInterface
 
 from initialise_db import initdb_blueprint
 from authentication import auth_blueprint
-from templates import template_blueprint
-from forms import form_blueprint
-from views import view_blueprint
+from form_routes import form_blueprint
+from view_routes import view_blueprint
 
 from api.retrieve import api_retrieve_blueprint
 
@@ -25,7 +24,6 @@ app = Sanic(__name__)
 app.blueprint(initdb_blueprint)
 app.blueprint(oauth_blueprint)
 app.blueprint(auth_blueprint)
-app.blueprint(template_blueprint)
 app.blueprint(form_blueprint)
 app.blueprint(view_blueprint)
 

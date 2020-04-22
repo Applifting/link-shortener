@@ -7,6 +7,8 @@ from sanic.response import html, json, redirect
 
 from sanic_oauth.blueprint import login_required
 
+from sqlalchemy.sql.expression import select as sql_select
+
 from models import actives, inactives
 from commands import template_generators
 
@@ -92,8 +94,7 @@ async def owner_specific_links(request, user):
                 status=200
             )
 
-    except Exception as error:
-        print(error)
+    except Exception:
         return json({'message': 'getting your links failed'}, status=500)
 
 
@@ -101,9 +102,9 @@ async def owner_specific_links(request, user):
 @login_required
 async def delete_link(request, user, status, link_id):
     if (status == 'active'):
-        table = 'active_links'
+        table = actives
     elif (status == 'inactive'):
-        table = 'inactive_links'
+        table = inactives
     else:
         return json({'message': 'Path does not exist'}, status=400)
 
@@ -111,8 +112,9 @@ async def delete_link(request, user, status, link_id):
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
             await conn.execute(
-                'DELETE FROM {} WHERE id = %s'.format(table),
-                link_id
+                table.delete().where(
+                    table.columns['id'] == link_id
+                )
             )
             await trans.commit()
             await trans.close()
@@ -130,22 +132,33 @@ async def activate_link(request, user, link_id):
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
             await conn.execute(
-                'INSERT INTO active_links \
-                 (identifier, owner, owner_id, endpoint, url) \
-                 SELECT identifier, owner, owner_id, endpoint, url \
-                 FROM inactive_links WHERE id = %s',
-                link_id
+                actives.insert().from_select(
+                    [
+                        'identifier',
+                        'owner',
+                        'owner_id',
+                        'endpoint',
+                        'url'
+                    ],
+                    sql_select([
+                        inactives.c.identifier,
+                        inactives.c.owner,
+                        inactives.c.owner_id,
+                        inactives.c.endpoint,
+                        inactives.c.url
+                    ]).where(inactives.c.id == link_id)
+                )
             )
             await conn.execute(
-                'DELETE FROM inactive_links WHERE id = %s',
-                link_id
+                inactives.delete().where(
+                    inactives.columns['id'] == link_id
+                )
             )
             await trans.commit()
             await trans.close()
             return redirect('/links/me')
 
-    except Exception as error:
-        print(error)
+    except Exception:
         await trans.close()
         return json({'message': 'activating link failed'}, status=500)
 
@@ -157,15 +170,27 @@ async def deactivate_link(request, user, link_id):
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
             await conn.execute(
-                'INSERT INTO inactive_links \
-                 (identifier, owner, owner_id, endpoint, url) \
-                 SELECT identifier, owner, owner_id, endpoint, url \
-                 FROM active_links WHERE id = %s',
-                link_id
+                inactives.insert().from_select(
+                    [
+                        'identifier',
+                        'owner',
+                        'owner_id',
+                        'endpoint',
+                        'url'
+                    ],
+                    sql_select([
+                        actives.c.identifier,
+                        actives.c.owner,
+                        actives.c.owner_id,
+                        actives.c.endpoint,
+                        actives.c.url
+                    ]).where(actives.c.id == link_id)
+                )
             )
             await conn.execute(
-                'DELETE FROM active_links WHERE id = %s',
-                link_id
+                actives.delete().where(
+                    actives.columns['id'] == link_id
+                )
             )
             await trans.commit()
             await trans.close()

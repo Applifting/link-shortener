@@ -48,29 +48,37 @@ def my_table_row_generator(id, endpoint, url, active):
     '''
     if active:
         table_row = '<tr> \
-                     <td>/{}</td> \
-                     <td><a href="{}">{}</a></td> \
-                     <td>fueled.by/{}</td> \
-                     <td><a href="/deactivate/{}"> \
+                     <td>/{endpoint}</td> \
+                     <td><a href="{url}">{url}</a></td> \
+                     <td>fueled.by/{endpoint}</td> \
+                     <td><a href="/deactivate/{id}"> \
                      <img src="on.png" heigh="20" width="20"></a></td> \
-                     <td><a href="/edit/active/{}"> \
+                     <td><a href="/edit/active/{id}"> \
                      <img src="edit.png" heigh="20" width="20"></a></td> \
-                     <td><a href="/delete/active/{}"> \
+                     <td><a href="/delete/active/{id}"> \
                      <img src="delete.png" heigh="20" width="20"></a></td> \
-                     </tr>'.format(endpoint, url, url, endpoint, id, id, id)
+                     </tr>'.format(
+                        endpoint=endpoint,
+                        url=url,
+                        id=id
+                    )
 
     else:
         table_row = '<tr> \
-                     <td>/{}</td> \
-                     <td><a href="{}">{}</a></td> \
-                     <td>fueled.by/{}</td> \
-                     <td><a href="/activate/{}"> \
+                     <td>/{endpoint}</td> \
+                     <td><a href="{url}">{url}</a></td> \
+                     <td>fueled.by/{endpoint}</td> \
+                     <td><a href="/activate/{id}"> \
                      <img src="off.png" heigh="20" width="20"></a></td> \
-                     <td><a href="/edit/inactive/{}"> \
+                     <td><a href="/edit/inactive/{id}"> \
                      <img src="edit.png" heigh="20" width="20"></a></td> \
-                     <td><a href="/delete/inactive/{}"> \
+                     <td><a href="/delete/inactive/{id}"> \
                      <img src="delete.png" heigh="20" width="20"></a></td> \
-                     </tr>'.format(endpoint, url, url, endpoint, id, id, id)
+                     </tr>'.format(
+                        endpoint=endpoint,
+                        url=url,
+                        id=id
+                    )
 
     return table_row
 
@@ -81,14 +89,19 @@ def all_table_row_generator(id, endpoint, owner, url):
     input attributes.
     '''
     table_row = '<tr> \
-                 <td>/{}</td> \
-                 <td>{}</td> \
-                 <td><a href="{}">{}</a></td> \
-                 <td>fueled.by/{}</td> \
-                 <td><a href="/edit/active/{}"> \
+                 <td>/{endpoint}</td> \
+                 <td>{owner}</td> \
+                 <td><a href="{url}">{url}</a></td> \
+                 <td>fueled.by/{endpoint}</td> \
+                 <td><a href="/edit/active/{id}"> \
                  <img src="edit.png" heigh="20" width="20"></a></td> \
-                 <td><a href="/delete/active/{}"> \
+                 <td><a href="/delete/active/{id}"> \
                  <img src="delete.png" heigh="20" width="20"></a></td> \
-                 </tr>'.format(endpoint, owner, url, url, endpoint, id, id)
+                 </tr>'.format(
+                    endpoint=endpoint,
+                    owner=owner,
+                    url=url,
+                    id=id
+                )
 
     return table_row

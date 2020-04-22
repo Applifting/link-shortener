@@ -2,6 +2,7 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+from decouple import config
 
 
 def all_links_page_generator(queryset):
@@ -50,7 +51,7 @@ def my_table_row_generator(id, endpoint, url, active):
         table_row = '<tr> \
                      <td>/{endpoint}</td> \
                      <td><a href="{url}">{url}</a></td> \
-                     <td>fueled.by/{endpoint}</td> \
+                     <td>{domain_name}/{endpoint}</td> \
                      <td><a href="/deactivate/{id}"> \
                      <img src="on.png" heigh="20" width="20"></a></td> \
                      <td><a href="/edit/active/{id}"> \
@@ -60,6 +61,7 @@ def my_table_row_generator(id, endpoint, url, active):
                      </tr>'.format(
                         endpoint=endpoint,
                         url=url,
+                        domain_name=config('DOMAIN_NAME'),
                         id=id
                     )
 
@@ -67,7 +69,7 @@ def my_table_row_generator(id, endpoint, url, active):
         table_row = '<tr> \
                      <td>/{endpoint}</td> \
                      <td><a href="{url}">{url}</a></td> \
-                     <td>fueled.by/{endpoint}</td> \
+                     <td>{domain_name}/{endpoint}</td> \
                      <td><a href="/activate/{id}"> \
                      <img src="off.png" heigh="20" width="20"></a></td> \
                      <td><a href="/edit/inactive/{id}"> \
@@ -77,6 +79,7 @@ def my_table_row_generator(id, endpoint, url, active):
                      </tr>'.format(
                         endpoint=endpoint,
                         url=url,
+                        domain_name=config('DOMAIN_NAME'),
                         id=id
                     )
 
@@ -92,7 +95,7 @@ def all_table_row_generator(id, endpoint, owner, url):
                  <td>/{endpoint}</td> \
                  <td>{owner}</td> \
                  <td><a href="{url}">{url}</a></td> \
-                 <td>fueled.by/{endpoint}</td> \
+                 <td>{domain_name}/{endpoint}</td> \
                  <td><a href="/edit/active/{id}"> \
                  <img src="edit.png" heigh="20" width="20"></a></td> \
                  <td><a href="/delete/active/{id}"> \
@@ -101,6 +104,7 @@ def all_table_row_generator(id, endpoint, owner, url):
                     endpoint=endpoint,
                     owner=owner,
                     url=url,
+                    domain_name=config('DOMAIN_NAME'),
                     id=id
                 )
 

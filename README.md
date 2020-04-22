@@ -61,3 +61,4 @@ To do before production:
 - Change DB configuration
 - Change wait_for_db from sleep to pinging the db
 - Change href links from localhost to fueled.by
+- Add attribution tags to icons that end up being used

@@ -38,13 +38,6 @@ class UpdateForm(SanicForm):
 async def create_link(request, user):
     form = CreateForm(request)
     if (request.method == 'POST') and form.validate():
-        # data = [(
-        #     str(uuid.uuid1())[:36],
-        #     user.email,
-        #     user.id,
-        #     form.endpoint.data,
-        #     form.url.data
-        # )]
         try:
             async with request.app.engine.acquire() as conn:
                 trans = await conn.begin()
@@ -57,12 +50,6 @@ async def create_link(request, user):
                         url=form.url.data
                     )
                 )
-                # await conn.execute(
-                #     'INSERT INTO active_links \
-                #      (identifier, owner, owner_id, endpoint, url) \
-                #      VALUES (%s, %s, %s, %s, %s)',
-                #     data
-                # )
                 await trans.commit()
                 await trans.close()
                 return redirect('/links/me')
@@ -80,10 +67,7 @@ async def create_link(request, user):
                 )
                 await trans.commit()
                 await trans.close()
-                return json(
-                    {'message': 'endpoint already exists, created inactive'},
-                    status=201
-                    )
+                return redirect('/links/me')
             except Exception:
                 await trans.close()
                 return json(
@@ -121,9 +105,11 @@ async def update_active_link(request, user, link_id):
             async with request.app.engine.acquire() as conn:
                 trans = await conn.begin()
                 await conn.execute(
-                    'UPDATE active_links SET url = %s \
-                     WHERE id = %s',
-                    [(form.url.data, link_id)]
+                    actives.update().where(
+                        actives.columns['id'] == link_id
+                    ).values(
+                        url=form.url.data
+                    )
                 )
                 await trans.commit()
                 await trans.close()
@@ -174,9 +160,11 @@ async def update_inactive_link(request, user, link_id):
             async with request.app.engine.acquire() as conn:
                 trans = await conn.begin()
                 await conn.execute(
-                    'UPDATE inactive_links SET url = %s \
-                     WHERE id = %s',
-                    [(form.url.data, link_id)]
+                    inactives.update().where(
+                        inactives.columns['id'] == link_id
+                    ).values(
+                        url=form.url.data
+                    )
                 )
                 await trans.commit()
                 await trans.close()

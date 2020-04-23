@@ -7,6 +7,8 @@ from json import dumps
 from sanic import Blueprint
 from sanic.response import json
 
+from sanic_oauth.blueprint import login_required
+
 from models import actives, inactives
 
 
@@ -14,7 +16,8 @@ api_retrieve_blueprint = Blueprint('retrieve')
 
 
 @api_retrieve_blueprint.route('/get_links', methods=['GET'])
-async def get_links(request):
+@login_required
+async def get_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
             data = []

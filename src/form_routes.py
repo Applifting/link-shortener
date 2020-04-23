@@ -11,8 +11,6 @@ from sanic_oauth.blueprint import login_required
 
 from sanic_wtf import SanicForm
 
-from sqlalchemy.exc import InvalidRequestError
-
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
@@ -33,67 +31,59 @@ class UpdateForm(SanicForm):
     submit = SubmitField('Update')
 
 
-@form_blueprint.route('/create', methods=['GET', 'POST'])
+@form_blueprint.route('/create', methods=['GET'])
 @login_required
-async def create_link(request, user):
+async def create_link_form(request, user):
     form = CreateForm(request)
-    if (request.method == 'POST') and form.validate():
-        try:
-            async with request.app.engine.acquire() as conn:
-                trans = await conn.begin()
-                await conn.execute(
-                    actives.insert().values(
-                        identifier=str(uuid.uuid1())[:36],
-                        owner=user.email,
-                        owner_id=user.id,
-                        endpoint=form.endpoint.data,
-                        url=form.url.data
-                    )
-                )
-                await trans.commit()
-                await trans.close()
-                return redirect('/links/me')
-
-        except InvalidRequestError:
-            try:
-                await conn.execute(
-                    inactives.insert().values(
-                        identifier=str(uuid.uuid1())[:36],
-                        owner=user.email,
-                        owner_id=user.id,
-                        endpoint=form.endpoint.data,
-                        url=form.url.data
-                    )
-                )
-                await trans.commit()
-                await trans.close()
-                return redirect('/links/me')
-            except Exception:
-                await trans.close()
-                return json(
-                    {'message': 'creating a new link failed'},
-                    status=500
-                )
-
     content = f"""
-    <div class="container">
-    <form action="" method="POST">
-      <h1 id="form-header">Create a new link</h1>
-      {'<br>'.join(form.csrf_token.errors)}
-      {form.csrf_token}
-      {'<br>'.join(form.endpoint.errors)}
-      <br>
-      <ul>
-      <li>{form.endpoint(size=20, placeholder="Endpoint")}</li>
-      <li>{form.url(size=20, placeholder="URL")}</li>
-      <li>{form.submit}</li>
-      </ul>
-    </form>
+        <div class="container">
+        <form action="" method="POST">
+          <h1 id="form-header">Create a new link</h1>
+          {'<br>'.join(form.csrf_token.errors)}
+          {form.csrf_token}
+          {'<br>'.join(form.endpoint.errors)}
+          <br>
+          <ul>
+          <li>{form.endpoint(size=20, placeholder="Endpoint")}</li>
+          <li>{form.url(size=20, placeholder="URL")}</li>
+          <li>{form.submit}</li>
+          </ul>
+        </form>
     """
     base = open('src/templates/base.html', 'r').read()
     appendix = open('src/templates/forms/create_form.html', 'r').read()
-
     return html(base + content + appendix)
+
+
+@form_blueprint.route('/create', methods=['POST'])
+@login_required
+async def create_link_save(request, user):
+    form = CreateForm(request)
+    if not form.validate():
+        return json({'message': 'form invalid'}, status=400)
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            await conn.execute(
+                actives.insert().values(
+                    identifier=str(uuid.uuid1())[:36],
+                    owner=user.email,
+                    owner_id=user.id,
+                    endpoint=form.endpoint.data,
+                    url=form.url.data
+                )
+            )
+            await trans.commit()
+            await trans.close()
+            return redirect('/links/me')
+
+    except Exception:
+        await trans.close()
+        return json(
+            {'message': 'an active link with that endpoint already exists'},
+            status=500
+        )
 
 
 @form_blueprint.route('/edit/<status>/<link_id>', methods=['GET'])

@@ -96,111 +96,76 @@ async def create_link(request, user):
     return html(base + content + appendix)
 
 
-@form_blueprint.route('/edit/active/<link_id>', methods=['GET', 'POST'])
+@form_blueprint.route('/edit/<status>/<link_id>', methods=['GET'])
 @login_required
-async def update_active_link(request, user, link_id):
+async def update_link_form(request, user, status, link_id):
     form = UpdateForm(request)
-    if (request.method == 'POST') and form.validate():
-        try:
-            async with request.app.engine.acquire() as conn:
-                trans = await conn.begin()
-                await conn.execute(
-                    actives.update().where(
-                        actives.columns['id'] == link_id
-                    ).values(
-                        url=form.url.data
-                    )
-                )
-                await trans.commit()
-                await trans.close()
-                return redirect('/links/me')
-
-        except Exception:
-            await trans.close()
-            return json({'message': 'updating link failed'}, status=500)
+    if (status == 'active'):
+        table = actives
+    elif (status == 'inactive'):
+        table = inactives
+    else:
+        return json({'message': 'path does not exist'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
             query = await conn.execute(
-                actives.select().where(
-                    actives.columns['id'] == link_id
+                table.select().where(
+                    table.columns['id'] == link_id
                 )
             )
             row = await query.fetchone()
-
             content = f"""
-            <div class="container">
-            <form action="" method="POST">
-              <h1 id="form-header">/{row.endpoint}</h1>
-              {'<br>'.join(form.csrf_token.errors)}
-              {form.csrf_token}
-              {'<br>'.join(form.url.errors)}
-              <br>
-              <ul>
-              <li>{form.url(size=50, placeholder=row.url)}</li>
-              <li>{form.submit}</li>
-              </ul>
-            </form>
+                <div class="container">
+                <form action="" method="POST">
+                  <h1 id="form-header">/{row.endpoint}</h1>
+                  {'<br>'.join(form.csrf_token.errors)}
+                  {form.csrf_token}
+                  {'<br>'.join(form.url.errors)}
+                  <br>
+                  <ul>
+                  <li>{form.url(size=50, placeholder=row.url)}</li>
+                  <li>{form.submit}</li>
+                  </ul>
+                </form>
             """
             base = open('src/templates/base.html', 'r').read()
             appendix = open('src/templates/forms/create_form.html', 'r').read()
-
             return html(base + content + appendix)
 
     except Exception:
         return json({'message': 'getting update form failed'}, status=500)
 
 
-@form_blueprint.route('/edit/inactive/<link_id>', methods=['GET', 'POST'])
+@form_blueprint.route('/edit/<status>/<link_id>', methods=['POST'])
 @login_required
-async def update_inactive_link(request, user, link_id):
+async def update_link_save(request, user, status, link_id):
     form = UpdateForm(request)
-    if (request.method == 'POST') and form.validate():
-        try:
-            async with request.app.engine.acquire() as conn:
-                trans = await conn.begin()
-                await conn.execute(
-                    inactives.update().where(
-                        inactives.columns['id'] == link_id
-                    ).values(
-                        url=form.url.data
-                    )
-                )
-                await trans.commit()
-                await trans.close()
-                return redirect('/links/me')
+    if (status == 'active'):
+        table = actives
+    elif (status == 'inactive'):
+        table = inactives
+    else:
+        return json({'message': 'path does not exist'}, status=400)
 
-        except Exception:
-            await trans.close()
-            return json({'message': 'updating link failed'}, status=500)
+    if not form.validate():
+        return json({'message': 'form invalid'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
-            query = await conn.execute(
-                inactives.select().where(
-                    inactives.columns['id'] == link_id
+            trans = await conn.begin()
+            await conn.execute(
+                table.update().where(
+                    table.columns['id'] == link_id
+                ).values(
+                    url=form.url.data
                 )
             )
-            row = await query.fetchone()
+            await trans.commit()
+            await trans.close()
+            return redirect('/links/me')
 
-            content = f"""
-            <div class="container">
-            <form action="" method="POST">
-              <h1 id="form-header">/{row.endpoint}</h1>
-              {'<br>'.join(form.csrf_token.errors)}
-              {form.csrf_token}
-              {'<br>'.join(form.url.errors)}
-              <br>
-              <ul>
-              <li>{form.url(size=50, placeholder=row.url)}</li>
-              <li>{form.submit}</li>
-              </ul>
-            </form>
-            """
-            base = open('src/templates/base.html', 'r').read()
-            appendix = open('src/templates/forms/create_form.html', 'r').read()
-
-            return html(base + content + appendix)
-
-    except Exception:
-        return json({'message': 'getting update form failed'}, status=500)
+    except Exception as error:
+        print(error)
+        await trans.close()
+        return json({'message': 'updating link failed'}, status=500)

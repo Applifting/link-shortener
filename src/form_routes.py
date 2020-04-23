@@ -67,7 +67,7 @@ async def create_link_save(request, user):
             trans = await conn.begin()
             await conn.execute(
                 actives.insert().values(
-                    identifier=str(uuid.uuid1())[:36],
+                    identifier=str(uuid.uuid1()),
                     owner=user.email,
                     owner_id=user.id,
                     endpoint=form.endpoint.data,

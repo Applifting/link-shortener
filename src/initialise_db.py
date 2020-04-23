@@ -18,42 +18,42 @@ initdb_blueprint = Blueprint('intitialise_db')
 
 active_data = [
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'pomuzemesi',
         'https://staging.pomuzeme.si'
     ),
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'vlk',
         'http://www.vlk.cz'
     ),
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg'
     ),
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'dollar',
         'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg'
     ),
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'kodex',
         'https://github.com/Applifting/culture'
     ),
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'meta',
@@ -62,14 +62,14 @@ active_data = [
 ]
 inactive_data = [
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'tunak',
         'https://www.britannica.com/animal/tuna-fish'
     ),
     (
-        str(uuid.uuid1())[:36],
+        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'nope',
@@ -92,8 +92,8 @@ async def initialise_db(app, loop):
         try:
             trans = await conn.begin()
 
-            await conn.execute(str(CreateTable(actives).compile(app.engine)))
-            await conn.execute(str(CreateTable(inactives).compile(app.engine)))
+            await conn.execute(CreateTable(actives))
+            await conn.execute(CreateTable(inactives))
             for values in active_data:
                 await conn.execute(
                     actives.insert().values(

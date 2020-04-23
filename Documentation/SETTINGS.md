@@ -7,6 +7,10 @@ OAUTH_SCOPE=email
 OAUTH_CLIENT_ID=<your_client_id>
 OAUTH_CLIENT_SECRET=<your_client_secret>
 
+WTF_CSRF_SECRET_KEY=<generated_key>
+
+DOMAIN_NAME=<your_domain>
+
 Notes:
 
 - Your OAUTH_REDIRECT_URI has to match the Redirect URI set in your Google

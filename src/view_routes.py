@@ -11,6 +11,7 @@ from sqlalchemy.sql.expression import select as sql_select
 
 from models import actives, inactives
 from commands import template_generators
+from templates import template_loader
 
 
 view_blueprint = Blueprint('views')
@@ -40,9 +41,7 @@ async def landing_page(request):
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     try:
-        base = open('src/templates/base.html', 'r').read()
-        about = open('src/templates/about/about.html', 'r').read()
-        return html(base + about)
+        return html(template_loader('about.html'), status=200)
 
     except Exception:
         return json({'message': 'getting route failed'}, status=500)

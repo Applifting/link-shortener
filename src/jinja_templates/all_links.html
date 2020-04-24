@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <br><br>
+    <div id="create">
+      <a href="/create">
+        <img src="plus.png" height="50" width="50" alt="Not found">
+      </a>
+    </div>
+    <br><br>
+    <table class="all-links-table">
+      <tr>
+        <th>Endpoint</th>
+        <th>Owner</th>
+        <th>Link</th>
+        <th>Short link</th>
+        <th></th>
+        <th></th>
+      </tr>
+      {% for row in data %}
+        <tr>
+          <td>/{{ row.endpoint }}</td>
+          <td>{{ row.owner }}</td>
+          <td><a href="{{ row.url }}">{{ row.url }}</a></td>
+          <td>{{ domain_name }}/{{ row.endpoint }}</td>
+          <td>
+            <a href="/edit/active/{{ row.id }}">
+              <img src="edit.png" height="20" width="20" alt="Not found">
+            </a>
+          </td>
+          <td>
+            <a href="/delete/active/{{ row.id }}">
+              <img src="delete.png" height="20" width="20" alt="Not found">
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

@@ -2,6 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+from decouple import config
+
 from sanic import Blueprint
 from sanic.response import html, json, redirect
 
@@ -10,7 +12,6 @@ from sanic_oauth.blueprint import login_required
 from sqlalchemy.sql.expression import select as sql_select
 
 from models import actives, inactives
-from commands import template_generators
 from templates import template_loader
 
 
@@ -41,7 +42,7 @@ async def landing_page(request):
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     try:
-        return html(template_loader('about.html'), status=200)
+        return html(template_loader(template_file='about.html'), status=200)
 
     except Exception:
         return json({'message': 'getting route failed'}, status=500)
@@ -52,18 +53,15 @@ async def about_page(request):
 async def all_active_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
-            data = []
             queryset = await conn.execute(actives.select())
-            for row in await queryset.fetchall():
-                data.append((row.id, row.endpoint, row.owner, row.url))
+            data = await queryset.fetchall()
+            return html(template_loader(
+                            template_file='all_links.html',
+                            domain_name=config('DOMAIN_NAME'),
+                            data=data
+                        ), status=200)
 
-            return html(
-                template_generators.all_links_page_generator(data),
-                status=200
-            )
-
-    except Exception as error:
-        print(error)
+    except Exception:
         return json({'message': 'getting links failed'}, status=500)
 
 
@@ -72,7 +70,6 @@ async def all_active_links(request, user):
 async def owner_specific_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
-            ac_data, in_data = [], []
             ac_queryset = await conn.execute(
                 actives.select().where(
                     actives.columns['owner_id'] == user.id
@@ -83,16 +80,14 @@ async def owner_specific_links(request, user):
                     inactives.columns['owner_id'] == user.id
                 )
             )
-            for row in await ac_queryset.fetchall():
-                ac_data.append((row.id, row.endpoint, row.url))
-
-            for row in await in_queryset.fetchall():
-                in_data.append((row.id, row.endpoint, row.url))
-
-            return html(
-                template_generators.my_links_page_generator(ac_data, in_data),
-                status=200
-            )
+            ac_data = await ac_queryset.fetchall()
+            in_data = await in_queryset.fetchall()
+            return html(template_loader(
+                            template_file='my_links.html',
+                            domain_name=config('DOMAIN_NAME'),
+                            ac_data=ac_data,
+                            in_data=in_data
+                        ), status=200)
 
     except Exception:
         return json({'message': 'getting your links failed'}, status=500)

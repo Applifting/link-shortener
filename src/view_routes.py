@@ -13,6 +13,7 @@ from sqlalchemy.sql.expression import select as sql_select
 
 from models import actives, inactives
 from templates import template_loader
+from decorators import credential_whitelist_check
 
 
 view_blueprint = Blueprint('views')
@@ -50,6 +51,7 @@ async def about_page(request):
 
 @view_blueprint.route('/links/all', methods=['GET'])
 @login_required
+@credential_whitelist_check()
 async def all_active_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
@@ -67,6 +69,7 @@ async def all_active_links(request, user):
 
 @view_blueprint.route('/links/me', methods=['GET'])
 @login_required
+@credential_whitelist_check()
 async def owner_specific_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
@@ -95,6 +98,7 @@ async def owner_specific_links(request, user):
 
 @view_blueprint.route('/delete/<status>/<link_id>', methods=['GET'])
 @login_required
+@credential_whitelist_check()
 async def delete_link(request, user, status, link_id):
     if (status == 'active'):
         table = actives
@@ -122,6 +126,7 @@ async def delete_link(request, user, status, link_id):
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
 @login_required
+@credential_whitelist_check()
 async def activate_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
@@ -160,6 +165,7 @@ async def activate_link(request, user, link_id):
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
 @login_required
+@credential_whitelist_check()
 async def deactivate_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:

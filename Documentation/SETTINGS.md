@@ -11,7 +11,13 @@ WTF_CSRF_SECRET_KEY=<generated_key>
 
 DOMAIN_NAME=<your_domain>
 
+WHITELISTED_EMAIL_1=<email_domain_1>
+WHITELISTED_EMAIL_2=<email_domain_2>
+...
+WHITELISTED_EMAIL_N=<email_domain_n>
+
 Notes:
 
 - Your OAUTH_REDIRECT_URI has to match the Redirect URI set in your Google
 developer console.
+- List whitelisted domains without the @ symbol ('gmail.com' for example)

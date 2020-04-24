@@ -15,6 +15,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
 from models import actives, inactives
+from templates import template_loader
 
 
 form_blueprint = Blueprint('forms')
@@ -50,9 +51,10 @@ async def create_link_form(request, user):
           </ul>
         </form>
     """
-    base = open('src/templates/base.html', 'r').read()
-    appendix = open('src/templates/forms/create_form.html', 'r').read()
-    return html(base + content + appendix)
+    return html(template_loader(
+                    template_file='wtf_form.html',
+                    form=content
+                ), status=200)
 
 
 @form_blueprint.route('/create', methods=['POST'])
@@ -119,9 +121,10 @@ async def update_link_form(request, user, status, link_id):
                   </ul>
                 </form>
             """
-            base = open('src/templates/base.html', 'r').read()
-            appendix = open('src/templates/forms/create_form.html', 'r').read()
-            return html(base + content + appendix)
+            return html(template_loader(
+                            template_file='wtf_form.html',
+                            form=content
+                        ), status=200)
 
     except Exception:
         return json({'message': 'getting update form failed'}, status=500)

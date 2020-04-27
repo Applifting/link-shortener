@@ -4,7 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import aiohttp
 
-from sanic import Blueprint, response
+from sanic import Blueprint
 
 
 auth_blueprint = Blueprint('authentication')

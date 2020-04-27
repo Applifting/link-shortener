@@ -2,10 +2,9 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import uuid
-
 from sanic import Blueprint
 
+from aiomysql import create_pool
 from aiomysql.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
@@ -77,9 +76,17 @@ inactive_data = [
     )
 ]
 
-
 @initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):
+    pool = await create_pool(
+        host='db',
+        port=3306,
+        user='user',
+        password='password',
+        db='db',
+        loop=loop,
+        autocommit=True
+    )
     app.engine = await create_engine(
         host='db',
         port=3306,
@@ -88,7 +95,8 @@ async def initialise_db(app, loop):
         db='db',
         loop=loop
     )
-    async with app.engine.acquire() as conn:
+    async with pool.acquire() as conn:
+        db_cursor = await conn.cursor()
         try:
             trans = await conn.begin()
 

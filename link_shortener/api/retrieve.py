@@ -10,6 +10,7 @@ from sanic.response import json
 from sanic_oauth.blueprint import login_required
 
 from link_shortener.models import actives, inactives
+from link_shortener.core.decorators import credential_whitelist_check
 
 
 api_retrieve_blueprint = Blueprint('retrieve')
@@ -17,6 +18,7 @@ api_retrieve_blueprint = Blueprint('retrieve')
 
 @api_retrieve_blueprint.route('/get_links', methods=['GET'])
 @login_required
+@credential_whitelist_check
 async def get_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:

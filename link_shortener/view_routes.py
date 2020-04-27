@@ -11,9 +11,10 @@ from sanic_oauth.blueprint import login_required
 
 from sqlalchemy.sql.expression import select as sql_select
 
-from models import actives, inactives
-from templates import template_loader
-from decorators import credential_whitelist_check
+from link_shortener.models import actives, inactives
+from link_shortener.templates import template_loader
+
+from link_shortener.core.decorators import credential_whitelist_check
 
 
 view_blueprint = Blueprint('views')

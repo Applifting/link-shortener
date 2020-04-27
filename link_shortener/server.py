@@ -10,11 +10,12 @@ from sanic_oauth.blueprint import oauth_blueprint
 
 from sanic_session import InMemorySessionInterface
 
-from initialise_db import initdb_blueprint
-from authentication import auth_blueprint
-from form_routes import form_blueprint
-from view_routes import view_blueprint
-from api.retrieve import api_retrieve_blueprint
+from link_shortener.core.initialise_db import initdb_blueprint
+from link_shortener.core.authentication import auth_blueprint
+
+from link_shortener.form_routes import form_blueprint
+from link_shortener.view_routes import view_blueprint
+from link_shortener.api.retrieve import api_retrieve_blueprint
 
 
 app = Sanic(__name__)

@@ -10,7 +10,7 @@ from aiomysql.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
 
-from models import actives, inactives
+from link_shortener.models import actives, inactives
 
 
 initdb_blueprint = Blueprint('intitialise_db')

@@ -9,7 +9,7 @@ from sanic.response import json
 
 from sanic_oauth.blueprint import login_required
 
-from models import actives, inactives
+from link_shortener.models import actives, inactives
 
 
 api_retrieve_blueprint = Blueprint('retrieve')

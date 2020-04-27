@@ -36,7 +36,7 @@ class UpdateForm(SanicForm):
 
 @form_blueprint.route('/create', methods=['GET'])
 @login_required
-@credential_whitelist_check()
+@credential_whitelist_check
 async def create_link_form(request, user):
     form = CreateForm(request)
     content = f"""
@@ -62,7 +62,7 @@ async def create_link_form(request, user):
 
 @form_blueprint.route('/create', methods=['POST'])
 @login_required
-@credential_whitelist_check()
+@credential_whitelist_check
 async def create_link_save(request, user):
     form = CreateForm(request)
     if not form.validate():
@@ -94,7 +94,7 @@ async def create_link_save(request, user):
 
 @form_blueprint.route('/edit/<status>/<link_id>', methods=['GET'])
 @login_required
-@credential_whitelist_check()
+@credential_whitelist_check
 async def update_link_form(request, user, status, link_id):
     form = UpdateForm(request)
     if (status == 'active'):
@@ -137,7 +137,7 @@ async def update_link_form(request, user, status, link_id):
 
 @form_blueprint.route('/edit/<status>/<link_id>', methods=['POST'])
 @login_required
-@credential_whitelist_check()
+@credential_whitelist_check
 async def update_link_save(request, user, status, link_id):
     form = UpdateForm(request)
     if (status == 'active'):

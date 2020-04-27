@@ -14,16 +14,14 @@ whitelist = [
 ]
 
 
-def credential_whitelist_check():
+def credential_whitelist_check(original_func):
 
-    def decorator(original_func):
-        @wraps(original_func)
-        async def wrapper(request, user, *args, **kwargs):
-            if (user.email.split('@')[1] in whitelist):
-                response = await original_func(request, user, *args, **kwargs)
-                return response
-            else:
-                return json({'message': 'unauthorized'}, status=401)
-        return wrapper
+    @wraps(original_func)
+    async def wrapper(request, user, *args, **kwargs):
+        if (user.email.split('@')[1] in whitelist):
+            response = await original_func(request, user, *args, **kwargs)
+            return response
+        else:
+            return json({'message': 'unauthorized'}, status=401)
 
-    return decorator
+    return wrapper

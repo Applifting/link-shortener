@@ -77,7 +77,6 @@ inactive_data = [
     )
 ]
 
-
 @initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):
     app.engine = await create_engine(

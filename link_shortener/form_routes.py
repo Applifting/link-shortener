@@ -39,24 +39,9 @@ class UpdateForm(SanicForm):
 @credential_whitelist_check
 async def create_link_form(request, user):
     form = CreateForm(request)
-    content = f"""
-        <div class="container">
-        <form action="" method="POST">
-          <h1 id="form-header">Create a new link</h1>
-          {'<br>'.join(form.csrf_token.errors)}
-          {form.csrf_token}
-          {'<br>'.join(form.endpoint.errors)}
-          <br>
-          <ul>
-          <li>{form.endpoint(size=20, placeholder="Endpoint")}</li>
-          <li>{form.url(size=20, placeholder="URL")}</li>
-          <li>{form.submit}</li>
-          </ul>
-        </form>
-    """
     return html(template_loader(
-                    template_file='wtf_form.html',
-                    form=content
+                    template_file='create_form.html',
+                    form=form
                 ), status=200)
 
 
@@ -111,24 +96,11 @@ async def update_link_form(request, user, status, link_id):
                     table.columns['id'] == link_id
                 )
             )
-            row = await query.fetchone()
-            content = f"""
-                <div class="container">
-                <form action="" method="POST">
-                  <h1 id="form-header">/{row.endpoint}</h1>
-                  {'<br>'.join(form.csrf_token.errors)}
-                  {form.csrf_token}
-                  {'<br>'.join(form.url.errors)}
-                  <br>
-                  <ul>
-                  <li>{form.url(size=50, placeholder=row.url)}</li>
-                  <li>{form.submit}</li>
-                  </ul>
-                </form>
-            """
+            link = await query.fetchone()
             return html(template_loader(
-                            template_file='wtf_form.html',
-                            form=content
+                            template_file='edit_form.html',
+                            form=form,
+                            link=link
                         ), status=200)
 
     except Exception:

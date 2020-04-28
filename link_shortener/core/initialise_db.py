@@ -21,6 +21,7 @@ active_data = [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
+        '',
         'pomuzemesi',
         'https://staging.pomuzeme.si'
     ),
@@ -28,6 +29,7 @@ active_data = [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
+        '',
         'vlk',
         'http://www.vlk.cz'
     ),
@@ -35,6 +37,7 @@ active_data = [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
+        'bigfish',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg'
     ),
@@ -42,6 +45,7 @@ active_data = [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
+        '',
         'dollar',
         'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg'
     ),
@@ -49,6 +53,7 @@ active_data = [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
+        '',
         'kodex',
         'https://github.com/Applifting/culture'
     ),
@@ -56,6 +61,7 @@ active_data = [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
+        'metapass',
         'meta',
         'https://github.com/Applifting/link-shortener'
     )
@@ -99,8 +105,9 @@ async def initialise_db(app, loop):
                         identifier=values[0],
                         owner=values[1],
                         owner_id=values[2],
-                        endpoint=values[3],
-                        url=values[4]
+                        password=values[3],
+                        endpoint=values[4],
+                        url=values[5]
                     )
                 )
             for values in inactive_data:

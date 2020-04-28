@@ -23,6 +23,7 @@ class TestSimpleViews(TestCase):
             gather_request=False
         )
         self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-12:], '/links/about')
 
     def test_getting_landing_page(self):
         '''
@@ -33,6 +34,7 @@ class TestSimpleViews(TestCase):
             gather_request=False
         )
         self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-12:], '/links/about')
 
     def test_existing_endpoint_redirect(self):
         '''
@@ -43,6 +45,7 @@ class TestSimpleViews(TestCase):
             gather_request=False
         )
         self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url), 'http://www.vlk.cz')
 
     def test_wrong_endpoint_redirect(self):
         '''
@@ -53,3 +56,4 @@ class TestSimpleViews(TestCase):
             gather_request=False
         )
         self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-6:], '/nevlk')

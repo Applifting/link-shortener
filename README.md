@@ -5,6 +5,12 @@ How to use:
 - Configure settings.ini with your Client ID and Secret key
 - Run 'docker-compose build', then 'docker-compose up'
 
+How to test:
+
+- Run 'docker-compose run web sh -c "pytest --disable-pytest-warnings"'
+- All or most of the warnings should be about async syntax deprecation,
+as sanic_oauth has old/deprecated versions of dependencies (httpx et al.)
+
 **/**
 Landing page - Redirects to About
 

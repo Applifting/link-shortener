@@ -1,3 +1,7 @@
+'''
+Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
+Licensed under the MIT (Expat) License (see LICENSE in Documentation).
+'''
 import pytest
 
 from unittest import TestCase
@@ -5,7 +9,7 @@ from unittest import TestCase
 from link_shortener.server import create_app
 
 
-class TestViews(TestCase):
+class TestSimpleViews(TestCase):
 
     def setUp(self):
         self.app = create_app()

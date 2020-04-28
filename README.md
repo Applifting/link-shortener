@@ -57,7 +57,6 @@ Displays a JSON formatted data from the database - health check for development
 
 To do eventually:
 
-- Forbid using endpoints that already exist as part of the application
 - Overview HTTP error codes and create templates to display them to users
 - Write unit tests
 
@@ -66,5 +65,3 @@ To do before production:
 - Hide environment variables
 - Change DB configuration
 - Change wait_for_db from sleep to pinging the db
-- Change href links from localhost to fueled.by
-- Add attribution tags to icons that end up being used

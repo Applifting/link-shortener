@@ -125,7 +125,7 @@ async def delete_link(request, user, status, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'deleting link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
@@ -141,6 +141,7 @@ async def activate_link(request, user, link_id):
                         'identifier',
                         'owner',
                         'owner_id',
+                        'password',
                         'endpoint',
                         'url'
                     ],
@@ -148,6 +149,7 @@ async def activate_link(request, user, link_id):
                         inactives.c.identifier,
                         inactives.c.owner,
                         inactives.c.owner_id,
+                        inactives.c.password,
                         inactives.c.endpoint,
                         inactives.c.url
                     ]).where(inactives.c.id == link_id)
@@ -164,7 +166,7 @@ async def activate_link(request, user, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'activating link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -180,6 +182,7 @@ async def deactivate_link(request, user, link_id):
                         'identifier',
                         'owner',
                         'owner_id',
+                        'password',
                         'endpoint',
                         'url'
                     ],
@@ -187,6 +190,7 @@ async def deactivate_link(request, user, link_id):
                         actives.c.identifier,
                         actives.c.owner,
                         actives.c.owner_id,
+                        actives.c.password,
                         actives.c.endpoint,
                         actives.c.url
                     ]).where(actives.c.id == link_id)
@@ -204,4 +208,4 @@ async def deactivate_link(request, user, link_id):
     except Exception as error:
         print(error)
         await trans.close()
-        return json({'message': 'deactivating link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)

@@ -26,6 +26,7 @@ form_blueprint = Blueprint('forms')
 class CreateForm(SanicForm):
     endpoint = StringField('Endpoint', validators=[DataRequired()])
     url = StringField('URL', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Create')
 
 
@@ -112,6 +113,7 @@ async def create_link_save(request, user):
                     identifier=str(uuid.uuid1()),
                     owner=user.email,
                     owner_id=user.id,
+                    password=form.password.data,
                     endpoint=form.endpoint.data,
                     url=form.url.data
                 )

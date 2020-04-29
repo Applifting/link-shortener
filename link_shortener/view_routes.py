@@ -31,7 +31,7 @@ async def redirect_link(request, link_endpoint):
             )
             link_data = await query.fetchone()
             if link_data.password:
-                return json({'message': 'password form'}, status=200)
+                return redirect('/authorize/{}'.format(link_data.id))
 
             return redirect(link_data.url)
 

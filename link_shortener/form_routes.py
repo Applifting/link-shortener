@@ -34,6 +34,33 @@ class UpdateForm(SanicForm):
     submit = SubmitField('Update')
 
 
+class PasswordForm(SanicForm):
+    password = StringField('Password', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+@form_blueprint.route('/authorize/<link_id>', methods=['GET'])
+async def link_password_form(request, link_id):
+    form = PasswordForm(request)
+    try:
+        async with request.app.engine.acquire() as conn:
+            query = await conn.execute(
+                actives.select().where(
+                    actives.columns['id'] == link_id
+                )
+            )
+            link = await query.fetchone()
+            return html(template_loader(
+                            template_file='password_form.html',
+                            form=form,
+                            link=link
+                        ), status=200)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'getting password form failed'}, status=500)
+
+
 @form_blueprint.route('/create', methods=['GET'])
 @login_required
 @credential_whitelist_check

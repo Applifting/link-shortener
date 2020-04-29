@@ -61,6 +61,30 @@ async def link_password_form(request, link_id):
         return json({'message': 'getting password form failed'}, status=500)
 
 
+@form_blueprint.route('/authorize/<link_id>', methods=['POST'])
+async def link_password_save(request, link_id):
+    form = PasswordForm(request)
+    if not form.validate():
+        return json({'message': 'form invalid'}, status=400)
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            query = await conn.execute(
+                actives.select().where(
+                    actives.columns['id'] == link_id
+                )
+            )
+            link = await query.fetchone()
+            if (link.password == form.password.data):
+                return redirect(link.url)
+
+            return json({'message': 'incorrect password'}, status=401)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'link inactive or does not exist'}, status=400)
+
+
 @form_blueprint.route('/create', methods=['GET'])
 @login_required
 @credential_whitelist_check
@@ -100,7 +124,7 @@ async def create_link_save(request, user):
         await trans.close()
         return json(
             {'message': 'an active link with that endpoint already exists'},
-            status=500
+            status=400
         )
 
 

@@ -3,6 +3,7 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from json import dumps
+from decouple import config
 
 from sanic import Blueprint
 from sanic.response import json
@@ -16,10 +17,11 @@ from link_shortener.core.decorators import credential_whitelist_check
 api_retrieve_blueprint = Blueprint('retrieve')
 
 
-@api_retrieve_blueprint.route('/get_links', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def get_links(request, user):
+@api_retrieve_blueprint.route('/api/links', methods=['GET'])
+async def get_links(request):
+    if (request.headers['Bearer'] != config('ACCESS_TOKEN')):
+        return json({'message': 'Unauthorized'}, status=401)
+
     try:
         async with request.app.engine.acquire() as conn:
             data = []

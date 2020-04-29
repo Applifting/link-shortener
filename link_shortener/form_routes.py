@@ -32,6 +32,7 @@ class CreateForm(SanicForm):
 
 class UpdateForm(SanicForm):
     url = StringField('URL', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
     submit = SubmitField('Update')
 
 
@@ -57,9 +58,8 @@ async def link_password_form(request, link_id):
                             link=link
                         ), status=200)
 
-    except Exception as error:
-        print(error)
-        return json({'message': 'getting password form failed'}, status=500)
+    except Exception:
+        return json({'message': 'Link does not exist'}, status=400)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])
@@ -81,8 +81,7 @@ async def link_password_save(request, link_id):
 
             return json({'message': 'incorrect password'}, status=401)
 
-    except Exception as error:
-        print(error)
+    except Exception:
         return json({'message': 'link inactive or does not exist'}, status=400)
 
 
@@ -182,6 +181,7 @@ async def update_link_save(request, user, status, link_id):
                 table.update().where(
                     table.columns['id'] == link_id
                 ).values(
+                    password=form.password.data,
                     url=form.url.data
                 )
             )
@@ -189,7 +189,6 @@ async def update_link_save(request, user, status, link_id):
             await trans.close()
             return redirect('/links/me')
 
-    except Exception as error:
-        print(error)
+    except Exception:
         await trans.close()
-        return json({'message': 'updating link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)

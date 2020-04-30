@@ -11,7 +11,7 @@ from sanic_oauth.blueprint import login_required
 
 from sanic_wtf import SanicForm
 
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
 
 from link_shortener.models import actives, inactives
@@ -37,7 +37,7 @@ class UpdateForm(SanicForm):
 
 
 class PasswordForm(SanicForm):
-    password = StringField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
 

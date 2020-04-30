@@ -2,7 +2,7 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from sqlalchemy import MetaData, Table, Column, String, Integer, BLOB, Text
+from sqlalchemy import MetaData, Table, Column, String, Integer, BLOB
 
 
 metadata = MetaData()
@@ -13,7 +13,7 @@ actives = Table(
     Column('identifier', String(36)),
     Column('owner', String(50)),
     Column('owner_id', String(255)),
-    Column('password', Text, default=None),
+    Column('password', BLOB, default=None),
     Column('endpoint', String(20), unique=True),
     Column('url', String(300))
 )
@@ -25,7 +25,7 @@ inactives = Table(
     Column('identifier', String(36)),
     Column('owner', String(50)),
     Column('owner_id', String(255)),
-    Column('password', Text, default=None),
+    Column('password', BLOB, default=None),
     Column('endpoint', String(20)),
     Column('url', String(300))
 )

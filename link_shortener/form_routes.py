@@ -3,6 +3,7 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import uuid
+import hashlib
 
 from sanic import Blueprint
 from sanic.response import redirect, html, json
@@ -14,7 +15,7 @@ from sanic_wtf import SanicForm
 from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import DataRequired
 
-from link_shortener.models import actives, inactives
+from link_shortener.models import actives, inactives, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -70,14 +71,26 @@ async def link_password_save(request, link_id):
 
     try:
         async with request.app.engine.acquire() as conn:
-            query = await conn.execute(
+            link_query = await conn.execute(
                 actives.select().where(
                     actives.columns['id'] == link_id
                 )
             )
-            link = await query.fetchone()
-            if (link.password == form.password.data):
-                return redirect(link.url)
+            link_data = await link_query.fetchone()
+            salt_query = await conn.execute(
+                salts.select().where(
+                    salts.columns['identifier'] == link_data.identifier
+                )
+            )
+            salt_data = await salt_query.fetchone()
+            password = hashlib.pbkdf2_hmac(
+                'sha256',
+                form.password.data.encode('utf-8'),
+                salt_data.salt,
+                100000
+            )
+            if (link_data.password == password):
+                return redirect(link_data.url)
 
             return json({'message': 'incorrect password'}, status=401)
 

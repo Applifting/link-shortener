@@ -69,21 +69,22 @@ active_data = [
     ]
 ]
 inactive_data = [
-    (
+    [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'tunak',
         'https://www.britannica.com/animal/tuna-fish'
-    ),
-    (
+    ],
+    [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'nope',
         'https://www.youtube.com/watch?v=gvdf5n-zI14'
-    )
+    ]
 ]
+
 
 @initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):

@@ -2,7 +2,7 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from link_shortener.server import create_app
 

@@ -2,6 +2,7 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+import os
 import uuid
 import hashlib
 
@@ -27,7 +28,7 @@ form_blueprint = Blueprint('forms')
 class CreateForm(SanicForm):
     endpoint = StringField('Endpoint', validators=[DataRequired()])
     url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password')
     submit = SubmitField('Create')
 
 
@@ -120,12 +121,30 @@ async def create_link_save(request, user):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
+            identifier = str(uuid.uuid1())
+            if form.password.data:
+                salt = os.urandom(32)
+                password = hashlib.pbkdf2_hmac(
+                    'sha256',
+                    form.password.data.encode('utf-8'),
+                    salt,
+                    100000
+                )
+                await conn.execute(
+                    salts.insert().values(
+                        identifier=identifier,
+                        salt=salt
+                    )
+                )
+            else:
+                password = None
+
             await conn.execute(
                 actives.insert().values(
-                    identifier=str(uuid.uuid1()),
+                    identifier=identifier,
                     owner=user.email,
                     owner_id=user.id,
-                    password=form.password.data,
+                    password=password,
                     endpoint=form.endpoint.data,
                     url=form.url.data
                 )

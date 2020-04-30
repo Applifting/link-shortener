@@ -30,10 +30,10 @@ async def redirect_link(request, link_endpoint):
                 )
             )
             link_data = await query.fetchone()
-            if link_data.password:
-                return redirect('/authorize/{}'.format(link_data.id))
+            if link_data.password is None:
+                return redirect(link_data.url)
 
-            return redirect(link_data.url)
+            return redirect('/authorize/{}'.format(link_data.id))
 
     except Exception:
         return json({'message': 'link inactive or does not exist'}, status=400)
@@ -205,7 +205,6 @@ async def deactivate_link(request, user, link_id):
             await trans.close()
             return redirect('/links/me')
 
-    except Exception as error:
-        print(error)
+    except Exception:
         await trans.close()
         return json({'message': 'Link does not exist'}, status=400)

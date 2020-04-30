@@ -26,13 +26,13 @@ form_blueprint = Blueprint('forms')
 class CreateForm(SanicForm):
     endpoint = StringField('Endpoint', validators=[DataRequired()])
     url = StringField('URL', validators=[DataRequired()])
-    password = StringField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Create')
 
 
 class UpdateForm(SanicForm):
     url = StringField('URL', validators=[DataRequired()])
-    password = StringField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Update')
 
 

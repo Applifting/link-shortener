@@ -21,7 +21,7 @@ active_data = [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        '',
+        None,
         'pomuzemesi',
         'https://staging.pomuzeme.si'
     ),
@@ -29,7 +29,7 @@ active_data = [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        '',
+        None,
         'vlk',
         'http://www.vlk.cz'
     ),
@@ -45,7 +45,7 @@ active_data = [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
-        '',
+        None,
         'dollar',
         'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg'
     ),
@@ -53,7 +53,7 @@ active_data = [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
-        '',
+        None,
         'kodex',
         'https://github.com/Applifting/culture'
     ),

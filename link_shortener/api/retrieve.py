@@ -19,8 +19,13 @@ api_retrieve_blueprint = Blueprint('retrieve')
 
 @api_retrieve_blueprint.route('/api/links', methods=['GET'])
 async def get_links(request):
-    if (request.headers['Bearer'] != config('ACCESS_TOKEN')):
-        return json({'message': 'Unauthorized'}, status=401)
+    try:
+        token = request.headers['Bearer']
+        if (token != config('ACCESS_TOKEN')):
+            return json({'message': 'Unauthorized'}, status=401)
+
+    except KeyError:
+        return json({'message': 'please provide a token'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
@@ -51,6 +56,5 @@ async def get_links(request):
                 )
             return json(dumps(data), status=200)
 
-    except Exception as error:
-        print(error)
+    except Exception:
         return json({'message': 'getting links failed'}, status=500)

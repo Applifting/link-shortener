@@ -31,6 +31,7 @@ async def get_links(request, user):
                         row.identifier,
                         row.owner,
                         row.owner_id,
+                        row.password,
                         row.endpoint,
                         row.url
                     )

@@ -2,7 +2,9 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+import os
 import uuid
+import hashlib
 
 from sanic import Blueprint
 
@@ -10,61 +12,61 @@ from aiomysql.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
 
-from link_shortener.models import actives, inactives
+from link_shortener.models import actives, inactives, salts
 
 
 initdb_blueprint = Blueprint('intitialise_db')
 
 
 active_data = [
-    (
+    [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
         'pomuzemesi',
         'https://staging.pomuzeme.si'
-    ),
-    (
+    ],
+    [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
         'vlk',
         'http://www.vlk.cz'
-    ),
-    (
+    ],
+    [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'bigfish',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg'
-    ),
-    (
+    ],
+    [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
         'dollar',
         'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg'
-    ),
-    (
+    ],
+    [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
         'kodex',
         'https://github.com/Applifting/culture'
-    ),
-    (
+    ],
+    [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'metapass',
         'meta',
         'https://github.com/Applifting/link-shortener'
-    )
+    ]
 ]
 inactive_data = [
     (
@@ -99,7 +101,23 @@ async def initialise_db(app, loop):
 
             await conn.execute(CreateTable(actives))
             await conn.execute(CreateTable(inactives))
+            await conn.execute(CreateTable(salts))
             for values in active_data:
+                if values[3] is not None:
+                    salt = os.urandom(32)
+                    values[3] = hashlib.pbkdf2_hmac(
+                        'sha256',
+                        values[3].encode('utf-8'),
+                        salt,
+                        100000
+                    )
+                    await conn.execute(
+                        salts.insert().values(
+                            identifier=values[0],
+                            salt=salt
+                        )
+                    )
+
                 await conn.execute(
                     actives.insert().values(
                         identifier=values[0],

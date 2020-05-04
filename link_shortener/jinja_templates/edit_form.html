@@ -7,18 +7,24 @@
       {{ '<br>'.join(form.csrf_token.errors) }}
       {{ form.csrf_token }}
       {{ '<br>'.join(form.url.errors) }}
-      <br>
       <ul>
         <li>
-          <button type="button" class="btn btn-danger">Deactivate link</button>
-          <button type="button" class="btn btn-secondary">Reset password</button>
+          <div id="edit-anchor">
+            {% if status == 'active' %}
+              <a class="deactivate" href="/deactivate/{{ link.id }}">Deactivate link</a>
+            {% else %}
+              <a class="activate" href="/activate/{{ link.id }}">Activate link</a>
+            {% endif %}
+            <a class="reset-delete" href="#">Reset password</a>
+            <a class="reset-delete" href="/delete/{{ status }}/{{ link.id }}">Delete link</a>
+          </div>
         </li>
         <br>
         <li><h4>New URL:</h4></li>
-        <li>{{ form.url(size=20, value=link.url) }}</li>
+        <li>{{ form.url(size=40, value=link.url) }}</li>
         <br>
         <li><h4>New password:</h4></li>
-        <li>{{ form.password(size=20, value=link.password) }}</li>
+        <li>{{ form.password(size=40, value=link.password) }}</li>
         <li>{{ form.submit }}</li>
       </ul>
     </form>

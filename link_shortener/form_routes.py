@@ -184,7 +184,8 @@ async def update_link_form(request, user, status, link_id):
             return html(template_loader(
                             template_file='edit_form.html',
                             form=form,
-                            link=link
+                            link=link,
+                            status=status
                         ), status=200)
 
     except Exception:

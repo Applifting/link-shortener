@@ -49,8 +49,13 @@ within the endpoint's link_id parameter.
 
 **/delete/<status>/<link_id>**
 Status = {'active', 'inactive'}.
-Deletes the link with the status and the id specified by the
-endpoint's respective parameters status and link_id.
+Deletes the link with the status and the id specified by
+the endpoint's respective parameters status and link_id.
+
+**/reset/<status>/<link_id>**
+Status = {'active', 'inactive'}.
+Resets the password of the link with the status and the id specified by
+the endpoint's respective parameters status and link_id.
 
 **/get_links** (API)
 Displays a JSON formatted data from the database - health check for development.

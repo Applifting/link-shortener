@@ -55,3 +55,42 @@ async def api_link_list(request):
 
     except Exception:
         return json({'message': 'Getting links failed'}, status=500)
+
+
+@api_retrieve_list_blueprint.route('/api/links/<status>', methods=['GET'])
+async def api_link_list_by_status(request, status):
+    try:
+        token = request.headers['Bearer']
+        if (token != config('ACCESS_TOKEN')):
+            return json({'message': 'Unauthorized'}, status=401)
+
+    except KeyError:
+        return json({'message': 'Please provide a token'}, status=400)
+
+    if (status == 'active'):
+        table = actives
+    elif (status == 'inactive'):
+        table = inactives
+    else:
+        return json(
+            {'message': 'Status "{}" does not exist'.format(status)},
+            status=400
+        )
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            data = []
+            queryset = await conn.execute(table.select())
+            for row in await queryset.fetchall():
+                data.append({
+                    'id': row.id,
+                    'identifier': row.identifier,
+                    'owner': row.owner,
+                    'endpoint': row.endpoint,
+                    'url': row.url
+                })
+
+            return json(data, status=200)
+
+    except Exception:
+        return json({'message': 'Getting links failed'}, status=500)

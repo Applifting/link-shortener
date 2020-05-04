@@ -8,7 +8,7 @@ from unittest import TestCase
 from link_shortener.server import create_app
 
 
-class TestRetrieveAPI(TestCase):
+class TestRetrieveAllLinksAPI(TestCase):
 
     def setUp(self):
         self.app = create_app()

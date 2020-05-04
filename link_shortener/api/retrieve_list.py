@@ -29,29 +29,27 @@ async def api_link_list(request):
             data = []
             queryset1 = await conn.execute(actives.select())
             for row in await queryset1.fetchall():
-                data.append(
-                    (
-                        row.id,
-                        row.identifier,
-                        row.owner,
-                        row.owner_id,
-                        row.endpoint,
-                        row.url
-                    )
-                )
+                data.append({
+                    'id': row.id,
+                    'identifier': row.identifier,
+                    'owner': row.owner,
+                    'endpoint': row.endpoint,
+                    'url': row.url,
+                    'status': 'active'
+                })
+
             queryset2 = await conn.execute(inactives.select())
             for row in await queryset2.fetchall():
-                data.append(
-                    (
-                        row.id,
-                        row.identifier,
-                        row.owner,
-                        row.owner_id,
-                        row.endpoint,
-                        row.url
-                    )
-                )
-            return json(dumps(data), status=200)
+                data.append({
+                    'id': row.id,
+                    'identifier': row.identifier,
+                    'owner': row.owner,
+                    'endpoint': row.endpoint,
+                    'url': row.url,
+                    'status': 'inactive'
+                })
+
+            return json(data, status=200)
 
     except Exception:
         return json({'message': 'Getting links failed'}, status=500)

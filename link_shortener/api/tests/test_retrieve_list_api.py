@@ -3,6 +3,7 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from decouple import config
+from json import loads
 from unittest import TestCase
 
 from link_shortener.server import create_app
@@ -28,6 +29,19 @@ class TestRetrieveAllLinksAPI(TestCase):
         )
         self.assertEqual(response.status, 200)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+    def test_retrieve_data(self):
+        '''
+        Test that a successful get request yields the correct data.
+        '''
+        headers = {'Bearer': self.token}
+        response = self.app.test_client.get(
+            self.endpoint,
+            gather_request=False,
+            headers=headers
+        )
+        data = loads(response.text)
+        self.assertEqual(data[1]['endpoint'], 'vlk')
 
     def test_retrieve_without_token_fails(self):
         '''

@@ -15,16 +15,22 @@
             {% else %}
               <a class="activate" href="/activate/{{ link.id }}">Activate link</a>
             {% endif %}
-            <a class="reset-delete" href="#">Reset password</a>
+            {% if has_password %}
+              <a class="reset-delete" href="#">Reset password</a>
+            {% endif %}
             <a class="reset-delete" href="/delete/{{ status }}/{{ link.id }}">Delete link</a>
           </div>
         </li>
         <br>
-        <li><h4>New URL:</h4></li>
+        <li><h4>Change URL:</h4></li>
         <li>{{ form.url(size=40, value=link.url) }}</li>
         <br>
-        <li><h4>New password:</h4></li>
-        <li>{{ form.password(size=40, value=link.password) }}</li>
+        {% if has_password %}
+          <li><h4>Change password:</h4></li>
+        {% else %}
+          <li><h4>Set a password:</h4></li>
+        {% endif %}
+        <li>{{ form.password(size=40) }}</li>
         <li>{{ form.submit }}</li>
       </ul>
     </form>

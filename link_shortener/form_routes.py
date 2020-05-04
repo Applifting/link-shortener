@@ -33,8 +33,8 @@ class CreateForm(SanicForm):
 
 
 class UpdateForm(SanicForm):
-    url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    url = StringField('URL', validators=[])
+    password = PasswordField('Password', validators=[])
     submit = SubmitField('Update')
 
 
@@ -181,11 +181,17 @@ async def update_link_form(request, user, status, link_id):
                 )
             )
             link = await query.fetchone()
+            if link.password is None:
+                has_password = False
+            else:
+                has_password = True
+
             return html(template_loader(
                             template_file='edit_form.html',
                             form=form,
                             link=link,
-                            status=status
+                            status=status,
+                            has_password=has_password
                         ), status=200)
 
     except Exception:
@@ -210,14 +216,69 @@ async def update_link_save(request, user, status, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            await conn.execute(
-                table.update().where(
-                    table.columns['id'] == link_id
-                ).values(
-                    password=form.password.data,
-                    url=form.url.data
+            if form.password.data:
+                link_query = await conn.execute(
+                    table.select().where(
+                        table.columns['id'] == link_id
+                    )
                 )
-            )
+                link_data = await link_query.fetchone()
+                if link_data.password:
+                    fresh_salt = os.urandom(32)
+                    password = hashlib.pbkdf2_hmac(
+                        'sha256',
+                        form.password.data.encode('utf-8'),
+                        fresh_salt,
+                        100000
+                    )
+                    await conn.execute(
+                        table.update().where(
+                            table.columns['id'] == link_id
+                        ).values(
+                            url=form.url.data,
+                            password=password
+                        )
+                    )
+                    await conn.execute(
+                        salts.update().where(
+                            salts.columns['identifier'] == link_data.identifier
+                        ).values(
+                            salt=fresh_salt
+                        )
+                    )
+
+                else:
+                    salt = os.urandom(32)
+                    password = hashlib.pbkdf2_hmac(
+                        'sha256',
+                        form.password.data.encode('utf-8'),
+                        salt,
+                        100000
+                    )
+                    await conn.execute(
+                        table.update().where(
+                            table.columns['id'] == link_id
+                        ).values(
+                            url=form.url.data,
+                            password=password
+                        )
+                    )
+                    await conn.execute(
+                        salts.insert().values(
+                            identifier=link_data.identifier,
+                            salt=salt
+                        )
+                    )
+
+            else:
+                await conn.execute(
+                    table.update().where(
+                        table.columns['id'] == link_id
+                    ).values(
+                        url=form.url.data
+                    )
+                )
+
             await trans.commit()
             await trans.close()
             return redirect('/links/me')

@@ -12,11 +12,14 @@
           <div id="edit-anchor">
             {% if status == 'active' %}
               <a class="deactivate" href="/deactivate/{{ link.id }}">Deactivate link</a>
+              {% if has_password %}
+                <a class="reset-delete" href="/reset/active/{{ link.id }}">Reset password</a>
+              {% endif %}
             {% else %}
               <a class="activate" href="/activate/{{ link.id }}">Activate link</a>
-            {% endif %}
-            {% if has_password %}
-              <a class="reset-delete" href="#">Reset password</a>
+              {% if has_password %}
+                <a class="reset-delete" href="/reset/inactive/{{ link.id }}">Reset password</a>
+              {% endif %}
             {% endif %}
             <a class="reset-delete" href="/delete/{{ status }}/{{ link.id }}">Delete link</a>
           </div>

@@ -11,7 +11,7 @@ from sanic_oauth.blueprint import login_required
 
 from sqlalchemy.sql.expression import select as sql_select
 
-from link_shortener.models import actives, inactives
+from link_shortener.models import actives, inactives, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -208,3 +208,44 @@ async def deactivate_link(request, user, link_id):
     except Exception:
         await trans.close()
         return json({'message': 'Link does not exist'}, status=400)
+
+
+@view_blueprint.route('/reset/<status>/<link_id>', methods=['GET'])
+@login_required
+@credential_whitelist_check
+async def reset_password_view(request, user, status, link_id):
+    if (status == 'active'):
+        table = actives
+    elif (status == 'inactive'):
+        table = inactives
+    else:
+        return json({'message': 'path does not exist'}, status=400)
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            link_query = await conn.execute(
+                table.select().where(
+                    table.columns['id'] == link_id
+                )
+            )
+            link_data = await link_query.fetchone()
+            await conn.execute(
+                table.update().where(
+                    table.columns['id'] == link_id
+                ).values(
+                    password=None
+                )
+            )
+            await conn.execute(
+                salts.delete().where(
+                    salts.columns['identifier'] == link_data.identifier
+                )
+            )
+            await trans.commit()
+            await trans.close()
+            return redirect('/links/me')
+
+    except Exception:
+        await trans.close()
+        return json({'message': 'link does not exist'}, status=400)

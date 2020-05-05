@@ -42,10 +42,12 @@ specified within the endpoint's link_id parameter.
 **/deactivate/<link_id>**
 Deactivates the active link pointed to via the id specified
 within the endpoint's link_id parameter.
+If deactivation date had been set, it will not be carried over.
 
 **/activate/<link_id>**
 Activates the inactive link pointed to via the id specified
 within the endpoint's link_id parameter.
+If activation date has been set, it will not be carried over.
 
 **/delete/<status>/<link_id>**
 Status = {'active', 'inactive'}.

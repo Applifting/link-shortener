@@ -9,9 +9,10 @@
       {{ '<br>'.join(form.endpoint.errors) }}
       <br>
       <ul>
-        <li>{{ form.endpoint(size=20, placeholder="Endpoint") }}</li>
-        <li>{{ form.url(size=20, placeholder="URL") }}</li>
-        <li>{{ form.password(size=20, placeholder="Password") }}</li>
+        <li>{{ form.endpoint(size=30, placeholder="Endpoint") }}</li>
+        <li>{{ form.url(size=30, placeholder="URL") }}</li>
+        <li>{{ form.password(size=30, placeholder="Password") }}</li>
+        <li>{{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD") }}</li>
         <li>{{ form.submit }}</li>
       </ul>
     </form>

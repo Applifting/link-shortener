@@ -13,7 +13,7 @@ from sanic_oauth.blueprint import login_required
 
 from sanic_wtf import SanicForm
 
-from wtforms import StringField, SubmitField, PasswordField
+from wtforms import StringField, SubmitField, PasswordField, DateField
 from wtforms.validators import DataRequired
 
 from link_shortener.models import actives, inactives, salts
@@ -29,12 +29,14 @@ class CreateForm(SanicForm):
     endpoint = StringField('Endpoint', validators=[DataRequired()])
     url = StringField('URL', validators=[DataRequired()])
     password = PasswordField('Password')
+    switch_date = DateField('Status switch date')
     submit = SubmitField('Create')
 
 
 class UpdateForm(SanicForm):
     url = StringField('URL', validators=[])
     password = PasswordField('Password', validators=[])
+    switch_date = DateField('Status switch date')
     submit = SubmitField('Update')
 
 
@@ -146,7 +148,8 @@ async def create_link_save(request, user):
                     owner_id=user.id,
                     password=password,
                     endpoint=form.endpoint.data,
-                    url=form.url.data
+                    url=form.url.data,
+                    switch_date=form.switch_date.data
                 )
             )
             await trans.commit()
@@ -236,7 +239,8 @@ async def update_link_save(request, user, status, link_id):
                             table.columns['id'] == link_id
                         ).values(
                             url=form.url.data,
-                            password=password
+                            password=password,
+                            switch_date=form.switch_date.data
                         )
                     )
                     await conn.execute(
@@ -260,7 +264,8 @@ async def update_link_save(request, user, status, link_id):
                             table.columns['id'] == link_id
                         ).values(
                             url=form.url.data,
-                            password=password
+                            password=password,
+                            switch_date=form.switch_date.data
                         )
                     )
                     await conn.execute(
@@ -275,7 +280,8 @@ async def update_link_save(request, user, status, link_id):
                     table.update().where(
                         table.columns['id'] == link_id
                     ).values(
-                        url=form.url.data
+                        url=form.url.data,
+                        switch_date=form.switch_date.data
                     )
                 )
 

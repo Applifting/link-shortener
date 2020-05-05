@@ -34,6 +34,22 @@
           <li><h4>Set a password:</h4></li>
         {% endif %}
         <li>{{ form.password(size=40) }}</li>
+        <br>
+        {% if link.switch_date %}
+          {% if status == 'active' %}
+            <h4>Link will deactivate on:</h4>
+          {% else %}
+            <h4>Link will activate on:</h4>
+          {% endif %}
+          <li>{{ form.switch_date(size=40, value=link.switch_date) }}</li>
+        {% else %}
+          {% if status == 'active' %}
+            <h4>Set a date to deactivate link</h4>
+          {% else %}
+            <h4>Set a date to activate link</h4>
+          {% endif %}
+          <li>{{ form.switch_date(size=40, placeholder="YYYY-MM-DD") }}</li>
+        {% endif %}
         <li>{{ form.submit }}</li>
       </ul>
     </form>

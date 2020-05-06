@@ -17,7 +17,7 @@ from link_shortener.models import actives, inactives
 api_switcher_blueprint = Blueprint('switchers')
 
 
-@api_switcher_blueprint.route('/api/status/activate', methods=['POST'])
+@api_switcher_blueprint.route('/api/links/activate', methods=['POST'])
 async def activate_due_links(request):
     try:
         token = request.headers['Bearer']
@@ -95,7 +95,7 @@ async def activate_due_links(request):
         return json({'message': 'Activating links failed'}, status=500)
 
 
-@api_switcher_blueprint.route('/api/status/deactivate', methods=['POST'])
+@api_switcher_blueprint.route('/api/links/deactivate', methods=['POST'])
 async def deactivate_due_links(request):
     try:
         token = request.headers['Bearer']

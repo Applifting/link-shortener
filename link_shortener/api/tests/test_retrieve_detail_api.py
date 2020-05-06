@@ -10,12 +10,12 @@ from json import loads
 from link_shortener.server import create_app
 
 
-class TestRetrieveDetailAPI(TestCase):
+class TestRetrieveDetailByIdAPI(TestCase):
 
     def setUp(self):
         self.app = create_app()
-        self.active_endpoint = '/api/links/active/1'
-        self.inactive_endpoint = '/api/links/inactive/1'
+        self.active_endpoint = '/api/link/active/1'
+        self.inactive_endpoint = '/api/link/inactive/1'
         self.headers = {'Bearer': config('ACCESS_TOKEN')}
 
     def test_active_detail_with_token(self):
@@ -29,7 +29,7 @@ class TestRetrieveDetailAPI(TestCase):
             headers=self.headers
         )
         self.assertEqual(response.status, 200)
-        self.assertEqual(str(response.url)[-19:], self.active_endpoint)
+        self.assertEqual(str(response.url)[-18:], self.active_endpoint)
 
     def test_inactive_detail_with_token(self):
         '''
@@ -42,7 +42,7 @@ class TestRetrieveDetailAPI(TestCase):
             headers=self.headers
         )
         self.assertEqual(response.status, 200)
-        self.assertEqual(str(response.url)[-21:], self.inactive_endpoint)
+        self.assertEqual(str(response.url)[-20:], self.inactive_endpoint)
 
     def test_detail_without_token_fails(self):
         '''
@@ -54,7 +54,7 @@ class TestRetrieveDetailAPI(TestCase):
             gather_request=False
         )
         self.assertEqual(response.status, 400)
-        self.assertEqual(str(response.url)[-19:], self.active_endpoint)
+        self.assertEqual(str(response.url)[-18:], self.active_endpoint)
 
     def test_detail_wrong_token_fails(self):
         '''
@@ -69,7 +69,7 @@ class TestRetrieveDetailAPI(TestCase):
             headers=headers
         )
         self.assertEqual(response.status, 401)
-        self.assertEqual(str(response.url)[-19:], self.active_endpoint)
+        self.assertEqual(str(response.url)[-18:], self.active_endpoint)
 
     def test_active_detail_wrong_method(self):
         '''
@@ -82,7 +82,7 @@ class TestRetrieveDetailAPI(TestCase):
             headers=self.headers
         )
         self.assertEqual(response.status, 405)
-        self.assertEqual(str(response.url)[-19:], self.active_endpoint)
+        self.assertEqual(str(response.url)[-18:], self.active_endpoint)
 
     def test_inactive_detail_wrong_method(self):
         '''
@@ -95,21 +95,21 @@ class TestRetrieveDetailAPI(TestCase):
             headers=self.headers
         )
         self.assertEqual(response.status, 405)
-        self.assertEqual(str(response.url)[-21:], self.inactive_endpoint)
+        self.assertEqual(str(response.url)[-20:], self.inactive_endpoint)
 
     def test_detail_wrong_status(self):
         '''
         Test that a get detail request for links with non-existing status
         yields an HTTP_400_BAD_REQUEST response.
         '''
-        endpoint = '/api/links/offline/1'
+        endpoint = '/api/link/offline/1'
         response = self.app.test_client.get(
             endpoint,
             gather_request=False,
             headers=self.headers
         )
         self.assertEqual(response.status, 400)
-        self.assertEqual(str(response.url)[-20:], endpoint)
+        self.assertEqual(str(response.url)[-19:], endpoint)
 
     def test_active_detail_wrong_id(self):
         '''
@@ -162,3 +162,96 @@ class TestRetrieveDetailAPI(TestCase):
             headers=self.headers
         )
         self.assertEqual(loads(loads(response.text))['id'], 1)
+
+
+class TestRetrieveDetailByIdentifierAPI(TestCase):
+
+    def setUp(self):
+        self.app = create_app()
+        self.endpoint = '/api/link/'
+        self.headers = {'Bearer': config('ACCESS_TOKEN')}
+
+    def test_active_setup(self):
+        '''
+        Fetches the unique identifier of the first active link, and checks
+        that its length is correct.
+        '''
+        active_response = self.app.test_client.get(
+            '/api/link/active/1',
+            gather_request=False,
+            headers=self.headers
+        )
+        global active_identifier
+        active_identifier = loads(loads(active_response.text))['identifier']
+        self.assertEqual(active_response.status, 200)
+        self.assertEqual(len(active_identifier), 36)
+
+    def test_inactive_setup(self):
+        '''
+        Fetches the unique identifier of the first inactive links, and checks
+        that its length is correct.
+        '''
+        inactive_response = self.app.test_client.get(
+            '/api/link/inactive/1',
+            gather_request=False,
+            headers=self.headers
+        )
+        global inactive_identifier
+        inactive_identifier = loads(loads(inactive_response.text))['identifier']
+        self.assertEqual(inactive_response.status, 200)
+        self.assertEqual(len(inactive_identifier), 36)
+
+    def test_identifier_active_detail_with_token_successful(self):
+        '''
+        Test that a get detail request for an active link specified by its
+        identifier with the correct token yields an HTTP_200_OK response.
+        '''
+        global active_identifier
+        endpoint = self.endpoint + active_identifier
+
+        response = self.app.test_client.get(
+            endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-46:], endpoint)
+
+    def test_identifier_inactive_detail_with_token_successful(self):
+        '''
+        Test that a get detail request for an inactive link specified by its
+        identifier with the correct token yields an HTTP_200_OK response.
+        '''
+        global inactive_identifier
+        endpoint = self.endpoint + inactive_identifier
+
+        response = self.app.test_client.get(
+            endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-46:], endpoint)
+
+    def test_identifier_detail_without_token_fails(self):
+        '''
+        Test that a get detail request for an active link specified by its
+        identifier without a token yields an HTTP_400_BAD_REQUEST response.
+        '''
+        pass
+
+
+    def test_identifier_detail_wrong_token_fails(self):
+        pass
+
+    def test_identifier_detail_wrong_method(self):
+        pass
+
+    def test_identifier_detail_wrong_identifier(self):
+        pass
+
+    def test_identifier_active_detail_payload(self):
+        pass
+
+    def test_identifier_inactive_detail_payload(self):
+        pass

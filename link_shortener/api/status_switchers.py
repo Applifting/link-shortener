@@ -4,6 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from datetime import date
 from decouple import config
+from json import loads
 
 from sanic import Blueprint
 from sanic.response import json
@@ -27,9 +28,10 @@ async def activate_due_links(request):
         return json({'message': 'Please provide a token'}, status=400)
 
     try:
-        year = request.data['Year']
-        month = request.data['Month']
-        day = request.data['Day']
+        data = request.body.decode().split('&')
+        year = int(data[0][5:])
+        month = int(data[1][6:])
+        day = int(data[2][4:])
 
         switch_date = date(year, month, day)
 
@@ -104,9 +106,10 @@ async def deactivate_due_links(request):
         return json({'message': 'Please provide a token'}, status=400)
 
     try:
-        year = request.data['Year']
-        month = request.data['Month']
-        day = request.data['Day']
+        data = request.body.decode().split('&')
+        year = int(data[0][5:])
+        month = int(data[1][6:])
+        day = int(data[2][4:])
 
         switch_date = date(year, month, day)
 

@@ -5,7 +5,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from decouple import config
 from unittest import TestCase
 
-form link_shortener.server import create_app
+from link_shortener.server import create_app
 
 
 class TestStatusSwitchersAPI(TestCase):

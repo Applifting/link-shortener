@@ -44,10 +44,10 @@ class TestRetrieveDetailByIdAPI(TestCase):
         self.assertEqual(response.status, 200)
         self.assertEqual(str(response.url)[-20:], self.inactive_endpoint)
 
-    def test_detail_without_token_fails(self):
+    def test_active_detail_without_token_fails(self):
         '''
-        Test that a get detail request without a token yields
-        an HTTP_400_BAD_REQUEST response.
+        Test that a get detail request for an active link without a token
+        yields an HTTP_400_BAD_REQUEST response.
         '''
         response = self.app.test_client.get(
             self.active_endpoint,
@@ -56,10 +56,22 @@ class TestRetrieveDetailByIdAPI(TestCase):
         self.assertEqual(response.status, 400)
         self.assertEqual(str(response.url)[-18:], self.active_endpoint)
 
-    def test_detail_wrong_token_fails(self):
+    def test_inactive_detail_without_token_fails(self):
         '''
-        Test that a get detail request with an incorrect token yields
-        an HTTP_401_UNAUTHORIZED response.
+        Test that a get detail request for an inactive link without a token
+        yields an HTTP_400_BAD_REQUEST response.
+        '''
+        response = self.app.test_client.get(
+            self.inactive_endpoint,
+            gather_request=False
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-20:], self.inactive_endpoint)
+
+    def test_active_detail_wrong_token_fails(self):
+        '''
+        Test that a get detail request for an active link with an incorrect
+        token yields an HTTP_401_UNAUTHORIZED response.
         '''
         bad_token = 'made-up-wrong-token'
         headers = {'Bearer': bad_token}
@@ -70,6 +82,21 @@ class TestRetrieveDetailByIdAPI(TestCase):
         )
         self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-18:], self.active_endpoint)
+
+    def test_inactive_detail_wrong_token_fails(self):
+        '''
+        Test that a get detail request for an inactive link with an incorrect
+        token yields an HTTP_401_UNAUTHORIZED response.
+        '''
+        bad_token = 'made-up-wrong-token'
+        headers = {'Bearer': bad_token}
+        response = self.app.test_client.get(
+            self.inactive_endpoint,
+            gather_request=False,
+            headers=headers
+        )
+        self.assertEqual(response.status, 401)
+        self.assertEqual(str(response.url)[-20:], self.inactive_endpoint)
 
     def test_active_detail_wrong_method(self):
         '''
@@ -172,56 +199,152 @@ class TestRetrieveDetailByIdentifierAPI(TestCase):
         self.headers = {'Bearer': config('ACCESS_TOKEN')}
         self.active_identifier = '19a0c1f8-9032-11ea-8195-0242ac120003'
         self.inactive_identifier = '19a0c770-9032-11ea-8195-0242ac120003'
+        self.active_endpoint = self.endpoint + self.active_identifier
+        self.inactive_endpoint = self.endpoint + self.inactive_identifier
 
     def test_identifier_active_detail_with_token_successful(self):
         '''
         Test that a get detail request for an active link specified by its
         identifier with the correct token yields an HTTP_200_OK response.
         '''
-        endpoint = self.endpoint + self.active_identifier
-
         response = self.app.test_client.get(
-            endpoint,
+            self.active_endpoint,
             gather_request=False,
             headers=self.headers
         )
         self.assertEqual(response.status, 200)
-        self.assertEqual(str(response.url)[-46:], endpoint)
+        self.assertEqual(str(response.url)[-46:], self.active_endpoint)
 
     def test_identifier_inactive_detail_with_token_successful(self):
         '''
         Test that a get detail request for an inactive link specified by its
         identifier with the correct token yields an HTTP_200_OK response.
         '''
-        endpoint = self.endpoint + self.inactive_identifier
+        response = self.app.test_client.get(
+            self.inactive_endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-46:], self.inactive_endpoint)
 
+    def test_identifier_active_detail_without_token_fails(self):
+        '''
+        Test that a get detail request for an active link specified by its
+        identifier without a token yields an HTTP_400_BAD_REQUEST response.
+        '''
+        response = self.app.test_client.get(
+            self.active_endpoint,
+            gather_request=False
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-46:], self.active_endpoint)
+
+    def test_identifier_inactive_detail_without_token_fails(self):
+        '''
+        Test that a get detail request for an inactive link specified by its
+        identifier without a token yields an HTTP_400_BAD_REQUEST response.
+        '''
+        response = self.app.test_client.get(
+            self.inactive_endpoint,
+            gather_request=False
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-46:], self.inactive_endpoint)
+
+    def test_identifier_active_detail_wrong_token_fails(self):
+        '''
+        Test that a get detail request for an active link specified
+        by its identifier with an incorrect token yields
+        an HTTP_401_UNAUTHORIZED response.
+        '''
+        bad_token = 'made-up-wrong-token'
+        headers = {'Bearer': bad_token}
+        response = self.app.test_client.get(
+            self.active_endpoint,
+            gather_request=False,
+            headers=headers
+        )
+        self.assertEqual(response.status, 401)
+        self.assertEqual(str(response.url)[-46:], self.active_endpoint)
+
+    def test_identifier_inactive_detail_wrong_token_fails(self):
+        '''
+        Test that a get detail request for an inactive link specified
+        by its identifier with an incorrect token yields
+        an HTTP_401_UNAUTHORIZED response.
+        '''
+        bad_token = 'made-up-wrong-token'
+        headers = {'Bearer': bad_token}
+        response = self.app.test_client.get(
+            self.inactive_endpoint,
+            gather_request=False,
+            headers=headers
+        )
+        self.assertEqual(response.status, 401)
+        self.assertEqual(str(response.url)[-46:], self.inactive_endpoint)
+
+    def test_identifier_active_detail_wrong_method(self):
+        '''
+        Test that a POST request method for an active link specified
+        by its identifier yields an HTTP_405_METHOD_NOT_ALLOWED response.
+        '''
+        response = self.app.test_client.post(
+            self.active_endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 405)
+        self.assertEqual(str(response.url)[-46:], self.active_endpoint)
+
+    def test_identifier_inactive_detail_wrong_method(self):
+        '''
+        Test that a POST request method for an inactive link specified
+        by its identifier yields an HTTP_405_METHOD_NOT_ALLOWED response.
+        '''
+        response = self.app.test_client.post(
+            self.inactive_endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 405)
+        self.assertEqual(str(response.url)[-46:], self.inactive_endpoint)
+
+    def test_identifier_detail_wrong_identifier(self):
+        '''
+        Test that a get detail request for a link specified by an identifier
+        that does not exist yields and HTTP_404_NOT_FOUND response.
+        '''
+        bad_identifier = 'made-up-wrong-identifier-fixedlength'
+        endpoint = self.endpoint + bad_identifier
         response = self.app.test_client.get(
             endpoint,
             gather_request=False,
             headers=self.headers
         )
-        self.assertEqual(response.status, 200)
+        self.assertEqual(response.status, 404)
         self.assertEqual(str(response.url)[-46:], endpoint)
 
-    def test_identifier_detail_without_token_fails(self):
-        '''
-        Test that a get detail request for an active link specified by its
-        identifier without a token yields an HTTP_400_BAD_REQUEST response.
-        '''
-        pass
-
-
-    def test_identifier_detail_wrong_token_fails(self):
-        pass
-
-    def test_identifier_detail_wrong_method(self):
-        pass
-
-    def test_identifier_detail_wrong_identifier(self):
-        pass
-
     def test_identifier_active_detail_payload(self):
-        pass
+        '''
+        Test that a successful get detail request for an active link
+        specified by an identifier yields the correct payload.
+        '''
+        response = self.app.test_client.get(
+            self.active_endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(loads(response.text)['id'], 2)
 
     def test_identifier_inactive_detail_payload(self):
-        pass
+        '''
+        Test that a successful get detail request for an inactive link
+        specified by an identifier yields the correct payload.
+        '''
+        response = self.app.test_client.get(
+            self.inactive_endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(loads(response.text)['id'], 1)

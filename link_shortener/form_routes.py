@@ -219,71 +219,40 @@ async def update_link_save(request, user, status, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            if form.password.data:
-                link_query = await conn.execute(
-                    table.select().where(
-                        table.columns['id'] == link_id
-                    )
-                )
-                link_data = await link_query.fetchone()
-                if link_data.password:
-                    fresh_salt = os.urandom(32)
-                    password = hashlib.pbkdf2_hmac(
-                        'sha256',
-                        form.password.data.encode('utf-8'),
-                        fresh_salt,
-                        100000
-                    )
-                    await conn.execute(
-                        table.update().where(
-                            table.columns['id'] == link_id
-                        ).values(
-                            url=form.url.data,
-                            password=password,
-                            switch_date=form.switch_date.data
-                        )
-                    )
-                    await conn.execute(
-                        salts.update().where(
-                            salts.columns['identifier'] == link_data.identifier
-                        ).values(
-                            salt=fresh_salt
-                        )
-                    )
+            link_update = table.update().where(table.columns['id'] == link_id)
 
+            if form.password.data:
+                fresh_salt = os.urandom(32)
+                password = hashlib.pbkdf2_hmac(
+                    'sha256',
+                    form.password.data.encode('utf-8'),
+                    fresh_salt,
+                    100000
+                )
+                await conn.execute(link_update.values(
+                    url=form.url.data,
+                    switch_date=form.switch_date.data,
+                    password=password
+                ))
+                link_query = await conn.execute(table.select() \
+                    .where(table.columns['id'] == link_id))
+                link_data = await link_query.fetchone()
+
+                if link_data.password:
+                    await conn.execute(salts.update().where(
+                        salts.columns['identifier'] == link_data.identifier
+                    ).values(salt=fresh_salt))
                 else:
-                    salt = os.urandom(32)
-                    password = hashlib.pbkdf2_hmac(
-                        'sha256',
-                        form.password.data.encode('utf-8'),
-                        salt,
-                        100000
-                    )
-                    await conn.execute(
-                        table.update().where(
-                            table.columns['id'] == link_id
-                        ).values(
-                            url=form.url.data,
-                            password=password,
-                            switch_date=form.switch_date.data
-                        )
-                    )
-                    await conn.execute(
-                        salts.insert().values(
+                    await conn.execute(salts.insert().values(
                             identifier=link_data.identifier,
-                            salt=salt
-                        )
-                    )
+                            salt=fresh_salt
+                    ))
 
             else:
-                await conn.execute(
-                    table.update().where(
-                        table.columns['id'] == link_id
-                    ).values(
-                        url=form.url.data,
-                        switch_date=form.switch_date.data
-                    )
-                )
+                await conn.execute(link_update.values(
+                    url=form.url.data,
+                    switch_date=form.switch_date.data
+                ))
 
             await trans.commit()
             await trans.close()

@@ -30,7 +30,7 @@ active_data = [
         None
     ],
     [
-        str(uuid.uuid1()),
+        '19a0c1f8-9032-11ea-8195-0242ac120003',
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
@@ -77,7 +77,7 @@ active_data = [
 ]
 inactive_data = [
     [
-        str(uuid.uuid1()),
+        '19a0c770-9032-11ea-8195-0242ac120003',
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'tunak',

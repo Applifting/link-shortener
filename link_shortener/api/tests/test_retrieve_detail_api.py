@@ -170,44 +170,15 @@ class TestRetrieveDetailByIdentifierAPI(TestCase):
         self.app = create_app()
         self.endpoint = '/api/link/'
         self.headers = {'Bearer': config('ACCESS_TOKEN')}
-
-    def test_active_setup(self):
-        '''
-        Fetches the unique identifier of the first active link, and checks
-        that its length is correct.
-        '''
-        active_response = self.app.test_client.get(
-            '/api/link/active/1',
-            gather_request=False,
-            headers=self.headers
-        )
-        global active_identifier
-        active_identifier = loads(loads(active_response.text))['identifier']
-        self.assertEqual(active_response.status, 200)
-        self.assertEqual(len(active_identifier), 36)
-
-    def test_inactive_setup(self):
-        '''
-        Fetches the unique identifier of the first inactive links, and checks
-        that its length is correct.
-        '''
-        inactive_response = self.app.test_client.get(
-            '/api/link/inactive/1',
-            gather_request=False,
-            headers=self.headers
-        )
-        global inactive_identifier
-        inactive_identifier = loads(loads(inactive_response.text))['identifier']
-        self.assertEqual(inactive_response.status, 200)
-        self.assertEqual(len(inactive_identifier), 36)
+        self.active_identifier = '19a0c1f8-9032-11ea-8195-0242ac120003'
+        self.inactive_identifier = '19a0c770-9032-11ea-8195-0242ac120003'
 
     def test_identifier_active_detail_with_token_successful(self):
         '''
         Test that a get detail request for an active link specified by its
         identifier with the correct token yields an HTTP_200_OK response.
         '''
-        global active_identifier
-        endpoint = self.endpoint + active_identifier
+        endpoint = self.endpoint + self.active_identifier
 
         response = self.app.test_client.get(
             endpoint,
@@ -222,8 +193,7 @@ class TestRetrieveDetailByIdentifierAPI(TestCase):
         Test that a get detail request for an inactive link specified by its
         identifier with the correct token yields an HTTP_200_OK response.
         '''
-        global inactive_identifier
-        endpoint = self.endpoint + inactive_identifier
+        endpoint = self.endpoint + self.inactive_identifier
 
         response = self.app.test_client.get(
             endpoint,

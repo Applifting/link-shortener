@@ -234,8 +234,9 @@ async def update_link_save(request, user, status, link_id):
                     switch_date=form.switch_date.data,
                     password=password
                 ))
-                link_query = await conn.execute(table.select() \
-                    .where(table.columns['id'] == link_id))
+                link_query = await conn.execute(table.select().where(
+                    table.columns['id'] == link_id
+                ))
                 link_data = await link_query.fetchone()
 
                 if link_data.password:

@@ -39,11 +39,11 @@ class TestSimpleViews(TestCase):
         Test that using an existing endpoint is successful.
         '''
         response = self.app.test_client.get(
-            '/vlk',
+            '/pomuzemesi',
             gather_request=False
         )
         self.assertEqual(response.status, 200)
-        self.assertEqual(str(response.url), 'http://www.vlk.cz')
+        self.assertEqual(str(response.url), 'https://staging.pomuzeme.si')
 
     def test_wrong_endpoint_redirect(self):
         '''

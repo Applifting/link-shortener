@@ -52,7 +52,7 @@ async def activate_due_links(request):
             link_data = await queryset.fetchall()
             if not link_data:
                 await trans.close()
-                return json({'message': 'No links to activate'}, status=200)
+                return json({'message': 'No links to activate'}, status=204)
 
             count = 0
             for link in link_data:
@@ -130,7 +130,7 @@ async def deactivate_due_links(request):
             link_data = await queryset.fetchall()
             if not link_data:
                 await trans.close()
-                return json({'message': 'No links to deactivate'}, status=200)
+                return json({'message': 'No links to deactivate'}, status=204)
 
             count = 0
             for link in link_data:

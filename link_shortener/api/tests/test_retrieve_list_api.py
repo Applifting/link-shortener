@@ -72,11 +72,11 @@ class TestRetrieveAllLinksAPI(TestCase):
 
     def test_retrieve_wrong_method(self):
         '''
-        Test that a POST request method yields
+        Test that a PATCH request method yields
         an HTTP_405_METHOD_NOT_ALLOWED response.
         '''
         headers = {'Bearer': self.token}
-        response = self.app.test_client.post(
+        response = self.app.test_client.patch(
             self.endpoint,
             gather_request=False,
             headers=headers

@@ -229,11 +229,6 @@ async def update_link_save(request, user, status, link_id):
                     fresh_salt,
                     100000
                 )
-                await conn.execute(link_update.values(
-                    url=form.url.data,
-                    switch_date=form.switch_date.data,
-                    password=password
-                ))
                 link_query = await conn.execute(table.select().where(
                     table.columns['id'] == link_id
                 ))
@@ -248,6 +243,12 @@ async def update_link_save(request, user, status, link_id):
                             identifier=link_data.identifier,
                             salt=fresh_salt
                     ))
+
+                await conn.execute(link_update.values(
+                    url=form.url.data,
+                    switch_date=form.switch_date.data,
+                    password=password
+                ))
 
             else:
                 await conn.execute(link_update.values(

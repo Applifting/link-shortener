@@ -64,15 +64,21 @@
         margin-top: 4em;
         border: 0.2em solid #484d4d;
         border-radius: 0.6em;
-
       }
       form ul {
         display: block;
+        list-style-type: none;
+        padding: 0px;
       }
       form ul li {
         display: block;
+        text-align: center;
         margin-bottom: 10px;
         min-height: 35px;
+      }
+      form ul li button {
+        margin-left: 0.5em;
+        margin-right: 0.5em;
       }
       #form-header {
         color: #fff;
@@ -81,8 +87,40 @@
       form input[type="submit"] {
         margin: 1em;
       }
-      form input a {
-        margin: 2em;
+
+      #edit-anchor a {
+      	text-decoration: none;
+        padding: .2em 1em;
+        width: 50%;
+
+        margin: 0.3em;
+        font-size: 1.2em;
+        border-radius: 0.3em;
+        display: inline-block;
+      }
+      .deactivate {
+        color: red;
+        border: 0.2em solid red;
+      }
+      .deactivate:hover {
+        color: #fff;
+        background-color: red;
+      }
+      .activate {
+        color: green;
+        border: 0.2em solid green;
+      }
+      .activate:hover {
+        color: #fff;
+        background-color: green;
+      }
+      .reset-delete {
+        color: #484d4d;
+        border: 0.2em solid #484d4d;
+      }
+      .reset-delete:hover {
+        color: #fff;
+        background-color: #484d4d;
       }
 
     </style>

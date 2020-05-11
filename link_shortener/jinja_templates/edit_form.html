@@ -7,9 +7,49 @@
       {{ '<br>'.join(form.csrf_token.errors) }}
       {{ form.csrf_token }}
       {{ '<br>'.join(form.url.errors) }}
-      <br>
       <ul>
-        <li>{{ form.url(size=20, placeholder=link.url) }}</li>
+        <li>
+          <div id="edit-anchor">
+            {% if status == 'active' %}
+              <a class="deactivate" href="/deactivate/{{ link.id }}">Deactivate link</a>
+              {% if has_password %}
+                <a class="reset-delete" href="/reset/active/{{ link.id }}">Reset password</a>
+              {% endif %}
+            {% else %}
+              <a class="activate" href="/activate/{{ link.id }}">Activate link</a>
+              {% if has_password %}
+                <a class="reset-delete" href="/reset/inactive/{{ link.id }}">Reset password</a>
+              {% endif %}
+            {% endif %}
+            <a class="reset-delete" href="/delete/{{ status }}/{{ link.id }}">Delete link</a>
+          </div>
+        </li>
+        <br>
+        <li><h4>Change URL:</h4></li>
+        <li>{{ form.url(size=40, value=link.url) }}</li>
+        <br>
+        {% if has_password %}
+          <li><h4>Change password:</h4></li>
+        {% else %}
+          <li><h4>Set a password:</h4></li>
+        {% endif %}
+        <li>{{ form.password(size=40) }}</li>
+        <br>
+        {% if link.switch_date %}
+          {% if status == 'active' %}
+            <h4>Link will deactivate on:</h4>
+          {% else %}
+            <h4>Link will activate on:</h4>
+          {% endif %}
+          <li>{{ form.switch_date(size=40, value=link.switch_date) }}</li>
+        {% else %}
+          {% if status == 'active' %}
+            <h4>Set a date to deactivate link</h4>
+          {% else %}
+            <h4>Set a date to activate link</h4>
+          {% endif %}
+          <li>{{ form.switch_date(size=40, placeholder="YYYY-MM-DD") }}</li>
+        {% endif %}
         <li>{{ form.submit }}</li>
       </ul>
     </form>

@@ -11,7 +11,7 @@ from sanic_oauth.blueprint import login_required
 
 from sqlalchemy.sql.expression import select as sql_select
 
-from link_shortener.models import actives, inactives
+from link_shortener.models import actives, inactives, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -30,7 +30,10 @@ async def redirect_link(request, link_endpoint):
                 )
             )
             link_data = await query.fetchone()
-            return redirect(link_data.url)
+            if link_data.password is None:
+                return redirect(link_data.url)
+
+            return redirect('/authorize/{}'.format(link_data.id))
 
     except Exception:
         return json({'message': 'link inactive or does not exist'}, status=400)
@@ -122,7 +125,7 @@ async def delete_link(request, user, status, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'deleting link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
@@ -138,6 +141,7 @@ async def activate_link(request, user, link_id):
                         'identifier',
                         'owner',
                         'owner_id',
+                        'password',
                         'endpoint',
                         'url'
                     ],
@@ -145,6 +149,7 @@ async def activate_link(request, user, link_id):
                         inactives.c.identifier,
                         inactives.c.owner,
                         inactives.c.owner_id,
+                        inactives.c.password,
                         inactives.c.endpoint,
                         inactives.c.url
                     ]).where(inactives.c.id == link_id)
@@ -161,7 +166,7 @@ async def activate_link(request, user, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'activating link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -177,6 +182,7 @@ async def deactivate_link(request, user, link_id):
                         'identifier',
                         'owner',
                         'owner_id',
+                        'password',
                         'endpoint',
                         'url'
                     ],
@@ -184,6 +190,7 @@ async def deactivate_link(request, user, link_id):
                         actives.c.identifier,
                         actives.c.owner,
                         actives.c.owner_id,
+                        actives.c.password,
                         actives.c.endpoint,
                         actives.c.url
                     ]).where(actives.c.id == link_id)
@@ -198,7 +205,47 @@ async def deactivate_link(request, user, link_id):
             await trans.close()
             return redirect('/links/me')
 
-    except Exception as error:
-        print(error)
+    except Exception:
         await trans.close()
-        return json({'message': 'deactivating link failed'}, status=500)
+        return json({'message': 'Link does not exist'}, status=400)
+
+
+@view_blueprint.route('/reset/<status>/<link_id>', methods=['GET'])
+@login_required
+@credential_whitelist_check
+async def reset_password_view(request, user, status, link_id):
+    if (status == 'active'):
+        table = actives
+    elif (status == 'inactive'):
+        table = inactives
+    else:
+        return json({'message': 'path does not exist'}, status=400)
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            link_query = await conn.execute(
+                table.select().where(
+                    table.columns['id'] == link_id
+                )
+            )
+            link_data = await link_query.fetchone()
+            await conn.execute(
+                table.update().where(
+                    table.columns['id'] == link_id
+                ).values(
+                    password=None
+                )
+            )
+            await conn.execute(
+                salts.delete().where(
+                    salts.columns['identifier'] == link_data.identifier
+                )
+            )
+            await trans.commit()
+            await trans.close()
+            return redirect('/links/me')
+
+    except Exception:
+        await trans.close()
+        return json({'message': 'link does not exist'}, status=400)

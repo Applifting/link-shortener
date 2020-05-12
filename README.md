@@ -7,6 +7,8 @@ How to use:
 
 How to test:
 
+- Run 'docker-compose down' and 'docker-compose up', the DB has to be fresh
+for the tests to work
 - Run 'docker-compose run web sh -c "pytest --disable-pytest-warnings"'
 - All or most of the warnings should be about async syntax deprecation,
 as sanic_oauth has old/deprecated versions of dependencies (httpx et al.)

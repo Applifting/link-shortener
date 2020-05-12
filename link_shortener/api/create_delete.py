@@ -11,7 +11,7 @@ from json import loads
 from sanic import Blueprint
 from sanic.response import json
 
-from link_shortener.models import actives
+from link_shortener.models import actives, inactives
 
 
 api_create_delete_blueprint = Blueprint('create_delete')
@@ -98,15 +98,30 @@ async def api_delete_link_by_id(request, status, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            await conn.execute(
-                table.delete().where(
+            query = await conn.execute(
+                table.select().where(
                     table.columns['id'] == link_id
                 )
             )
-            await trans.commit()
-            await trans.close()
-            return json({}, status=204)
+            try:
+                link_data = await query.fetchone()
+                if link_data:
+                    await conn.execute(
+                        table.delete().where(
+                            table.columns['id'] == link_id
+                        )
+                    )
+                    await trans.commit()
+                    await trans.close()
+                    return json({}, status=204)
+
+                await trans.close()
+                return json({'message': 'Link does not exist'}, status=404)
+
+            except Exception:
+                trans.close()
+                return json({'message': 'Link does not exist'}, status=404)
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=400)
+        return json({'message': 'Deleting link failed'}, status=500)

@@ -143,7 +143,7 @@ class TestRetrieveLinksByStatusAPI(TestCase):
             headers=self.headers
         )
         data = loads(response.text)
-        self.assertEqual(data[1]['endpoint'], 'nope')
+        self.assertEqual(data[0]['endpoint'], 'tunak')
 
     def test_retrieve_active_without_token_fails(self):
         '''

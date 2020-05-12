@@ -70,3 +70,43 @@ async def api_create_link(request):
     except Exception:
         await trans.close()
         return json({'message': 'Creating link failed'}, status=500)
+
+
+@api_create_delete_blueprint.route(
+    '/api/link/<status>/<link_id>',
+    methods=['DELETE']
+)
+async def api_delete_link_by_id(request, status, link_id):
+    try:
+        token = request.headers['Bearer']
+        if (token != config('ACCESS_TOKEN')):
+            return json({'message': 'Unauthorized'}, status=401)
+
+    except KeyError:
+        return json({'message': 'Please provide a token'}, status=400)
+
+    if (status == 'active'):
+        table = actives
+    elif (status == 'inactive'):
+        table = inactives
+    else:
+        return json(
+            {'message': 'Status "{}" does not exist'.format(status)},
+            status=400
+        )
+
+    try:
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            await conn.execute(
+                table.delete().where(
+                    table.columns['id'] == link_id
+                )
+            )
+            await trans.commit()
+            await trans.close()
+            return json({}, status=204)
+
+    except Exception:
+        await trans.close()
+        return json({'message': 'Link does not exist'}, status=400)

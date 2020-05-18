@@ -7,6 +7,8 @@ import uuid
 import hashlib
 import datetime
 
+from decouple import config
+
 from sanic import Blueprint
 
 from aiomysql.sa import create_engine
@@ -97,14 +99,24 @@ inactive_data = [
 
 @initdb_blueprint.listener('before_server_start')
 async def initialise_db(app, loop):
-    app.engine = await create_engine(
-        host='db',
-        port=3306,
-        user='user',
-        password='password',
-        db='db',
-        loop=loop
-    )
+    if config('PRODUCTION', default=False, cast=bool):
+        app.engine = await create_engine(
+            host=config('MYSQL_HOST'),
+            port=config('MYSQL_PORT', cast=int),
+            user=config('MYSQL_USER'),
+            password=config('MYSQL_PASSWORD'),
+            db=config('MYSQL_DB'),
+            loop=loop
+        )
+    else:
+        app.engine = await create_engine(
+            host='db',
+            port=3306,
+            user='user',
+            password='password',
+            db='db',
+            loop=loop
+        )
     async with app.engine.acquire() as conn:
         try:
             trans = await conn.begin()

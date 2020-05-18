@@ -68,10 +68,14 @@ def create_app():
     app.session_interface = InMemorySessionInterface()
 
     app.config.OAUTH_PROVIDER = config('OAUTH_PROVIDER')
-    app.config.OAUTH_REDIRECT_URI = config('OAUTH_REDIRECT_URI')
     app.config.OAUTH_SCOPE = config('OAUTH_SCOPE')
     app.config.OAUTH_CLIENT_ID = config('OAUTH_CLIENT_ID')
     app.config.OAUTH_CLIENT_SECRET = config('OAUTH_CLIENT_SECRET')
+    if config('PRODUCTION', default=False, cast=bool):
+        domain = config('DOMAIN_NAME')
+    else:
+        domain = config('LOCAL_HOST')
+    app.config.OAUTH_REDIRECT_URI = domain + config('OAUTH_REDIRECT_ENDPOINT')
 
     app.register_middleware(add_session_to_request, 'request')
     app.register_middleware(save_session, 'response')

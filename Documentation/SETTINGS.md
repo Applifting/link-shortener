@@ -23,7 +23,6 @@ MYSQL_HOST=<mysql_host_name>
 MYSQL_DB=<mysql_db_name>
 MYSQL_USER=<mysql_user_name>
 MYSQL_PASSWORD=<mysql_password>
-MYSQL_ROOT_PASSWORD=<mysql_root_password>
 MYSQL_PORT=<mysql_db_port> (Most likely 3306)
 
 Notes:

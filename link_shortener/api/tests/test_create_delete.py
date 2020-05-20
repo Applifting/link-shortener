@@ -258,7 +258,7 @@ class TestDeleteByIdAPI(TestCase):
 
     def test_delete_inactive_wrong_method_fails(self):
         '''
-        Test that a PATCH request method to delete an inactive link
+        Test that a HEAD request method to delete an inactive link
         yields an HTTP_405_METHOD_NOT_ALLOWED response.
         '''
         response = self.app.test_client.head(
@@ -310,3 +310,82 @@ class TestDeleteByIdAPI(TestCase):
         )
         self.assertEqual(response.status, 404)
         self.assertEqual(str(response.url)[-23:], endpoint)
+
+
+class TestDeleteByIdentifierAPI(TestCase):
+
+    def setUp(self):
+        self.app = create_app()
+        self.endpoint = '/api/link/'
+        self.identifier = '19a0c770-9032-11ea-8195-0242ac120003'
+        self.url = self.endpoint + self.identifier
+        self.headers = {'Bearer': config('ACCESS_TOKEN')}
+
+    def test_delete_by_identifier_without_token_fails(self):
+        '''
+        Test that a DELETE request to delete a link specified by identifier
+        without a token yields an HTTP_400_BAD_REQUEST response.
+        '''
+        response = self.app.test_client.delete(
+            self.url,
+            gather_request=False
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-46:], self.url)
+
+    def test_delete_by_identifier_wrong_token_fails(self):
+        '''
+        Test that a DELETE request to delete a link specified by identifier
+        with an incorrect token yields an HTTP_401_UNAUTHORIZED response.
+        '''
+        bad_token = 'made-up-wrong-token'
+        headers = {'Bearer': bad_token}
+        response = self.app.test_client.delete(
+            self.url,
+            gather_request=False,
+            headers=headers
+        )
+        self.assertEqual(response.status, 401)
+        self.assertEqual(str(response.url)[-46:], self.url)
+
+    def test_delete_by_identifier_wrong_method_fails(self):
+        '''
+        Test that a HEAD request method to delete a link specified
+        by identifier yields an HTTP_405_METHOD_NOT_ALLOWED response.
+        '''
+        response = self.app.test_client.head(
+            self.url,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 405)
+        self.assertEqual(str(response.url)[-46:], self.url)
+
+    def test_delete_by_identifier_nonexisting_fails(self):
+        '''
+        Test that a DELETE request to delete a link specified by identifier
+        that does not exist yields an HTTP_404_NOT_FOUND response.
+        '''
+        bad_identifier = '12345678-1234-1234-1234-123456789012'
+        url = self.endpoint + bad_identifier
+        response = self.app.test_client.delete(
+            url,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 404)
+        self.assertEqual(str(response.url)[-46:], url)
+
+    def test_delete_by_identifier_correct_request_successful(self):
+        '''
+        Test that a DELETE request to delete a link specified by identifier
+        with the correct token yields an HTTP_204_NO_CONTENT response.
+        '''
+        pass
+        # response = self.app.test_client.delete(
+        #     self.url,
+        #     gather_request=False,
+        #     headers=self.headers
+        # )
+        # self.assertEqual(response.status, 204)
+        # self.assertEqual(str(response.url)[-46:], self.url)

@@ -50,7 +50,7 @@ class TestUpdateLinkByIdAPI(TestCase):
     def test_update_active_link_by_id_without_token_fails(self):
         '''
         Test that a put request to update an active link specified by id
-        without a token yield an HTTP_400_BAD_REQUEST response.
+        without a token yields an HTTP_400_BAD_REQUEST response.
         '''
         response = self.app.test_client.put(
             self.active_endpoint,
@@ -239,7 +239,7 @@ class TestUpdateLinkByIdAPI(TestCase):
         self.assertEqual(str(response.url)[-20:], self.inactive_endpoint)
 
 
-class TestCheckDataAfterUpdate(TestCase):
+class TestCheckDataAfterUpdateById(TestCase):
 
     def setUp(self):
         self.app = create_app()
@@ -270,3 +270,136 @@ class TestCheckDataAfterUpdate(TestCase):
             headers=self.headers
         )
         self.assertEqual(loads(loads(response.text))['url'], 'test-url')
+
+
+class TestUpdateLinkByIdentifierAPI(TestCase):
+
+    def setUp(self):
+        self.app = create_app()
+        self.identifier = '19a0c1f8-9032-11ea-8195-0242ac120003'
+        self.endpoint = '/api/link/' + self.identifier
+        self.headers = {'Bearer': config('ACCESS_TOKEN')}
+        self.data = dumps({'url': 'test-url'})
+
+    def test_update_link_by_identifier_with_token_successful(self):
+        '''
+        Test that a put request to update a link specified by identifier with
+        the correct token and data yields an HTTP_200_OK response.
+        '''
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=self.data
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-46:], self.endpoint)
+
+    def test_update_link_by_identifier_without_token_fails(self):
+        '''
+        Test that a put request to update a link specified by identifier
+        without a token yields an HTTP_400_BAD_REQUEST response.
+        '''
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            data=self.data
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-46:], self.endpoint)
+
+    def test_update_link_by_identifier_wrong_token_fails(self):
+        '''
+        Test that a put request to update a link specified by identifier with
+        an incorrect token yields an HTTP_401_UNAUTHORIZED response.
+        '''
+        bad_token = 'made-up-wrong-token'
+        headers = {'Bearer': bad_token}
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=headers,
+            data=self.data
+        )
+        self.assertEqual(response.status, 401)
+        self.assertEqual(str(response.url)[-46:], self.endpoint)
+
+    def test_update_link_by_identifier_wrong_method_fails(self):
+        '''
+        Test that a POST request method to update a link specified by
+        identifier yields an HTTP_405_METHOD_NOT_ALLOWED response.
+        '''
+        response = self.app.test_client.post(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=self.data
+        )
+        self.assertEqual(response.status, 405)
+        self.assertEqual(str(response.url)[-46:], self.endpoint)
+
+    def test_update_link_by_identifier_wrong_identifier_fails(self):
+        '''
+        Test that a put request to update a link specified by identifier that
+        does not exist yields and HTTP_404_NOT_FOUND response.
+        '''
+        bad_identifier = 'made-up-wrong-identifier-fixedlength'
+        endpoint = '/api/link/' + bad_identifier
+        response = self.app.test_client.put(
+            endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=self.data
+        )
+        self.assertEqual(response.status, 404)
+        self.assertEqual(str(response.url)[-46:], endpoint)
+
+    def test_update_link_by_identifier_incorrect_payload_fails(self):
+        '''
+        Test that a put request to update a link specified by identifier with
+        an incorrect payload yields and HTTP_400_BAD_REQUEST response.
+        '''
+        data = 'wrong_data_format'
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(data)
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-46:], self.endpoint)
+
+    def test_update_link_by_identifier_incomplete_payload_fails(self):
+        '''
+        Test that a put request to update a link specified by identifier with
+        an incomplete payload yields an HTTP_400_BAD_REQUEST response.
+        '''
+        data = {}
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(data)
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-46:], self.endpoint)
+
+class TestCheckDataAfterUpdateByIdentifier(TestCase):
+
+    def setUp(self):
+        self.app = create_app()
+        self.identifier = '19a0c1f8-9032-11ea-8195-0242ac120003'
+        self.endpoint = '/api/link/' + self.identifier
+        self.headers = {'Bearer': config('ACCESS_TOKEN')}
+
+    def test_update_link_by_identifier_data_changed_successfully(self):
+        '''
+        Test that a detail get request for a link updated via a test
+        put request specified by identifier yields the updated data.
+        '''
+        response = self.app.test_client.get(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(loads(response.text)['url'], 'test-url')

@@ -118,6 +118,7 @@ async def api_update_link_by_identifier(request, identifier):
                 table, data = inactives, in_data
 
             else:
+                await trans.close()
                 return json({'message': 'Link does not exist'}, status=404)
 
             await conn.execute(

@@ -143,28 +143,28 @@ class TestRetrieveDetailByIdAPI(TestCase):
         Test that a get detail request for an active link that does not exist
         yields an HTTP_404_NOT_FOUND response.
         '''
-        endpoint = '/api/links/active/1000000'
+        endpoint = '/api/link/active/1000000'
         response = self.app.test_client.get(
             endpoint,
             gather_request=False,
             headers=self.headers
         )
         self.assertEqual(response.status, 404)
-        self.assertEqual(str(response.url)[-25:], endpoint)
+        self.assertEqual(str(response.url)[-24:], endpoint)
 
     def test_inactive_detail_wrong_id(self):
         '''
         Test that a get detail request for an inactive link that does not exist
         yields an HTTP_404_NOT_FOUND response.
         '''
-        endpoint = '/api/links/inactive/1000000'
+        endpoint = '/api/link/inactive/1000000'
         response = self.app.test_client.get(
             endpoint,
             gather_request=False,
             headers=self.headers
         )
         self.assertEqual(response.status, 404)
-        self.assertEqual(str(response.url)[-27:], endpoint)
+        self.assertEqual(str(response.url)[-26:], endpoint)
 
     def test_active_detail_payload(self):
         '''

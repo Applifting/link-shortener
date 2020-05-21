@@ -44,27 +44,44 @@ async def api_update_link_by_id(request, status, link_id):
     except KeyError:
         return json({'message': 'Please provide a new url'}, status=400)
 
-    except KeyError:
+    except Exception:
         return json({'message': 'Incorrect payload'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            try:
+            queryset = await conn.execute(
+                table.select().where(
+                    table.columns['id'] == link_id
+                )
+            )
+            if await queryset.fetchone():
                 await conn.execute(
                     table.update().where(
                         table.columns['id'] == link_id
-                    ).values(
-                        url=url
-                    )
+                    ).values(url=url)
                 )
                 await trans.commit()
                 await trans.close()
                 return json({'message': 'Link updated'}, status=200)
 
-            except Exception:
-                await trans.close()
-                return json({'message': 'Link does not exist'}, status=404)
+            await trans.close()
+            return json({'message': 'Link does not exist'}, status=404)
+            # try:
+            #     await conn.execute(
+            #         table.update().where(
+            #             table.columns['id'] == link_id
+            #         ).values(
+            #             url=url
+            #         )
+            #     )
+            #     await trans.commit()
+            #     await trans.close()
+            #     return json({'message': 'Link updated'}, status=200)
+            #
+            # except Exception:
+            #     await trans.close()
+            #     return json({'message': 'Link does not exist'}, status=404)
 
 
     except Exception:

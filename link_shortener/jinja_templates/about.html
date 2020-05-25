@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <br><br>
   <div class="container">
     <h1>Greetings!</h1>
     <p>
@@ -24,53 +25,11 @@
     <p>
       As the creator is JavaScript illiterate, this site is 99% server-side.
     </p>
-
-    <br><br>
-    <div class="container construct-body">
-      <table width="100%">
-        <tr>
-          <td width="33%"><span id="firstHouse"><img src="house1.png" width="250" height="250" alt="Not found"></span></td>
-          <td width="33%"><span id="secondHouse"><img src="house2.png" width="250" height="250" alt="Not found"></span></td>
-          <td width="34%"><span id="thirdHouse"><img src="home.png" width="250" height="250" alt="Not found"></span></td>
-        </tr>
-      </table>
-    </div>
+    <br>
+    <h3>Can I and/or my company have this app?</h3>
+    <p>
+      Yes, Link Shortener is an open source project. You can clone the project
+      <a href="https://github.com/Applifting/link-shortener">HERE</a>
+    </p>
   </div>
-  <script type="text/javascript">
-    var options = ["hidden", "hidden", "visible"];
-    var i = 2;
-    var j = 1;
-    var k = 0;
-
-    function firstHouseBuildingGif() {
-      document.getElementById("firstHouse").style.visibility = options[i];
-      i++;
-
-      if (i > options.length - 1) {
-        i = 0;
-      }
-    }
-
-    function secondHouseBuildingGif() {
-      document.getElementById("secondHouse").style.visibility = options[j];
-      j++;
-
-      if (j > options.length - 1) {
-        j = 0;
-      }
-    }
-
-    function thirdHouseBuildingGif() {
-      document.getElementById("thirdHouse").style.visibility = options[k];
-      k++;
-
-      if (k > options.length - 1) {
-        k = 0;
-      }
-    }
-
-    setInterval(firstHouseBuildingGif, 1000);
-    setInterval(secondHouseBuildingGif, 1000);
-    setInterval(thirdHouseBuildingGif, 1000);
-  </script>
 {% endblock %}

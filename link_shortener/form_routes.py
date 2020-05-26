@@ -188,8 +188,9 @@ async def update_link_form(request, user, link_id):
                     links.columns['id'] == link_id
                 )
             )
-            if not await query.fetchall():
-                return json({'message': 'Link does not exist'}, status=404)
+            print('yo')
+            # if not await query.fetchall():
+            #     return json({'message': 'Link does not exist'}, status=404)
 
             link = await query.fetchone()
             return html(template_loader(
@@ -198,8 +199,7 @@ async def update_link_form(request, user, link_id):
                             link=link,
                         ), status=200)
 
-    except Exception as error:
-        print(error)
+    except Exception:
         return json({'message': 'Getting update form failed'}, status=500)
 
 

@@ -13,7 +13,7 @@ from sanic_session import InMemorySessionInterface
 from link_shortener.core.initialise_db import initdb_blueprint
 from link_shortener.core.authentication import auth_blueprint
 
-# from link_shortener.form_routes import form_blueprint
+from link_shortener.form_routes import form_blueprint
 from link_shortener.view_routes import view_blueprint
 
 # from link_shortener.api.retrieve_list import api_retrieve_list_blueprint
@@ -59,7 +59,7 @@ def create_app():
     app.blueprint(initdb_blueprint)
     app.blueprint(oauth_blueprint)
     app.blueprint(auth_blueprint)
-    # app.blueprint(form_blueprint)
+    app.blueprint(form_blueprint)
     app.blueprint(view_blueprint)
     # app.blueprint(api_retrieve_list_blueprint)
     # app.blueprint(api_retrieve_detail_blueprint)

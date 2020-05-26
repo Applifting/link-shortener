@@ -16,7 +16,7 @@ from sanic_wtf import SanicForm
 from wtforms import StringField, SubmitField, PasswordField, DateField
 from wtforms.validators import DataRequired
 
-from link_shortener.models import actives, inactives, salts
+from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -51,8 +51,8 @@ async def link_password_form(request, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             query = await conn.execute(
-                actives.select().where(
-                    actives.columns['id'] == link_id
+                links.select().where(
+                    links.columns['id'] == link_id
                 )
             )
             link = await query.fetchone()
@@ -75,8 +75,8 @@ async def link_password_save(request, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             link_query = await conn.execute(
-                actives.select().where(
-                    actives.columns['id'] == link_id
+                links.select().where(
+                    links.columns['id'] == link_id
                 )
             )
             link_data = await link_query.fetchone()
@@ -93,12 +93,12 @@ async def link_password_save(request, link_id):
                 100000
             )
             if (link_data.password == password):
-                return redirect(link_data.url)
+                return redirect(link_data.url, status=302)
 
-            return json({'message': 'incorrect password'}, status=401)
+            return json({'message': 'Incorrect password'}, status=401)
 
     except Exception:
-        return json({'message': 'link inactive or does not exist'}, status=400)
+        return json({'message': 'Link inactive or does not exist'}, status=404)
 
 
 @form_blueprint.route('/create', methods=['GET'])
@@ -118,11 +118,25 @@ async def create_link_form(request, user):
 async def create_link_save(request, user):
     form = CreateForm(request)
     if not form.validate():
-        return json({'message': 'form invalid'}, status=400)
+        return json({'message': 'Form invalid'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
+            query = await conn.execute(
+                links.select().where(
+                    links.columns['endpoint'] == form.endpoint.data
+                ).where(
+                    links.columns['is_active'] == True
+                )
+            )
+            if await query.fetchall():
+                await trans.close()
+                return json(
+                    {'message': 'This active endpoint already exists'},
+                    status=400
+                )
+
             identifier = str(uuid.uuid1())
             if form.password.data:
                 salt = os.urandom(32)
@@ -142,14 +156,15 @@ async def create_link_save(request, user):
                 password = None
 
             await conn.execute(
-                actives.insert().values(
+                links.insert().values(
                     identifier=identifier,
                     owner=user.email,
                     owner_id=user.id,
                     password=password,
                     endpoint=form.endpoint.data,
                     url=form.url.data,
-                    switch_date=form.switch_date.data
+                    switch_date=form.switch_date.data,
+                    is_active=True
                 )
             )
             await trans.commit()
@@ -158,68 +173,47 @@ async def create_link_save(request, user):
 
     except Exception:
         await trans.close()
-        return json(
-            {'message': 'an active link with that endpoint already exists'},
-            status=400
-        )
+        return json({'message': 'Creating new link failed'}, status=500)
 
 
-@form_blueprint.route('/edit/<status>/<link_id>', methods=['GET'])
+@form_blueprint.route('/edit/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def update_link_form(request, user, status, link_id):
+async def update_link_form(request, user, link_id):
     form = UpdateForm(request)
-    if (status == 'active'):
-        table = actives
-    elif (status == 'inactive'):
-        table = inactives
-    else:
-        return json({'message': 'path does not exist'}, status=400)
-
     try:
         async with request.app.engine.acquire() as conn:
             query = await conn.execute(
-                table.select().where(
-                    table.columns['id'] == link_id
+                links.select().where(
+                    links.columns['id'] == link_id
                 )
             )
-            link = await query.fetchone()
-            if link.password is None:
-                has_password = False
-            else:
-                has_password = True
+            if not await query.fetchall():
+                return json({'message': 'Link does not exist'}, status=404)
 
+            link = await query.fetchone()
             return html(template_loader(
                             template_file='edit_form.html',
                             form=form,
                             link=link,
-                            status=status,
-                            has_password=has_password
                         ), status=200)
 
     except Exception:
-        return json({'message': 'getting update form failed'}, status=500)
+        return json({'message': 'Getting update form failed'}, status=500)
 
 
-@form_blueprint.route('/edit/<status>/<link_id>', methods=['POST'])
+@form_blueprint.route('/edit/<link_id>', methods=['POST'])
 @login_required
 @credential_whitelist_check
-async def update_link_save(request, user, status, link_id):
+async def update_link_save(request, user, link_id):
     form = UpdateForm(request)
-    if (status == 'active'):
-        table = actives
-    elif (status == 'inactive'):
-        table = inactives
-    else:
-        return json({'message': 'path does not exist'}, status=400)
-
     if not form.validate():
-        return json({'message': 'form invalid'}, status=400)
+        return json({'message': 'Form invalid'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            link_update = table.update().where(table.columns['id'] == link_id)
+            link_update = links.update().where(table.columns['id'] == link_id)
 
             if form.password.data:
                 fresh_salt = os.urandom(32)
@@ -229,8 +223,8 @@ async def update_link_save(request, user, status, link_id):
                     fresh_salt,
                     100000
                 )
-                link_query = await conn.execute(table.select().where(
-                    table.columns['id'] == link_id
+                link_query = await conn.execute(links.select().where(
+                    links.columns['id'] == link_id
                 ))
                 link_data = await link_query.fetchone()
 
@@ -258,8 +252,8 @@ async def update_link_save(request, user, status, link_id):
 
             await trans.commit()
             await trans.close()
-            return redirect('/links/me')
+            return redirect('/links/me', status=302)
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=400)
+        return json({'message': 'Editing link failed'}, status=500)

@@ -91,8 +91,7 @@ async def owner_specific_links(request, user):
                             link_data=link_data
                         ), status=200)
 
-    except Exception as error:
-        print(error)
+    except Exception:
         return json({'message': 'Template failed loading'}, status=500)
 
 

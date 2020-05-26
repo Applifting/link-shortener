@@ -11,7 +11,7 @@ from sanic_oauth.blueprint import login_required
 
 from sqlalchemy.sql.expression import select as sql_select
 
-from link_shortener.models import actives, inactives, salts
+from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -25,8 +25,9 @@ async def redirect_link(request, link_endpoint):
     try:
         async with request.app.engine.acquire() as conn:
             query = await conn.execute(
-                actives.select().where(
-                    actives.columns['endpoint'] == link_endpoint
+                links.select().where(
+                    links.columns['endpoint'] == link_endpoint,
+                    links.columns['is_active'] == True
                 )
             )
             link_data = await query.fetchone()
@@ -36,12 +37,12 @@ async def redirect_link(request, link_endpoint):
             return redirect('/authorize/{}'.format(link_data.id))
 
     except Exception:
-        return json({'message': 'link inactive or does not exist'}, status=400)
+        return json({'message': 'Link inactive or does not exist'}, status=404)
 
 
 @view_blueprint.route('/', methods=['GET'])
 async def landing_page(request):
-    return redirect('/links/about')
+    return redirect('/links/about', status=301)
 
 
 @view_blueprint.route('/links/about', methods=['GET'])
@@ -50,7 +51,7 @@ async def about_page(request):
         return html(template_loader(template_file='about.html'), status=200)
 
     except Exception:
-        return json({'message': 'getting route failed'}, status=500)
+        return json({'message': 'Template failed loading'}, status=500)
 
 
 @view_blueprint.route('/links/all', methods=['GET'])
@@ -59,7 +60,7 @@ async def about_page(request):
 async def all_active_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
-            queryset = await conn.execute(actives.select())
+            queryset = await conn.execute(links.select())
             data = await queryset.fetchall()
             return html(template_loader(
                             template_file='all_links.html',
@@ -68,7 +69,7 @@ async def all_active_links(request, user):
                         ), status=200)
 
     except Exception:
-        return json({'message': 'getting links failed'}, status=500)
+        return json({'message': 'Template failed loading'}, status=500)
 
 
 @view_blueprint.route('/links/me', methods=['GET'])
@@ -78,13 +79,15 @@ async def owner_specific_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
             ac_queryset = await conn.execute(
-                actives.select().where(
-                    actives.columns['owner_id'] == user.id
+                links.select().where(
+                    links.columns['owner_id'] == user.id,
+                    links.columns['is_active'] == True
                 )
             )
             in_queryset = await conn.execute(
-                inactives.select().where(
-                    inactives.columns['owner_id'] == user.id
+                links.select().where(
+                    links.columns['owner_id'] == user.id,
+                    links.columns['is_active'] == False
                 )
             )
             ac_data = await ac_queryset.fetchall()
@@ -97,35 +100,28 @@ async def owner_specific_links(request, user):
                         ), status=200)
 
     except Exception:
-        return json({'message': 'getting your links failed'}, status=500)
+        return json({'message': 'Template failed loading'}, status=500)
 
 
-@view_blueprint.route('/delete/<status>/<link_id>', methods=['GET'])
+@view_blueprint.route('/delete/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def delete_link(request, user, status, link_id):
-    if (status == 'active'):
-        table = actives
-    elif (status == 'inactive'):
-        table = inactives
-    else:
-        return json({'message': 'Path does not exist'}, status=400)
-
+async def delete_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
             await conn.execute(
-                table.delete().where(
+                links.delete().where(
                     table.columns['id'] == link_id
                 )
             )
             await trans.commit()
             await trans.close()
-            return redirect('/links/me')
+            return redirect('/links/me', status=204)
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=400)
+        return json({'message': 'Link does not exist'}, status=404)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
@@ -135,30 +131,19 @@ async def activate_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            await conn.execute(
-                actives.insert().from_select(
-                    [
-                        'identifier',
-                        'owner',
-                        'owner_id',
-                        'password',
-                        'endpoint',
-                        'url'
-                    ],
-                    sql_select([
-                        inactives.c.identifier,
-                        inactives.c.owner,
-                        inactives.c.owner_id,
-                        inactives.c.password,
-                        inactives.c.endpoint,
-                        inactives.c.url
-                    ]).where(inactives.c.id == link_id)
+            query = await conn.execute(
+                links.select().where(
+                    links.columns['id'] == link_id
                 )
             )
+            link_data = await query.fetchone()
+            if link_data.is_active:
+                return json({'message': 'Link is already active'}, status=400)
+
             await conn.execute(
-                inactives.delete().where(
-                    inactives.columns['id'] == link_id
-                )
+                links.update().where(
+                    links.columns['id'] == link_id
+                ).values(is_active=True)
             )
             await trans.commit()
             await trans.close()
@@ -166,7 +151,7 @@ async def activate_link(request, user, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=400)
+        return json({'message': 'Link does not exist'}, status=404)
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -176,30 +161,22 @@ async def deactivate_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            await conn.execute(
-                inactives.insert().from_select(
-                    [
-                        'identifier',
-                        'owner',
-                        'owner_id',
-                        'password',
-                        'endpoint',
-                        'url'
-                    ],
-                    sql_select([
-                        actives.c.identifier,
-                        actives.c.owner,
-                        actives.c.owner_id,
-                        actives.c.password,
-                        actives.c.endpoint,
-                        actives.c.url
-                    ]).where(actives.c.id == link_id)
+            query = await conn.execute(
+                links.select().where(
+                    links.columns['id'] == link_id
                 )
             )
-            await conn.execute(
-                actives.delete().where(
-                    actives.columns['id'] == link_id
+            link_data = await query.fetchone()
+            if not link_data.is_active:
+                return json(
+                    {'message': 'Link is already inactive'},
+                    status=400
                 )
+
+            await conn.execute(
+                links.update().where(
+                    links.columns['id'] == link_id
+                ).values(is_active=False)
             )
             await trans.commit()
             await trans.close()
@@ -207,32 +184,25 @@ async def deactivate_link(request, user, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=400)
+        return json({'message': 'Link does not exist'}, status=404)
 
 
-@view_blueprint.route('/reset/<status>/<link_id>', methods=['GET'])
+@view_blueprint.route('/reset/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def reset_password_view(request, user, status, link_id):
-    if (status == 'active'):
-        table = actives
-    elif (status == 'inactive'):
-        table = inactives
-    else:
-        return json({'message': 'path does not exist'}, status=400)
-
+async def reset_password_view(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            link_query = await conn.execute(
-                table.select().where(
-                    table.columns['id'] == link_id
+            query = await conn.execute(
+                links.select().where(
+                    links.columns['id'] == link_id
                 )
             )
             link_data = await link_query.fetchone()
             await conn.execute(
-                table.update().where(
-                    table.columns['id'] == link_id
+                links.update().where(
+                    links.columns['id'] == link_id
                 ).values(
                     password=None
                 )
@@ -248,4 +218,4 @@ async def reset_password_view(request, user, status, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'link does not exist'}, status=400)
+        return json({'message': 'link does not exist'}, status=404)

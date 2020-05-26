@@ -2,8 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from sqlalchemy import MetaData, Table, Column, String, Integer, BLOB,
-                        Date, Boolean
+from sqlalchemy import (MetaData, Table, Column, String, Integer, BLOB,
+                        Date, Boolean)
 
 
 metadata = MetaData()

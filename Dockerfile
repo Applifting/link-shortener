@@ -23,4 +23,4 @@ LABEL maintainer="Vojtech Janousek" \
 EXPOSE 8000
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/link_shortener"
-# CMD ['python', 'server.py']
+CMD ["python", "link_shortener/server.py"]

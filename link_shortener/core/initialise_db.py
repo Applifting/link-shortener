@@ -15,13 +15,13 @@ from aiomysql.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
 
-from link_shortener.models import actives, inactives, salts
+from link_shortener.models import links, salts
 
 
 initdb_blueprint = Blueprint('intitialise_db')
 
 
-active_data = [
+data = [
     [
         str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
@@ -29,7 +29,8 @@ active_data = [
         None,
         'pomuzemesi',
         'https://staging.pomuzeme.si',
-        None
+        None,
+        True
     ],
     [
         '19a0c1f8-9032-11ea-8195-0242ac120003',
@@ -38,7 +39,8 @@ active_data = [
         None,
         'vlk',
         'http://www.vlk.cz',
-        datetime.date(2020, 5, 6)
+        datetime.date(2020, 5, 6),
+        True
     ],
     [
         str(uuid.uuid1()),
@@ -47,7 +49,8 @@ active_data = [
         'bigfish',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg',
-        None
+        None,
+        True
     ],
     [
         str(uuid.uuid1()),
@@ -56,7 +59,8 @@ active_data = [
         None,
         'dollar',
         'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg',
-        datetime.date(2020, 5, 8)
+        datetime.date(2020, 5, 8),
+        True
     ],
     [
         str(uuid.uuid1()),
@@ -65,7 +69,8 @@ active_data = [
         None,
         'kodex',
         'https://github.com/Applifting/culture',
-        None
+        None,
+        True
     ],
     [
         str(uuid.uuid1()),
@@ -74,25 +79,28 @@ active_data = [
         'metapass',
         'meta',
         'https://github.com/Applifting/link-shortener',
-        None
-    ]
-]
-inactive_data = [
+        None,
+        True
+    ],
     [
         '19a0c770-9032-11ea-8195-0242ac120003',
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
+        None,
         'tunak',
         'https://www.britannica.com/animal/tuna-fish',
-        datetime.date(2020, 6, 1)
+        datetime.date(2020, 6, 1),
+        False
     ],
     [
         str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
+        None,
         'nope',
         'https://www.youtube.com/watch?v=gvdf5n-zI14',
-        None
+        None,
+        False
     ]
 ]
 
@@ -121,10 +129,9 @@ async def initialise_db(app, loop):
         try:
             trans = await conn.begin()
 
-            await conn.execute(CreateTable(actives))
-            await conn.execute(CreateTable(inactives))
+            await conn.execute(CreateTable(links))
             await conn.execute(CreateTable(salts))
-            for values in active_data:
+            for values in data:
                 if values[3] is not None:
                     salt = os.urandom(32)
                     values[3] = hashlib.pbkdf2_hmac(
@@ -141,27 +148,18 @@ async def initialise_db(app, loop):
                     )
 
                 await conn.execute(
-                    actives.insert().values(
+                    links.insert().values(
                         identifier=values[0],
                         owner=values[1],
                         owner_id=values[2],
                         password=values[3],
                         endpoint=values[4],
                         url=values[5],
-                        switch_date=values[6]
+                        switch_date=values[6],
+                        is_active=values[7]
                     )
                 )
-            for values in inactive_data:
-                await conn.execute(
-                    inactives.insert().values(
-                        identifier=values[0],
-                        owner=values[1],
-                        owner_id=values[2],
-                        endpoint=values[3],
-                        url=values[4],
-                        switch_date=values[5]
-                    )
-                )
+
             await trans.commit()
             await trans.close()
 

@@ -18,46 +18,31 @@
         <th></th>
         <th></th>
       </tr>
-      {% for row in ac_data %}
+      {% for link in link_data %}
         <tr>
-          <td>/{{ row.endpoint }}</td>
-          <td><a href="{{ row.url }}">{{ row.url }}</a></td>
-          <td>{{ domain_name }}/{{ row.endpoint }}</td>
+          <td>/{{ link.endpoint }}</td>
+          <td><a href="{{ link.url }}">{{ link.url }}</a></td>
+          <td>{{ domain_name }}/{{ link.endpoint }}</td>
+          {% if link.is_active %}
+            <td>
+              <a href="/deactivate/{{ link.id }}">
+                <img src="on.png" width="20" height="20" alt="Not found">
+              </a>
+            </td>
+          {% else %}
+            <td>
+              <a href="/activate/{{ link.id }}">
+                <img src="off.png" width="20" height="20" alt="Not found">
+              </a>
+            </td>
+          {% endif %}
           <td>
-            <a href="/deactivate/{{ row.id }}">
-              <img src="on.png" width="20" height="20" alt="Not found">
-            </a>
-          </td>
-          <td>
-            <a href="/edit/active/{{ row.id }}">
+            <a href="/edit/{{ link.id }}">
               <img src="edit.png" width="20" height="20" alt="Not found">
             </a>
           </td>
           <td>
-            <a href="/delete/active/{{ row.id }}">
-              <img src="delete.png" width="20" height="20" alt="Not found">
-            </a>
-          </td>
-        </tr>
-      {% endfor %}
-
-      {% for row in in_data %}
-        <tr>
-          <td>/{{ row.endpoint }}</td>
-          <td><a href="{{ row.url }}">{{ row.url }}</a></td>
-          <td>{{ domain_name }}/{{ row.endpoint }}</td>
-          <td>
-            <a href="/activate/{{ row.id }}">
-              <img src="off.png" width="20" height="20" alt="Not found">
-            </a>
-          </td>
-          <td>
-            <a href="/edit/inactive/{{ row.id }}">
-              <img src="edit.png" width="20" height="20" alt="Not found">
-            </a>
-          </td>
-          <td>
-            <a href="/delete/inactive/{{ row.id }}">
+            <a href="/delete/{{ link.id }}">
               <img src="delete.png" width="20" height="20" alt="Not found">
             </a>
           </td>

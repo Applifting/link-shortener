@@ -79,28 +79,20 @@ async def all_active_links(request, user):
 async def owner_specific_links(request, user):
     try:
         async with request.app.engine.acquire() as conn:
-            ac_queryset = await conn.execute(
+            queryset = await conn.execute(
                 links.select().where(
-                    links.columns['owner_id'] == user.id,
-                    links.columns['is_active'] == True
+                    links.columns['owner_id'] == user.id
                 )
             )
-            in_queryset = await conn.execute(
-                links.select().where(
-                    links.columns['owner_id'] == user.id,
-                    links.columns['is_active'] == False
-                )
-            )
-            ac_data = await ac_queryset.fetchall()
-            in_data = await in_queryset.fetchall()
+            link_data = await queryset.fetchall()
             return html(template_loader(
                             template_file='my_links.html',
                             domain_name=config('DOMAIN_NAME'),
-                            ac_data=ac_data,
-                            in_data=in_data
+                            link_data=link_data
                         ), status=200)
 
-    except Exception:
+    except Exception as error:
+        print(error)
         return json({'message': 'Template failed loading'}, status=500)
 
 

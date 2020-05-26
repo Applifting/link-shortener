@@ -13,14 +13,14 @@ from sanic_session import InMemorySessionInterface
 from link_shortener.core.initialise_db import initdb_blueprint
 from link_shortener.core.authentication import auth_blueprint
 
-from link_shortener.form_routes import form_blueprint
+# from link_shortener.form_routes import form_blueprint
 from link_shortener.view_routes import view_blueprint
 
-from link_shortener.api.retrieve_list import api_retrieve_list_blueprint
-from link_shortener.api.retrieve_detail import api_retrieve_detail_blueprint
-from link_shortener.api.create_delete import api_create_delete_blueprint
-from link_shortener.api.status_switchers import api_switcher_blueprint
-from link_shortener.api.update_link import api_update_link_blueprint
+# from link_shortener.api.retrieve_list import api_retrieve_list_blueprint
+# from link_shortener.api.retrieve_detail import api_retrieve_detail_blueprint
+# from link_shortener.api.create_delete import api_create_delete_blueprint
+# from link_shortener.api.status_switchers import api_switcher_blueprint
+# from link_shortener.api.update_link import api_update_link_blueprint
 
 
 async def add_session_to_request(request):

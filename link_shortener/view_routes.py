@@ -26,7 +26,8 @@ async def redirect_link(request, link_endpoint):
         async with request.app.engine.acquire() as conn:
             query = await conn.execute(
                 links.select().where(
-                    links.columns['endpoint'] == link_endpoint,
+                    links.columns['endpoint'] == link_endpoint
+                ).where(
                     links.columns['is_active'] == True
                 )
             )
@@ -112,12 +113,12 @@ async def delete_link(request, user, link_id):
             trans = await conn.begin()
             await conn.execute(
                 links.delete().where(
-                    table.columns['id'] == link_id
+                    links.columns['id'] == link_id
                 )
             )
             await trans.commit()
             await trans.close()
-            return redirect('/links/me', status=204)
+            return redirect('/links/me', status=302)
 
     except Exception:
         await trans.close()

@@ -198,7 +198,8 @@ async def update_link_form(request, user, link_id):
                             link=link,
                         ), status=200)
 
-    except Exception:
+    except Exception as error:
+        print(error)
         return json({'message': 'Getting update form failed'}, status=500)
 
 

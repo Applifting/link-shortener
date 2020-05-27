@@ -188,16 +188,16 @@ async def update_link_form(request, user, link_id):
                     links.columns['id'] == link_id
                 )
             )
-            print('yo')
-            # if not await query.fetchall():
-            #     return json({'message': 'Link does not exist'}, status=404)
+            try:
+                link = await query.fetchone()
+                return html(template_loader(
+                                template_file='edit_form.html',
+                                form=form,
+                                link=link,
+                            ), status=200)
 
-            link = await query.fetchone()
-            return html(template_loader(
-                            template_file='edit_form.html',
-                            form=form,
-                            link=link,
-                        ), status=200)
+            except Exception:
+                return json({'message': 'Link does not exist'}, status=404)
 
     except Exception:
         return json({'message': 'Getting update form failed'}, status=500)
@@ -214,8 +214,7 @@ async def update_link_save(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            link_update = links.update().where(table.columns['id'] == link_id)
-
+            link_update = links.update().where(links.columns['id'] == link_id)
             if form.password.data:
                 fresh_salt = os.urandom(32)
                 password = hashlib.pbkdf2_hmac(
@@ -255,6 +254,7 @@ async def update_link_save(request, user, link_id):
             await trans.close()
             return redirect('/links/me', status=302)
 
-    except Exception:
+    except Exception as error:
+        print(error)
         await trans.close()
         return json({'message': 'Editing link failed'}, status=500)

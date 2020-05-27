@@ -123,27 +123,52 @@ async def activate_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['id'] == link_id
+            try:
+                query = await conn.execute(
+                    links.select().where(
+                        links.columns['id'] == link_id
+                    )
                 )
-            )
-            link_data = await query.fetchone()
-            if link_data.is_active:
-                return json({'message': 'Link is already active'}, status=400)
+                link_data = await query.fetchone()
+                if not link_data:
+                    await trans.close()
+                    raise Exception
 
-            await conn.execute(
-                links.update().where(
-                    links.columns['id'] == link_id
-                ).values(is_active=True)
-            )
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me')
+                try:
+                    endpoint_query = await conn.execute(
+                        links.select().where(
+                            links.columns['endpoint'] == link_data.endpoint
+                        ).where(
+                            links.columns['is_active'] == True
+                        )
+                    )
+                    active_endpoint = await endpoint_query.fetchone()
+                    await trans.close()
+                    if not active_endpoint:
+                        raise Exception
+
+                    return json(
+                        {'message': 'That active endpoint already exists'},
+                        status=400
+                    )
+
+                except Exception:
+                    await conn.execute(
+                        links.update().where(
+                            links.columns['id'] == link_id
+                        ).values(is_active=True)
+                    )
+                    await trans.commit()
+                    await trans.close()
+                    return redirect('/links/me', status=302)
+
+            except Exception:
+                await trans.close()
+                return json({'message': 'Link does not exist'}, status=404)
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=404)
+        return json({'message': 'Activating failed'}, status=500)
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -153,30 +178,32 @@ async def deactivate_link(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['id'] == link_id
+            try:
+                query = await conn.execute(
+                    links.select().where(
+                        links.columns['id'] == link_id
+                    )
                 )
-            )
-            link_data = await query.fetchone()
-            if not link_data.is_active:
-                return json(
-                    {'message': 'Link is already inactive'},
-                    status=400
-                )
+                link = await query.fetchone()
+                if not link:
+                    raise Exception
 
-            await conn.execute(
-                links.update().where(
-                    links.columns['id'] == link_id
-                ).values(is_active=False)
-            )
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me')
+                await conn.execute(
+                    links.update().where(
+                        links.columns['id'] == link_id
+                    ).values(is_active=False)
+                )
+                await trans.commit()
+                await trans.close()
+                return redirect('/links/me', status=302)
+
+            except Exception:
+                await trans.close()
+                return json({'message': 'Link does not exist'}, status=404)
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=404)
+        return json({'message': 'Deactivating failed'}, status=500)
 
 
 @view_blueprint.route('/reset/<link_id>', methods=['GET'])
@@ -186,28 +213,37 @@ async def reset_password_view(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['id'] == link_id
+            try:
+                query = await conn.execute(
+                    links.select().where(
+                        links.columns['id'] == link_id
+                    )
                 )
-            )
-            link_data = await link_query.fetchone()
-            await conn.execute(
-                links.update().where(
-                    links.columns['id'] == link_id
-                ).values(
-                    password=None
+                link_data = await query.fetchone()
+                if not link_data:
+                    await trans.close()
+                    raise Exception
+
+                await conn.execute(
+                    links.update().where(
+                        links.columns['id'] == link_id
+                    ).values(
+                        password=None
+                    )
                 )
-            )
-            await conn.execute(
-                salts.delete().where(
-                    salts.columns['identifier'] == link_data.identifier
+                await conn.execute(
+                    salts.delete().where(
+                        salts.columns['identifier'] == link_data.identifier
+                    )
                 )
-            )
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me')
+                await trans.commit()
+                await trans.close()
+                return redirect('/links/me', status=302)
+
+            except Exception:
+                await trans.close()
+                return json({'message': 'Link does not exist'}, status=404)
 
     except Exception:
         await trans.close()
-        return json({'message': 'link does not exist'}, status=404)
+        return json({'message': 'Resetting password failed'}, status=500)

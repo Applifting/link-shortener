@@ -24,21 +24,34 @@ view_blueprint = Blueprint('views')
 async def redirect_link(request, link_endpoint):
     try:
         async with request.app.engine.acquire() as conn:
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['endpoint'] == link_endpoint
-                ).where(
-                    links.columns['is_active'] == True
+            try:
+                query = await conn.execute(
+                    links.select().where(
+                        links.columns['endpoint'] == link_endpoint
+                    ).where(
+                        links.columns['is_active'] == True
+                    )
                 )
-            )
-            link_data = await query.fetchone()
-            if link_data.password is None:
-                return redirect(link_data.url)
+                link_data = await query.fetchone()
+                if not link_data:
+                    raise Exception
 
-            return redirect('/authorize/{}'.format(link_data.id))
+                if link_data.password is None:
+                    return redirect(link_data.url, status=301)
+
+                return redirect(
+                    '/authorize/{}'.format(link_data.id),
+                    status=301
+                )
+
+            except Exception:
+                return json(
+                    {'message': 'Link inactive or does not exist'},
+                    status=404
+                )
 
     except Exception:
-        return json({'message': 'Link inactive or does not exist'}, status=404)
+        return json({'message': 'Server error'}, status=500)
 
 
 @view_blueprint.route('/', methods=['GET'])
@@ -113,7 +126,7 @@ async def delete_link(request, user, link_id):
 
     except Exception:
         await trans.close()
-        return json({'message': 'Link does not exist'}, status=404)
+        return json({'message': 'Deleting failed'}, status=500)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

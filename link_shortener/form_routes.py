@@ -50,55 +50,75 @@ async def link_password_form(request, link_id):
     form = PasswordForm(request)
     try:
         async with request.app.engine.acquire() as conn:
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['id'] == link_id
+            try:
+                query = await conn.execute(
+                    links.select().where(
+                        links.columns['id'] == link_id
+                    )
                 )
-            )
-            link = await query.fetchone()
-            return html(template_loader(
-                            template_file='password_form.html',
-                            form=form,
-                            link=link
-                        ), status=200)
+                link_data = await query.fetchone()
+                if not link_data:
+                    raise Exception
+
+                return html(template_loader(
+                                template_file='password_form.html',
+                                form=form,
+                                link=link_data
+                            ), status=200)
+
+            except Exception:
+                return json(
+                    {'message': 'Link has no password or does not exist'},
+                    status=404
+                )
 
     except Exception:
-        return json({'message': 'Link does not exist'}, status=400)
+        return json({'message': 'Authorizing failed'}, status=500)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])
 async def link_password_save(request, link_id):
     form = PasswordForm(request)
     if not form.validate():
-        return json({'message': 'form invalid'}, status=400)
+        return json({'message': 'Form invalid'}, status=400)
 
     try:
         async with request.app.engine.acquire() as conn:
-            link_query = await conn.execute(
-                links.select().where(
-                    links.columns['id'] == link_id
+            try:
+                link_query = await conn.execute(
+                    links.select().where(
+                        links.columns['id'] == link_id
+                    )
                 )
-            )
-            link_data = await link_query.fetchone()
-            salt_query = await conn.execute(
-                salts.select().where(
-                    salts.columns['identifier'] == link_data.identifier
-                )
-            )
-            salt_data = await salt_query.fetchone()
-            password = hashlib.pbkdf2_hmac(
-                'sha256',
-                form.password.data.encode('utf-8'),
-                salt_data.salt,
-                100000
-            )
-            if (link_data.password == password):
-                return redirect(link_data.url, status=302)
+                link_data = await link_query.fetchone()
+                if not link_data:
+                    raise Exception
 
-            return json({'message': 'Incorrect password'}, status=401)
+                salt_query = await conn.execute(
+                    salts.select().where(
+                        salts.columns['identifier'] == link_data.identifier
+                    )
+                )
+                salt_data = await salt_query.fetchone()
+                password = hashlib.pbkdf2_hmac(
+                    'sha256',
+                    form.password.data.encode('utf-8'),
+                    salt_data.salt,
+                    100000
+                )
+                if (link_data.password == password):
+                    return redirect(link_data.url, status=302)
+
+                return json({'message': 'Incorrect password'}, status=401)
+
+            except Exception:
+                return json(
+                    {'Link has no password or does not exist'},
+                    status=404
+                )
 
     except Exception:
-        return json({'message': 'Link inactive or does not exist'}, status=404)
+        return json({'message': 'Form failed'}, status=500)
 
 
 @form_blueprint.route('/create', methods=['GET'])
@@ -123,14 +143,19 @@ async def create_link_save(request, user):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['endpoint'] == form.endpoint.data
-                ).where(
-                    links.columns['is_active'] == True
+            try:
+                query = await conn.execute(
+                    links.select().where(
+                        links.columns['endpoint'] == form.endpoint.data
+                    ).where(
+                        links.columns['is_active'] == True
+                    )
                 )
-            )
-            if await query.fetchall():
+                link_data = await query.fetchone()
+                if link_data:
+                    raise Exception
+
+            except Exception:
                 await trans.close()
                 return json(
                     {'message': 'This active endpoint already exists'},
@@ -169,7 +194,7 @@ async def create_link_save(request, user):
             )
             await trans.commit()
             await trans.close()
-            return redirect('/links/me')
+            return redirect('/links/me', status=302)
 
     except Exception:
         await trans.close()

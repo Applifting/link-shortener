@@ -147,37 +147,39 @@ async def activate_link(request, user, link_id):
                     await trans.close()
                     raise Exception
 
-                try:
-                    endpoint_query = await conn.execute(
-                        links.select().where(
-                            links.columns['endpoint'] == link_data.endpoint
-                        ).where(
-                            links.columns['is_active'] == True
-                        )
-                    )
-                    active_endpoint = await endpoint_query.fetchone()
-                    await trans.close()
-                    if not active_endpoint:
-                        raise Exception
-
-                    return json(
-                        {'message': 'That active endpoint already exists'},
-                        status=400
-                    )
-
-                except Exception:
-                    await conn.execute(
-                        links.update().where(
-                            links.columns['id'] == link_id
-                        ).values(is_active=True)
-                    )
-                    await trans.commit()
-                    await trans.close()
-                    return redirect('/links/me', status=302)
-
             except Exception:
                 await trans.close()
                 return json({'message': 'Link does not exist'}, status=404)
+
+            try:
+                endpoint_query = await conn.execute(
+                    links.select().where(
+                        links.columns['endpoint'] == link_data.endpoint
+                    ).where(
+                        links.columns['is_active'] == True
+                    ).where(
+                        links.columns['id'] != link_id
+                    )
+                )
+                active_endpoint = await endpoint_query.fetchone()
+                if not active_endpoint:
+                    raise Exception
+
+                await trans.close()
+                return json(
+                    {'message': 'That active endpoint already exists'},
+                    status=400
+                )
+
+            except Exception:
+                await conn.execute(
+                    links.update().where(
+                        links.columns['id'] == link_id
+                    ).values(is_active=True)
+                )
+                await trans.commit()
+                await trans.close()
+                return redirect('/links/me', status=302)
 
     except Exception:
         await trans.close()

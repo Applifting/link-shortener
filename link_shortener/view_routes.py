@@ -15,6 +15,7 @@ from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links
+from link_shortener.commands.delete import delete_link
 
 from link_shortener.core.decorators import credential_whitelist_check
 
@@ -128,22 +129,28 @@ async def owner_specific_links(request, user):
 @view_blueprint.route('/delete/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def delete_link(request, user, link_id):
-    try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            await conn.execute(
-                links.delete().where(
-                    links.columns['id'] == link_id
-                )
-            )
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me', status=302)
-
-    except Exception:
-        await trans.close()
-        return json({'message': 'Deleting failed'}, status=500)
+async def delete_link_view(request, user, link_id):
+    message, status_code = await delete_link(request, link_id)
+    return html(template_loader(
+                    template_file='message.html',
+                    message=message,
+                    status_code=str(status_code)
+                ), status=status_code)
+    # try:
+    #     async with request.app.engine.acquire() as conn:
+    #         trans = await conn.begin()
+    #         await conn.execute(
+    #             links.delete().where(
+    #                 links.columns['id'] == link_id
+    #             )
+    #         )
+    #         await trans.commit()
+    #         await trans.close()
+    #         return redirect('/links/me', status=302)
+    #
+    # except Exception:
+    #     await trans.close()
+    #     return json({'message': 'Deleting failed'}, status=500)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

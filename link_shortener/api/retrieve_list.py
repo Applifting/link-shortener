@@ -2,7 +2,7 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from json import dumps, loads
+from json import loads
 from decouple import config
 
 from sanic import Blueprint

@@ -2,8 +2,6 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from sanic.response import json
-
 from link_shortener.models import links
 
 

@@ -4,7 +4,6 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from datetime import date
 from decouple import config
-from json import loads
 
 from sanic import Blueprint
 from sanic.response import json

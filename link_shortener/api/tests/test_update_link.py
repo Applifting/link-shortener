@@ -384,6 +384,7 @@ class TestUpdateLinkByIdentifierAPI(TestCase):
         self.assertEqual(response.status, 400)
         self.assertEqual(str(response.url)[-46:], self.endpoint)
 
+
 class TestCheckDataAfterUpdateByIdentifier(TestCase):
 
     def setUp(self):

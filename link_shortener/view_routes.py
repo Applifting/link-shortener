@@ -9,8 +9,6 @@ from sanic.response import html, json, redirect
 
 from sanic_oauth.blueprint import login_required
 
-from sqlalchemy.sql.expression import select as sql_select
-
 from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
@@ -39,7 +37,7 @@ async def redirect_link(request, link_endpoint):
                 if not link_data:
                     raise Exception
 
-                if link_data.password is None:
+                if not link_data.password:
                     return redirect(link_data.url, status=301)
 
                 return redirect(
@@ -75,16 +73,6 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    # try:
-    #     async with request.app.engine.acquire() as conn:
-    #         queryset = await conn.execute(links.select())
-    #         data = await queryset.fetchall()
-    #         return html(template_loader(
-    #                         template_file='all_links.html',
-    #                         domain_name=config('DOMAIN_NAME'),
-    #                         data=data
-    #                     ), status=200)
-    #
     try:
         link_data = await retrieve_links(request, {'is_active': True})
         return html(template_loader(
@@ -101,19 +89,6 @@ async def all_active_links(request, user):
 @login_required
 @credential_whitelist_check
 async def owner_specific_links(request, user):
-    # try:
-    #     async with request.app.engine.acquire() as conn:
-    #         queryset = await conn.execute(
-    #             links.select().where(
-    #                 links.columns['owner_id'] == user.id
-    #             )
-    #         )
-    #         link_data = await queryset.fetchall()
-    #         return html(template_loader(
-    #                         template_file='my_links.html',
-    #                         domain_name=config('DOMAIN_NAME'),
-    #                         link_data=link_data
-    #                     ), status=200)
     try:
         link_data = await retrieve_links(request, {'owner_id': user.id})
         return html(template_loader(
@@ -136,21 +111,6 @@ async def delete_link_view(request, user, link_id):
                     message=message,
                     status_code=str(status_code)
                 ), status=status_code)
-    # try:
-    #     async with request.app.engine.acquire() as conn:
-    #         trans = await conn.begin()
-    #         await conn.execute(
-    #             links.delete().where(
-    #                 links.columns['id'] == link_id
-    #             )
-    #         )
-    #         await trans.commit()
-    #         await trans.close()
-    #         return redirect('/links/me', status=302)
-    #
-    # except Exception:
-    #     await trans.close()
-    #     return json({'message': 'Deleting failed'}, status=500)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

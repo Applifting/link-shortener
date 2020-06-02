@@ -14,6 +14,8 @@ from sqlalchemy.sql.expression import select as sql_select
 from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
+from link_shortener.commands.retrieve import retrieve_links
+
 from link_shortener.core.decorators import credential_whitelist_check
 
 
@@ -72,15 +74,23 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
+    # try:
+    #     async with request.app.engine.acquire() as conn:
+    #         queryset = await conn.execute(links.select())
+    #         data = await queryset.fetchall()
+    #         return html(template_loader(
+    #                         template_file='all_links.html',
+    #                         domain_name=config('DOMAIN_NAME'),
+    #                         data=data
+    #                     ), status=200)
+    #
     try:
-        async with request.app.engine.acquire() as conn:
-            queryset = await conn.execute(links.select())
-            data = await queryset.fetchall()
-            return html(template_loader(
-                            template_file='all_links.html',
-                            domain_name=config('DOMAIN_NAME'),
-                            data=data
-                        ), status=200)
+        link_data = await retrieve_links(request, {'is_active': True})
+        return html(template_loader(
+                        template_file='all_links.html',
+                        domain_name=config('DOMAIN_NAME'),
+                        data=link_data
+                    ), status=200)
 
     except Exception:
         return json({'message': 'Template failed loading'}, status=500)
@@ -90,19 +100,26 @@ async def all_active_links(request, user):
 @login_required
 @credential_whitelist_check
 async def owner_specific_links(request, user):
+    # try:
+    #     async with request.app.engine.acquire() as conn:
+    #         queryset = await conn.execute(
+    #             links.select().where(
+    #                 links.columns['owner_id'] == user.id
+    #             )
+    #         )
+    #         link_data = await queryset.fetchall()
+    #         return html(template_loader(
+    #                         template_file='my_links.html',
+    #                         domain_name=config('DOMAIN_NAME'),
+    #                         link_data=link_data
+    #                     ), status=200)
     try:
-        async with request.app.engine.acquire() as conn:
-            queryset = await conn.execute(
-                links.select().where(
-                    links.columns['owner_id'] == user.id
-                )
-            )
-            link_data = await queryset.fetchall()
-            return html(template_loader(
-                            template_file='my_links.html',
-                            domain_name=config('DOMAIN_NAME'),
-                            link_data=link_data
-                        ), status=200)
+        link_data = await retrieve_links(request, {'owner_id': user.id})
+        return html(template_loader(
+                        template_file='my_links.html',
+                        domain_name=config('DOMAIN_NAME'),
+                        link_data=link_data
+                    ), status=200)
 
     except Exception:
         return json({'message': 'Template failed loading'}, status=500)

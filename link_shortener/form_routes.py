@@ -19,7 +19,7 @@ from wtforms.validators import DataRequired
 from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
-from link_shortener.commands.authorize import check_password_form
+from link_shortener.commands.authorize import check_form, check_password
 
 from link_shortener.core.decorators import credential_whitelist_check
 
@@ -50,7 +50,7 @@ class PasswordForm(SanicForm):
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])
 async def link_password_form(request, link_id):
     form = PasswordForm(request)
-    file, payload, status = await check_password_form(request, link_id)
+    file, payload, status = await check_form(request, link_id)
     return html(template_loader(
                     template_file=file,
                     form=form,
@@ -63,45 +63,21 @@ async def link_password_form(request, link_id):
 async def link_password_save(request, link_id):
     form = PasswordForm(request)
     if not form.validate():
-        return json({'message': 'Form invalid'}, status=400)
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Form invalid',
+                        status_code='400'
+                    ), status=400)
 
-    try:
-        async with request.app.engine.acquire() as conn:
-            try:
-                link_query = await conn.execute(
-                    links.select().where(
-                        links.columns['id'] == link_id
-                    )
-                )
-                link_data = await link_query.fetchone()
-                if not link_data:
-                    raise Exception
+    payload, status = await check_password(request, link_id, form)
+    if status:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=payload,
+                        status_code=str(status)
+                    ), status=status)
 
-                salt_query = await conn.execute(
-                    salts.select().where(
-                        salts.columns['identifier'] == link_data.identifier
-                    )
-                )
-                salt_data = await salt_query.fetchone()
-                password = hashlib.pbkdf2_hmac(
-                    'sha256',
-                    form.password.data.encode('utf-8'),
-                    salt_data.salt,
-                    100000
-                )
-                if (link_data.password == password):
-                    return redirect(link_data.url, status=302)
-
-                return json({'message': 'Incorrect password'}, status=401)
-
-            except Exception:
-                return json(
-                    {'Link has no password or does not exist'},
-                    status=404
-                )
-
-    except Exception:
-        return json({'message': 'Form failed'}, status=500)
+    return redirect(payload, status=302)
 
 
 @form_blueprint.route('/create', methods=['GET'])

@@ -5,11 +5,11 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from decouple import config
 
 from sanic import Blueprint
-from sanic.response import html, json, redirect
+from sanic.response import html, redirect
 
 from sanic_oauth.blueprint import login_required
 
-from link_shortener.models import links, salts
+from link_shortener.models import links
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links

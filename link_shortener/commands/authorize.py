@@ -7,7 +7,7 @@ import hashlib
 from link_shortener.models import links, salts
 
 
-async def check_form(request, link_id):
+async def check_auth_form(request, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             try:

@@ -18,7 +18,8 @@ from wtforms.validators import DataRequired
 from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
-from link_shortener.commands.authorize import check_form, check_password
+from link_shortener.commands.authorize import check_auth_form, check_password
+from link_shortener.commands.update import check_update_form
 from link_shortener.commands.create import create_link
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -50,7 +51,7 @@ class PasswordForm(SanicForm):
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])
 async def link_password_form(request, link_id):
     form = PasswordForm(request)
-    file, payload, status = await check_form(request, link_id)
+    file, payload, status = await check_auth_form(request, link_id)
     return html(template_loader(
                     template_file=file,
                     form=form,
@@ -128,29 +129,13 @@ async def create_link_save(request, user):
 @credential_whitelist_check
 async def update_link_form(request, user, link_id):
     form = UpdateForm(request)
-    try:
-        async with request.app.engine.acquire() as conn:
-            try:
-                query = await conn.execute(
-                    links.select().where(
-                        links.columns['id'] == link_id
-                    )
-                )
-                link = await query.fetchone()
-                if not link:
-                    raise Exception
-
-                return html(template_loader(
-                                template_file='edit_form.html',
-                                form=form,
-                                link=link,
-                            ), status=200)
-
-            except Exception:
-                return json({'message': 'Link does not exist'}, status=404)
-
-    except Exception:
-        return json({'message': 'Getting update form failed'}, status=500)
+    file, payload, status = await check_update_form(request, link_id)
+    return html(template_loader(
+                    template_file=file,
+                    form=form,
+                    payload=payload,
+                    status_code=str(status)
+                ), status=status)
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['POST'])

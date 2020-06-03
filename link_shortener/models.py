@@ -11,7 +11,6 @@ links = Table(
     'links',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    # Column('identifier', String(36)),
     Column('owner', String(50)),
     Column('owner_id', String(255)),
     Column('password', BLOB, default=None),

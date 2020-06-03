@@ -14,8 +14,7 @@ from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links
 from link_shortener.commands.update import reset_password
-from link_shortener.commands.status_change import (activate_link,
-                                                   deactivate_link)
+from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -161,40 +160,9 @@ async def deactivate_link_view(request, user, link_id):
 @login_required
 @credential_whitelist_check
 async def reset_password_view(request, user, link_id):
-    try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            try:
-                query = await conn.execute(
-                    links.select().where(
-                        links.columns['id'] == link_id
-                    )
-                )
-                link_data = await query.fetchone()
-                if not link_data:
-                    await trans.close()
-                    raise Exception
-
-                await conn.execute(
-                    links.update().where(
-                        links.columns['id'] == link_id
-                    ).values(
-                        password=None
-                    )
-                )
-                await conn.execute(
-                    salts.delete().where(
-                        salts.columns['identifier'] == link_data.identifier
-                    )
-                )
-                await trans.commit()
-                await trans.close()
-                return redirect('/links/me', status=302)
-
-            except Exception:
-                await trans.close()
-                return json({'message': 'Link does not exist'}, status=404)
-
-    except Exception:
-        await trans.close()
-        return json({'message': 'Resetting password failed'}, status=500)
+    message, status_code = await reset_password(request, link_id)
+    return html(template_loader(
+                    template_file='message.html',
+                    message=message,
+                    status_code=str(status_code)
+                ), status=status_code)

@@ -9,13 +9,13 @@ from sanic.response import html, redirect
 
 from sanic_oauth.blueprint import login_required
 
-from link_shortener.models import links
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links
 from link_shortener.commands.update import reset_password
 from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
+from link_shortener.commands.redirect import redirect_link
 
 from link_shortener.core.decorators import credential_whitelist_check
 
@@ -24,42 +24,16 @@ view_blueprint = Blueprint('views')
 
 
 @view_blueprint.route('/<link_endpoint>', methods=['GET'])
-async def redirect_link(request, link_endpoint):
-    try:
-        async with request.app.engine.acquire() as conn:
-            try:
-                query = await conn.execute(
-                    links.select().where(
-                        links.columns['endpoint'] == link_endpoint
-                    ).where(
-                        links.columns['is_active'] == True
-                    )
-                )
-                link_data = await query.fetchone()
-                if not link_data:
-                    raise Exception
-
-                if not link_data.password:
-                    return redirect(link_data.url, status=301)
-
-                return redirect(
-                    '/authorize/{}'.format(link_data.id),
-                    status=301
-                )
-
-            except Exception:
-                return html(template_loader(
-                                template_file='message.html',
-                                payload='Link inactive or does not exist',
-                                status_code='404'
-                            ), status=404)
-
-    except Exception:
+async def redirect_link_view(request, link_endpoint):
+    payload, status = await redirect_link(request, link_endpoint)
+    if status:
         return html(template_loader(
                         template_file='message.html',
-                        payload='Server error',
-                        status_code='500'
-                    ), status=500)
+                        payload=payload,
+                        status_code=str(status)
+                    ), status=status)
+
+    return redirect(payload, status=301)
 
 
 @view_blueprint.route('/', methods=['GET'])

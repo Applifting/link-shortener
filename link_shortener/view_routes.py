@@ -46,13 +46,18 @@ async def redirect_link(request, link_endpoint):
                 )
 
             except Exception:
-                return json(
-                    {'message': 'Link inactive or does not exist'},
-                    status=404
-                )
+                return html(template_loader(
+                                template_file='message.html',
+                                message='Link inactive or does not exist',
+                                status_code='404'
+                            ), status=404)
 
     except Exception:
-        return json({'message': 'Server error'}, status=500)
+        return html(template_loader(
+                        template_file='message.html',
+                        message='Server error',
+                        status_code='500'
+                    ), status=500)
 
 
 @view_blueprint.route('/', methods=['GET'])
@@ -66,7 +71,11 @@ async def about_page(request):
         return html(template_loader(template_file='about.html'), status=200)
 
     except Exception:
-        return json({'message': 'Template failed loading'}, status=500)
+        return html(template_loader(
+                        template_file='message.html',
+                        message='Template failed loading',
+                        status_code='500'
+                    ), status=500)
 
 
 @view_blueprint.route('/links/all', methods=['GET'])
@@ -82,7 +91,11 @@ async def all_active_links(request, user):
                     ), status=200)
 
     except Exception:
-        return json({'message': 'Template failed loading'}, status=500)
+        return html(template_loader(
+                        template_file='message.html',
+                        message='Template failed loading',
+                        status_code='500'
+                    ), status=500)
 
 
 @view_blueprint.route('/links/me', methods=['GET'])
@@ -98,7 +111,11 @@ async def owner_specific_links(request, user):
                     ), status=200)
 
     except Exception:
-        return json({'message': 'Template failed loading'}, status=500)
+        return html(template_loader(
+                        template_file='message.html',
+                        message='Template failed loading',
+                        status_code='500'
+                    ), status=500)
 
 
 @view_blueprint.route('/delete/<link_id>', methods=['GET'])

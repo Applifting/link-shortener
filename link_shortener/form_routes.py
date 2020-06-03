@@ -3,7 +3,6 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import os
-import uuid
 import hashlib
 
 from sanic import Blueprint
@@ -20,6 +19,7 @@ from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.authorize import check_form, check_password
+from link_shortener.commands.create import create_link
 
 from link_shortener.core.decorators import credential_whitelist_check
 
@@ -95,69 +95,32 @@ async def create_link_form(request, user):
 @login_required
 @credential_whitelist_check
 async def create_link_save(request, user):
-    form = CreateForm(request)
-    if not form.validate():
-        return json({'message': 'Form invalid'}, status=400)
-
     try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            try:
-                query = await conn.execute(
-                    links.select().where(
-                        links.columns['endpoint'] == form.endpoint.data
-                    ).where(
-                        links.columns['is_active'] == True
-                    )
-                )
-                link_data = await query.fetchone()
-                if link_data:
-                    raise Exception
+        form = CreateForm(request)
+        if not form.validate():
+            raise Exception
 
-            except Exception:
-                await trans.close()
-                return json(
-                    {'message': 'This active endpoint already exists'},
-                    status=400
-                )
-
-            identifier = str(uuid.uuid1())
-            if form.password.data:
-                salt = os.urandom(32)
-                password = hashlib.pbkdf2_hmac(
-                    'sha256',
-                    form.password.data.encode('utf-8'),
-                    salt,
-                    100000
-                )
-                await conn.execute(
-                    salts.insert().values(
-                        identifier=identifier,
-                        salt=salt
-                    )
-                )
-            else:
-                password = None
-
-            await conn.execute(
-                links.insert().values(
-                    identifier=identifier,
-                    owner=user.email,
-                    owner_id=user.id,
-                    password=password,
-                    endpoint=form.endpoint.data,
-                    url=form.url.data,
-                    switch_date=form.switch_date.data,
-                    is_active=True
-                )
-            )
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me', status=302)
+        data = {
+            'owner': user.email,
+            'owner_id': user.id,
+            'password': form.password.data,
+            'endpoint': form.endpoint.data,
+            'url': form.url.data,
+            'switch_date': form.switch_date.data
+        }
+        message, status = await create_link(request, data)
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=message,
+                        status_code=str(status)
+                    ), status=status)
 
     except Exception:
-        await trans.close()
-        return json({'message': 'Creating new link failed'}, status=500)
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Form or data invalid',
+                        status_code='400'
+                    ), status=400)
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])

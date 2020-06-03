@@ -48,32 +48,39 @@ class PasswordForm(SanicForm):
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])
 async def link_password_form(request, link_id):
     form = PasswordForm(request)
-    try:
-        async with request.app.engine.acquire() as conn:
-            try:
-                query = await conn.execute(
-                    links.select().where(
-                        links.columns['id'] == link_id
-                    )
-                )
-                link_data = await query.fetchone()
-                if not link_data:
-                    raise Exception
-
-                return html(template_loader(
-                                template_file='password_form.html',
-                                form=form,
-                                link=link_data
-                            ), status=200)
-
-            except Exception:
-                return json(
-                    {'message': 'Link has no password or does not exist'},
-                    status=404
-                )
-
-    except Exception:
-        return json({'message': 'Authorizing failed'}, status=500)
+    file, payload, status = await check_password(request, link_id)
+    return html(template_loader(
+                    template_file=file,
+                    form=form,
+                    payload=payload,
+                    status_code=str(status)
+                ), status=status)
+    # try:
+    #     async with request.app.engine.acquire() as conn:
+    #         try:
+    #             query = await conn.execute(
+    #                 links.select().where(
+    #                     links.columns['id'] == link_id
+    #                 )
+    #             )
+    #             link_data = await query.fetchone()
+    #             if not link_data:
+    #                 raise Exception
+    #
+    #             return html(template_loader(
+    #                             template_file='password_form.html',
+    #                             form=form,
+    #                             link=link_data
+    #                         ), status=200)
+    #
+    #         except Exception:
+    #             return json(
+    #                 {'message': 'Link has no password or does not exist'},
+    #                 status=404
+    #             )
+    #
+    # except Exception:
+    #     return json({'message': 'Authorizing failed'}, status=500)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])

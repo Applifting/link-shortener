@@ -50,14 +50,14 @@ async def redirect_link(request, link_endpoint):
             except Exception:
                 return html(template_loader(
                                 template_file='message.html',
-                                message='Link inactive or does not exist',
+                                payload='Link inactive or does not exist',
                                 status_code='404'
                             ), status=404)
 
     except Exception:
         return html(template_loader(
                         template_file='message.html',
-                        message='Server error',
+                        payload='Server error',
                         status_code='500'
                     ), status=500)
 
@@ -75,7 +75,7 @@ async def about_page(request):
     except Exception:
         return html(template_loader(
                         template_file='message.html',
-                        message='Template failed loading',
+                        payload='Template failed loading',
                         status_code='500'
                     ), status=500)
 
@@ -95,7 +95,7 @@ async def all_active_links(request, user):
     except Exception:
         return html(template_loader(
                         template_file='message.html',
-                        message='Template failed loading',
+                        payload='Template failed loading',
                         status_code='500'
                     ), status=500)
 
@@ -115,7 +115,7 @@ async def owner_specific_links(request, user):
     except Exception:
         return html(template_loader(
                         template_file='message.html',
-                        message='Template failed loading',
+                        payload='Template failed loading',
                         status_code='500'
                     ), status=500)
 
@@ -127,7 +127,7 @@ async def delete_link_view(request, user, link_id):
     message, status_code = await delete_link(request, link_id)
     return html(template_loader(
                     template_file='message.html',
-                    message=message,
+                    payload=message,
                     status_code=str(status_code)
                 ), status=status_code)
 
@@ -139,7 +139,7 @@ async def activate_link_view(request, user, link_id):
     message, status_code = await activate_link(request, link_id)
     return html(template_loader(
                     template_file='message.html',
-                    message=message,
+                    payload=message,
                     status_code=str(status_code)
                 ), status=status_code)
 
@@ -151,7 +151,7 @@ async def deactivate_link_view(request, user, link_id):
     message, status_code = await deactivate_link(request, link_id)
     return html(template_loader(
                     template_file='message.html',
-                    message=message,
+                    payload=message,
                     status_code=str(status_code)
                 ), status=status_code)
 
@@ -163,6 +163,6 @@ async def reset_password_view(request, user, link_id):
     message, status_code = await reset_password(request, link_id)
     return html(template_loader(
                     template_file='message.html',
-                    message=message,
+                    payload=message,
                     status_code=str(status_code)
                 ), status=status_code)

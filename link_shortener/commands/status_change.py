@@ -50,3 +50,31 @@ async def activate_link(request, link_id):
     except Exception:
         await trans.close()
         return ('Activating link failed', 500)
+
+
+async def deactivate_link(request, link_id):
+    try:
+        async with request.app.engine.acquire() as conn:
+            trans = await conn.begin()
+            try:
+                query = await conn.execute(links.select().where(
+                    links.columns['id'] == link_id
+                ))
+                link_data = await query.fetchone()
+                if not link_data:
+                    raise Exception
+
+                await conn.execute(links.update().where(
+                    links.columns['id'] == link_id
+                ).values(is_active=False))
+                await trans.commit()
+                await trans.close()
+                return ('Link deactivated successfully', 200)
+
+            except Exception:
+                await trans.close()
+                return ('Link does not exist', 404)
+
+    except Exception:
+        await trans.close()
+        return ('Deactivating link failed', 500)

@@ -13,9 +13,10 @@ from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links
-from link_shortener.commands.delete import delete_link
+from link_shortener.commands.update import reset_password
 from link_shortener.commands.status_change import (activate_link,
                                                    deactivate_link)
+from link_shortener.commands.delete import delete_link
 
 from link_shortener.core.decorators import credential_whitelist_check
 

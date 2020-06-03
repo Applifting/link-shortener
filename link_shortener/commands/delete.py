@@ -20,10 +20,10 @@ async def delete_link(request, link_id):
                     raise Exception
 
                 await conn.execute(links.delete().where(
-                    links.columns['identifier'] == link_data.identifier
+                    links.columns['id'] == link_data.id
                 ))
                 await conn.execute(salts.delete().where(
-                    salts.columns['identifier'] == link_data.identifier
+                    salts.columns['id'] == link_data.id
                 ))
                 await trans.commit()
                 await trans.close()

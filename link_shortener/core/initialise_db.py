@@ -3,7 +3,6 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import os
-import uuid
 import hashlib
 import datetime
 
@@ -23,7 +22,6 @@ initdb_blueprint = Blueprint('intitialise_db')
 
 data = [
     [
-        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
@@ -33,7 +31,6 @@ data = [
         True
     ],
     [
-        '19a0c1f8-9032-11ea-8195-0242ac120003',
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
@@ -43,17 +40,16 @@ data = [
         True
     ],
     [
-        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'bigfish',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg',
         None,
-        True
+        True,
+        3
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
@@ -63,7 +59,6 @@ data = [
         True
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
@@ -73,17 +68,16 @@ data = [
         True
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'metapass',
         'meta',
         'https://github.com/Applifting/link-shortener',
         None,
-        True
+        True,
+        6
     ],
     [
-        '19a0c770-9032-11ea-8195-0242ac120003',
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
@@ -93,7 +87,6 @@ data = [
         False
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
@@ -128,37 +121,31 @@ async def initialise_db(app, loop):
     async with app.engine.acquire() as conn:
         try:
             trans = await conn.begin()
-
             await conn.execute(CreateTable(links))
             await conn.execute(CreateTable(salts))
             for values in data:
-                if values[3] is not None:
+                if values[2] is not None:
                     salt = os.urandom(32)
-                    values[3] = hashlib.pbkdf2_hmac(
+                    values[2] = hashlib.pbkdf2_hmac(
                         'sha256',
-                        values[3].encode('utf-8'),
+                        values[2].encode('utf-8'),
                         salt,
                         100000
                     )
-                    await conn.execute(
-                        salts.insert().values(
-                            identifier=values[0],
-                            salt=salt
-                        )
-                    )
+                    await conn.execute(salts.insert().values(
+                        id=values[7],
+                        salt=salt
+                    ))
 
-                await conn.execute(
-                    links.insert().values(
-                        identifier=values[0],
-                        owner=values[1],
-                        owner_id=values[2],
-                        password=values[3],
-                        endpoint=values[4],
-                        url=values[5],
-                        switch_date=values[6],
-                        is_active=values[7]
-                    )
-                )
+                await conn.execute(links.insert().values(
+                    owner=values[0],
+                    owner_id=values[1],
+                    password=values[2],
+                    endpoint=values[3],
+                    url=values[4],
+                    switch_date=values[5],
+                    is_active=values[6]
+                ))
 
             await trans.commit()
             await trans.close()

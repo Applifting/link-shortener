@@ -11,7 +11,7 @@ links = Table(
     'links',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('identifier', String(36)),
+    # Column('identifier', String(36)),
     Column('owner', String(50)),
     Column('owner_id', String(255)),
     Column('password', BLOB, default=None),
@@ -20,23 +20,9 @@ links = Table(
     Column('switch_date', Date, default=None),
     Column('is_active', Boolean, default=False)
 )
-
-# inactives = Table(
-#     'inactive_links',
-#     metadata,
-#     Column('id', Integer, primary_key=True, autoincrement=True),
-#     Column('identifier', String(36)),
-#     Column('owner', String(50)),
-#     Column('owner_id', String(255)),
-#     Column('password', BLOB, default=None),
-#     Column('endpoint', String(20)),
-#     Column('url', String(300)),
-#     Column('switch_date', Date, default=None)
-# )
-
 salts = Table(
     'hash_salts',
     metadata,
-    Column('identifier', String(36), primary_key=True),
+    Column('id', Integer, primary_key=True),
     Column('salt', BLOB)
 )

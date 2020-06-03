@@ -14,6 +14,7 @@ from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links
 from link_shortener.commands.delete import delete_link
+from link_shortener.commands.status_change import activate_link
 
 from link_shortener.core.decorators import credential_whitelist_check
 
@@ -133,64 +134,70 @@ async def delete_link_view(request, user, link_id):
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def activate_link(request, user, link_id):
-    try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            try:
-                query = await conn.execute(
-                    links.select().where(
-                        links.columns['id'] == link_id
-                    )
-                )
-                link_data = await query.fetchone()
-                if not link_data:
-                    await trans.close()
-                    raise Exception
-
-            except Exception:
-                await trans.close()
-                return json({'message': 'Link does not exist'}, status=404)
-
-            try:
-                endpoint_query = await conn.execute(
-                    links.select().where(
-                        links.columns['endpoint'] == link_data.endpoint
-                    ).where(
-                        links.columns['is_active'] == True
-                    ).where(
-                        links.columns['id'] != link_id
-                    )
-                )
-                active_endpoint = await endpoint_query.fetchone()
-                if not active_endpoint:
-                    raise Exception
-
-                await trans.close()
-                return json(
-                    {'message': 'That active endpoint already exists'},
-                    status=400
-                )
-
-            except Exception:
-                await conn.execute(
-                    links.update().where(
-                        links.columns['id'] == link_id
-                    ).values(is_active=True)
-                )
-                await trans.commit()
-                await trans.close()
-                return redirect('/links/me', status=302)
-
-    except Exception:
-        await trans.close()
-        return json({'message': 'Activating failed'}, status=500)
+async def activate_link_view(request, user, link_id):
+    message, status_code = await activate_link(request, link_id)
+    return html(template_loader(
+                    template_file='message.html',
+                    message=message,
+                    status_code=str(status_code)
+                ), status=status_code)
+    # try:
+    #     async with request.app.engine.acquire() as conn:
+    #         trans = await conn.begin()
+    #         try:
+    #             query = await conn.execute(
+    #                 links.select().where(
+    #                     links.columns['id'] == link_id
+    #                 )
+    #             )
+    #             link_data = await query.fetchone()
+    #             if not link_data:
+    #                 await trans.close()
+    #                 raise Exception
+    #
+    #         except Exception:
+    #             await trans.close()
+    #             return json({'message': 'Link does not exist'}, status=404)
+    #
+    #         try:
+    #             endpoint_query = await conn.execute(
+    #                 links.select().where(
+    #                     links.columns['endpoint'] == link_data.endpoint
+    #                 ).where(
+    #                     links.columns['is_active'] == True
+    #                 ).where(
+    #                     links.columns['id'] != link_id
+    #                 )
+    #             )
+    #             active_endpoint = await endpoint_query.fetchone()
+    #             if not active_endpoint:
+    #                 raise Exception
+    #
+    #             await trans.close()
+    #             return json(
+    #                 {'message': 'That active endpoint already exists'},
+    #                 status=400
+    #             )
+    #
+    #         except Exception:
+    #             await conn.execute(
+    #                 links.update().where(
+    #                     links.columns['id'] == link_id
+    #                 ).values(is_active=True)
+    #             )
+    #             await trans.commit()
+    #             await trans.close()
+    #             return redirect('/links/me', status=302)
+    #
+    # except Exception:
+    #     await trans.close()
+    #     return json({'message': 'Activating failed'}, status=500)
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def deactivate_link(request, user, link_id):
+async def deactivate_link_view(request, user, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()

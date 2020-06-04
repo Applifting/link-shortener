@@ -2,11 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import os
-import hashlib
-
 from sanic import Blueprint
-from sanic.response import redirect, html, json
+from sanic.response import redirect, html
 
 from sanic_oauth.blueprint import login_required
 
@@ -15,11 +12,10 @@ from sanic_wtf import SanicForm
 from wtforms import StringField, SubmitField, PasswordField, DateField
 from wtforms.validators import DataRequired
 
-from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.authorize import check_auth_form, check_password
-from link_shortener.commands.update import check_update_form
+from link_shortener.commands.update import check_update_form, update_link
 from link_shortener.commands.create import create_link
 
 from link_shortener.core.decorators import credential_whitelist_check
@@ -142,60 +138,26 @@ async def update_link_form(request, user, link_id):
 @login_required
 @credential_whitelist_check
 async def update_link_save(request, user, link_id):
-    form = UpdateForm(request)
-    if not form.validate():
-        return json({'message': 'Form invalid'}, status=400)
-
     try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            link_update = links.update().where(links.columns['id'] == link_id)
-            try:
-                link_query = await conn.execute(links.select().where(
-                    links.columns['id'] == link_id
-                ))
-                link_data = await link_query.fetchone()
-                if not link_data:
-                    raise Exception
+        form = UpdateForm(request)
+        data = {
+            'password': form.password.data,
+            'url': form.url.data,
+            'switch_date': form.switch_date.data
+        }
+        if not form.validate():
+            raise Exception
 
-            except Exception:
-                await trans.close()
-                return json({'message': 'Link does not exist'}, status=404)
-
-            if form.password.data:
-                fresh_salt = os.urandom(32)
-                password = hashlib.pbkdf2_hmac(
-                    'sha256',
-                    form.password.data.encode('utf-8'),
-                    fresh_salt,
-                    100000
-                )
-                if link_data.password:
-                    await conn.execute(salts.update().where(
-                        salts.columns['identifier'] == link_data.identifier
-                    ).values(salt=fresh_salt))
-                else:
-                    await conn.execute(salts.insert().values(
-                            identifier=link_data.identifier,
-                            salt=fresh_salt
-                    ))
-
-                await conn.execute(link_update.values(
-                    url=form.url.data,
-                    switch_date=form.switch_date.data,
-                    password=password
-                ))
-
-            else:
-                await conn.execute(link_update.values(
-                    url=form.url.data,
-                    switch_date=form.switch_date.data
-                ))
-
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me', status=302)
+        message, status = await update_link(request, link_id, data)
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=message,
+                        status_code=str(status)
+                    ), status=status)
 
     except Exception:
-        await trans.close()
-        return json({'message': 'Editing link failed'}, status=500)
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Form or data invalid',
+                        status_code='400'
+                    ), status=400)

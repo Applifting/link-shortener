@@ -8,10 +8,46 @@ from decouple import config
 from sanic import Blueprint
 from sanic.response import json
 
-from link_shortener.commands.retrieve import retrieve_link
+from link_shortener.commands.retrieve import retrieve_links, retrieve_link
 
 
 api_retrieve_blueprint = Blueprint('api_retrieve')
+
+
+@api_retrieve_blueprint.route('/api/links', methods=['GET'])
+async def api_retrieve_links(request):
+    try:
+        token = request.headers['Bearer']
+        if (token != config('ACCESS_TOKEN')):
+            return json({'message': 'Unauthorized'}, status=401)
+
+    except KeyError:
+        return json({'message': 'Please provide a token'}, status=400)
+
+    try:
+        data = []
+        for link in await retrieve_links(request, {}):
+            link_data = {
+                'id': link.id,
+                'owner': link.owner,
+                'endpoint': link.endpoint,
+                'url': link.url,
+                'is_active': link.is_active
+            }
+            if link.switch_date:
+                link_data['switch_date'] = {
+                    'Year': link.switch_date.year,
+                    'Month': link.switch_date.month,
+                    'Day': link.switch_date.day
+                }
+
+            data.append(link_data)
+
+        return json(data, status=200)
+
+    except Exception as error:
+        print(error)
+        return json({'message': 'Getting links failed'}, status=500)
 
 
 @api_retrieve_blueprint.route('/api/link/<link_id>', methods=['GET'])

@@ -18,6 +18,7 @@ from link_shortener.view_routes import view_blueprint
 
 from link_shortener.api.api_retrieve import api_retrieve_blueprint
 from link_shortener.api.api_create import api_create_blueprint
+from link_shortener.api.api_update import api_update_blueprint
 from link_shortener.api.api_delete import api_delete_blueprint
 
 
@@ -61,6 +62,7 @@ def create_app():
     app.blueprint(view_blueprint)
     app.blueprint(api_retrieve_blueprint)
     app.blueprint(api_create_blueprint)
+    app.blueprint(api_update_blueprint)
     app.blueprint(api_delete_blueprint)
 
     app.static('/links/', './static/')

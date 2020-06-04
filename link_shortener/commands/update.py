@@ -79,7 +79,8 @@ async def update_link(request, link_id, data):
             await trans.close()
             return ('Link updated successfully', 200)
 
-    except Exception:
+    except Exception as error:
+        print(error)
         await trans.close()
         return ('Editing link failed', 500)
 

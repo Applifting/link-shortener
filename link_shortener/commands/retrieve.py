@@ -15,3 +15,19 @@ async def retrieve_links(request, filters):
         queryset = await conn.execute(link_select)
         link_data = await queryset.fetchall()
         return link_data
+
+
+async def retrieve_link(request, link_id):
+    async with request.app.engine.acquire() as conn:
+        try:
+            query = await conn.execute(links.select().where(
+                links.columns['id'] == link_id
+            ))
+            link_data = await query.fetchone()
+            if not link_data:
+                raise Exception
+
+            return (link_data, None)
+
+        except Exception:
+            return ('Link does not exist', 404)

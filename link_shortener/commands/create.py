@@ -62,7 +62,6 @@ async def create_link(request, data):
             await trans.close()
             return ('Link created successfully', 201)
 
-    except Exception as error:
-        print(error)
+    except Exception:
         await trans.close()
         return ('Creating new link failed', 500)

@@ -26,18 +26,15 @@ async def api_create_link(request):
         return json({'message': 'Please provide a token'}, status=400)
 
     try:
-        data = {}
+        data = {'password': None}
         payload = loads(request.body)
-
         data['owner'] = payload['owner']
         data['owner_id'] = payload['owner_id']
         data['endpoint'] = payload['endpoint']
         data['url'] = payload['url']
-
         sd = payload['switch_date']
         data['switch_date'] = date(sd['Year'], sd['Month'], sd['Day'])
 
-        print(data)
         message, status = await create_link(request, data)
         return json({'message': message}, status=status)
 

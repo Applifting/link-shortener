@@ -20,6 +20,7 @@ from link_shortener.api.api_retrieve import api_retrieve_blueprint
 from link_shortener.api.api_create import api_create_blueprint
 from link_shortener.api.api_update import api_update_blueprint
 from link_shortener.api.api_delete import api_delete_blueprint
+from link_shortener.api.api_switch import api_switch_blueprint
 
 
 async def add_session_to_request(request):
@@ -64,6 +65,7 @@ def create_app():
     app.blueprint(api_create_blueprint)
     app.blueprint(api_update_blueprint)
     app.blueprint(api_delete_blueprint)
+    app.blueprint(api_switch_blueprint)
 
     app.static('/links/', './static/')
     app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')

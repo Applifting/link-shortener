@@ -94,6 +94,15 @@ data = [
         'https://www.youtube.com/watch?v=gvdf5n-zI14',
         None,
         False
+    ],
+    [
+        'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
+        None,
+        'vlk',
+        'https://google.com',
+        None,
+        False
     ]
 ]
 

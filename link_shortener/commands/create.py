@@ -26,7 +26,7 @@ async def create_link(request, data):
                 await trans.close()
                 return (
                     'An active endpoint with that name already exists',
-                    400
+                    409
                 )
 
             if data['password']:

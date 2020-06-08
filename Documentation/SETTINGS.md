@@ -7,7 +7,7 @@ OAUTH_SCOPE=email
 OAUTH_CLIENT_ID=<your_client_id>
 OAUTH_CLIENT_SECRET=<your_client_secret>
 
-WTF_CSRF_SECRET_KEY=<generated_key>
+SENTRY_DSN=<sentry_dsn>
 
 DOMAIN_NAME=<your_domain>
 

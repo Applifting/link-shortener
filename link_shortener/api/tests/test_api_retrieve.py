@@ -17,7 +17,7 @@ class TestRetrieveLinksAPI(TestCase):
         self.endpoint = '/api/links'
         self.headers = {'Bearer': config('ACCESS_TOKEN')}
 
-    def test_get_list_with_token_successful(self):
+    def test_get_list_correct_request_successful(self):
         '''
         Test that a get request for a list of all links with the correct token
         yields an HTTP_200_OK response and the correct data.

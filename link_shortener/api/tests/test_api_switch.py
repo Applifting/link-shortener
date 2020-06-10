@@ -15,7 +15,7 @@ class TestActivateLinkAPI(TestCase):
         self.endpoint = '/api/activate/7'
         self.headers = {'Bearer': config('ACCESS_TOKEN')}
 
-    def test_activate_link_with_token_successful(self):
+    def test_activate_link_correct_request_successful(self):
         '''
         Test that a get request to activate a specific link with the correct
         token yields an HTTP_200_OK response.

@@ -46,6 +46,7 @@ async def redirect_link(request, link_endpoint):
             )
             link_data = await query.fetchone()
             if link_data.password is None:
+                redirect_counter.inc()
                 return redirect(link_data.url)
 
             return redirect('/authorize/{}'.format(link_data.id))

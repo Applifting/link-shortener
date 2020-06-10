@@ -23,7 +23,7 @@ view_blueprint = Blueprint('views')
 redirect_counter = Counter(
     'redirect_count',
     'Number of successful link redirections',
-    ['id']
+    ['link_id', 'referer']
 )
 
 
@@ -47,7 +47,10 @@ async def redirect_link(request, link_endpoint):
             )
             link_data = await query.fetchone()
             if link_data.password is None:
-                redirect_counter.labels(str(link_data.id)).inc()
+                redirect_counter.labels(
+                    str(link_data.id),
+                    str(request.headers.get('Referer'))
+                ).inc()
                 return redirect(link_data.url)
 
             return redirect('/authorize/{}'.format(link_data.id))

@@ -5,7 +5,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from decouple import config
 
 from sanic import Blueprint
-from sanic.response import html, json, redirect
+from sanic.response import html, json, redirect, text
 
 from sanic_oauth.blueprint import login_required
 
@@ -21,8 +21,9 @@ from link_shortener.core.decorators import credential_whitelist_check
 
 view_blueprint = Blueprint('views')
 redirect_counter = Counter(
-    'Redirect count',
-    'Number of successful link redirections'
+    'redirect_count',
+    'Number of successful link redirections',
+    ['id']
 )
 
 
@@ -31,7 +32,7 @@ async def requests_count(request):
     try:
         count = generate_latest(redirect_counter)
         return text(count.decode())
-    except Exception:
+    except Exception as error:
         return json({'message': error}, status=500)
 
 
@@ -46,7 +47,7 @@ async def redirect_link(request, link_endpoint):
             )
             link_data = await query.fetchone()
             if link_data.password is None:
-                redirect_counter.inc()
+                redirect_counter.labels(str(link_data.id)).inc()
                 return redirect(link_data.url)
 
             return redirect('/authorize/{}'.format(link_data.id))

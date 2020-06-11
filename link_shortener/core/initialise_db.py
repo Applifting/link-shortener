@@ -133,7 +133,7 @@ async def initialise_db(app, loop):
             await conn.execute(CreateTable(links))
             await conn.execute(CreateTable(salts))
             for values in data:
-                if values[2] is not None:
+                if values[2]:
                     salt = os.urandom(32)
                     values[2] = hashlib.pbkdf2_hmac(
                         'sha256',
@@ -141,20 +141,29 @@ async def initialise_db(app, loop):
                         salt,
                         100000
                     )
+                    link_object = await conn.execute(links.insert().values(
+                        owner=values[0],
+                        owner_id=values[1],
+                        password=values[2],
+                        endpoint=values[3],
+                        url=values[4],
+                        switch_date=values[5],
+                        is_active=values[6]
+                    ))
                     await conn.execute(salts.insert().values(
-                        id=values[7],
+                        link_id=link_object.lastrowid,
                         salt=salt
                     ))
-
-                await conn.execute(links.insert().values(
-                    owner=values[0],
-                    owner_id=values[1],
-                    password=values[2],
-                    endpoint=values[3],
-                    url=values[4],
-                    switch_date=values[5],
-                    is_active=values[6]
-                ))
+                else:
+                    await conn.execute(links.insert().values(
+                        owner=values[0],
+                        owner_id=values[1],
+                        password=values[2],
+                        endpoint=values[3],
+                        url=values[4],
+                        switch_date=values[5],
+                        is_active=values[6]
+                    ))
 
             await trans.commit()
             await trans.close()

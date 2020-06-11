@@ -2,8 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from sqlalchemy import (MetaData, Table, Column, String, Integer, BLOB,
-                        Date, Boolean)
+from sqlalchemy import (MetaData, Table, Column, ForeignKey, String, Integer,
+                        BLOB, Date, Boolean)
 
 
 metadata = MetaData()
@@ -22,6 +22,10 @@ links = Table(
 salts = Table(
     'hash_salts',
     metadata,
-    Column('id', Integer, primary_key=True),
+    Column(
+        'link_id',
+        Integer,
+        ForeignKey('links.id', onupdate='CASCADE', ondelete='CASCADE'
+    )),
     Column('salt', BLOB)
 )

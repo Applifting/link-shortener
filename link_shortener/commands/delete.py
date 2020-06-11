@@ -9,12 +9,10 @@ async def delete_link(request, link_id):
     try:
         async with request.app.engine.acquire() as conn:
             trans = await conn.begin()
-            query = await conn.execute(
-                links.select().where(
-                    links.columns['id'] == link_id
-                )
-            )
             try:
+                query = await conn.execute(links.select().where(
+                        links.columns['id'] == link_id
+                ))
                 link_data = await query.fetchone()
                 if not link_data:
                     raise Exception
@@ -23,7 +21,7 @@ async def delete_link(request, link_id):
                     links.columns['id'] == link_data.id
                 ))
                 await conn.execute(salts.delete().where(
-                    salts.columns['id'] == link_data.id
+                    salts.columns['link_id'] == link_data.id
                 ))
                 await trans.commit()
                 await trans.close()

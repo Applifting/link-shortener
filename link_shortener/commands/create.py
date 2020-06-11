@@ -37,19 +37,10 @@ async def create_link(request, data):
                     salt,
                     100000
                 )
-                last_query = await conn.execute(links.select().order_by(
-                    links.columns['id'].desc()
-                ).limit(1))
-                last_row = await last_query.fetchone()
-                await conn.execute(salts.insert().values(
-                    id=last_row.id+1,
-                    salt=salt
-                ))
-
             else:
                 password = None
 
-            await conn.execute(links.insert().values(
+            link_object = await conn.execute(links.insert().values(
                 owner=data['owner'],
                 owner_id=data['owner_id'],
                 password=password,
@@ -58,6 +49,12 @@ async def create_link(request, data):
                 switch_date=data['switch_date'],
                 is_active=True
             ))
+            if password:
+                await conn.execute(salts.insert().values(
+                    link_id=link_object.lastrowid,
+                    salt=salt
+                ))
+
             await trans.commit()
             await trans.close()
             return ('Link created successfully', 201)

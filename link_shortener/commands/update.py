@@ -55,11 +55,11 @@ async def update_link(request, link_id, data):
                 )
                 if link_data.password:
                     await conn.execute(salts.update().where(
-                        salts.columns['id'] == link_id
+                        salts.columns['link_id'] == link_id
                     ).values(salt=salt))
                 else:
                     await conn.execute(salts.insert().values(
-                        id=link_id,
+                        link_id=link_id,
                         salt=salt
                     ))
 
@@ -79,8 +79,7 @@ async def update_link(request, link_id, data):
             await trans.close()
             return ('Link updated successfully', 200)
 
-    except Exception as error:
-        print(error)
+    except Exception:
         await trans.close()
         return ('Editing link failed', 500)
 
@@ -103,7 +102,7 @@ async def reset_password(request, link_id):
                     links.columns['id'] == link_id
                 ).values(password=None))
                 await conn.execute(salts.delete().where(
-                    salts.columns['id'] == link_id
+                    salts.columns['link_id'] == link_id
                 ))
                 await trans.commit()
                 await trans.close()

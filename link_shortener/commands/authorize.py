@@ -44,7 +44,7 @@ async def check_password(request, link_id, form):
                 ))
                 link_data = await link_query.fetchone()
                 salt_query = await conn.execute(salts.select().where(
-                    salts.columns['id'] == link_id
+                    salts.columns['link_id'] == link_id
                 ))
                 salt_data = await salt_query.fetchone()
                 if (not link_data) or (not salt_data):

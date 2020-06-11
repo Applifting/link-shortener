@@ -17,7 +17,7 @@ as sanic_oauth has old/deprecated versions of dependencies (httpx et al.)
 Landing page - Redirects to /links/about.
 
 **/links/about**
-Displays information about the page.
+Displays information about the application.
 
 **/<link_endpoint>**
 Redirects to the URL corresponding to its respective endpoint.
@@ -26,59 +26,39 @@ Redirects to the URL corresponding to its respective endpoint.
 Displays a list of all active links and their owners.
 
 **/links/me**
-Authenticates the user, then displays a list of all the user's links.
-Based on the user's Google id.
+Displays a list of all links created by the authenticated user.
 
 **/create**
-A form for creating new links. If an active link with the same endpoint
-already exists, an error will be thrown.
+A form for creating new links. Creating a link with identical endpoint to an already
+existing active link is not allowed.
 
-**/edit/active/<link_id>**
-A form for updating the URL of an active link pointed to via the id
-specified within the endpoint's link_id parameter.
-
-**/edit/inactive/<link_id>**
-A form for updating the URL of an inactive link pointed to via the id
-specified within the endpoint's link_id parameter.
+**/edit/<link_id>**
+A form for updating attributes of a link identified by the endpoint's
+link_id parameter.
 
 **/deactivate/<link_id>**
-Deactivates the active link pointed to via the id specified
-within the endpoint's link_id parameter.
-If deactivation date had been set, it will not be carried over.
+Deactivates an active link identified by the endpoint's link_id parameter.
+If a deactivation date had been set, it will not be carried over.
 
 **/activate/<link_id>**
-Activates the inactive link pointed to via the id specified
-within the endpoint's link_id parameter.
-If activation date has been set, it will not be carried over.
+Activates an inactive link identified by the endpoint's link_id parameter.
+If an activation date had been set, it will not be carried over.
 
-**/delete/<status>/<link_id>**
-Status = {'active', 'inactive'}.
-Deletes the link with the status and the id specified by
-the endpoint's respective parameters status and link_id.
+**/delete/<link_id>**
+Deletes a link identified by the endpoint's link_id parameter.
 
-**/reset/<status>/<link_id>**
-Status = {'active', 'inactive'}.
-Resets the password of the link with the status and the id specified by
-the endpoint's respective parameters status and link_id.
-
-**/get_links** (API)
-Displays a JSON formatted data from the database - health check for development.
+**/reset/<link_id>**
+Resets password of a link identified by the endpoint's link_id parameter.
 
 **/authorize/<link_id>**
-A form for entering a password for an active link pointed to via the id
-specified within the endpoint's link_id parameter.
-An automatic redirection target for accessing any link secured by a password.
-Submitting a correct password results in redirection to the link's
+A form for submitting a password of a link identified by the endpoint's
+link_id parameter.
+Attempts at accessing password secured links will be automatically redirected
+to this endpoint.
+Submitting the correct password results in redirection to the link's
 specific URL.
 
 
-To do eventually:
-
-- Overview HTTP error codes and create templates to display them to users
-- Write unit tests
-
 To do before production:
 
-- Hide environment variables
-- Change DB configuration
 - Change wait_for_db from sleep to pinging the db

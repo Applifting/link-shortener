@@ -4,6 +4,8 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import hashlib
 
+from decouple import config
+
 from link_shortener.models import links, salts
 
 
@@ -66,3 +68,15 @@ async def check_password(request, link_id, form):
 
     except Exception:
         return ('Form failed', 500)
+
+
+async def check_token(request):
+    try:
+        token = request.headers['Bearer']
+        if (token != config('ACCESS_TOKEN')):
+            return ('Unauthorized', 401)
+
+        return None
+
+    except KeyError:
+        return ('Please provide a token', 400)

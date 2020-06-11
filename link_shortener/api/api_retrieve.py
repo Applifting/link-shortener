@@ -8,6 +8,7 @@ from sanic import Blueprint
 from sanic.response import json
 
 from link_shortener.commands.retrieve import retrieve_links, retrieve_link
+from link_shortener.commands.authorize import check_token
 
 
 api_retrieve_blueprint = Blueprint('api_retrieve')
@@ -15,13 +16,9 @@ api_retrieve_blueprint = Blueprint('api_retrieve')
 
 @api_retrieve_blueprint.route('/api/links', methods=['GET'])
 async def api_retrieve_links(request):
-    try:
-        token = request.headers['Bearer']
-        if (token != config('ACCESS_TOKEN')):
-            return json({'message': 'Unauthorized'}, status=401)
-
-    except KeyError:
-        return json({'message': 'Please provide a token'}, status=400)
+    if await check_token(request):
+        message, status = await check_token(request)
+        return json({'message': message}, status=status)
 
     try:
         data = []

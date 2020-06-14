@@ -25,7 +25,7 @@ salts = Table(
     Column(
         'link_id',
         Integer,
-        ForeignKey('links.id', onupdate='CASCADE', ondelete='CASCADE'
-    )),
+        ForeignKey('links.id', onupdate='CASCADE', ondelete='CASCADE')
+    ),
     Column('salt', BLOB)
 )

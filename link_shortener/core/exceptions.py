@@ -2,6 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+
+
 class AccessDeniedException(Exception):
     '''
     Used for API token checking. Raised when headers are missing a token

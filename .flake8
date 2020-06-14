@@ -1,3 +1,4 @@
 [flake8]
 exclude =
-  migrations
+  migrations,
+  old_api

@@ -8,6 +8,8 @@ from decouple import config
 
 from link_shortener.models import links, salts
 
+from link_shortener.core.exceptions import AccessDeniedException
+
 
 async def check_auth_form(request, link_id):
     try:
@@ -74,9 +76,7 @@ async def check_token(request):
     try:
         token = request.headers['Bearer']
         if (token != config('ACCESS_TOKEN')):
-            return ('Unauthorized', 401)
-
-        return None
+            raise AccessDeniedException
 
     except KeyError:
-        return ('Please provide a token', 400)
+        raise AccessDeniedException

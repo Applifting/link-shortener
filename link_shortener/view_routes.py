@@ -19,8 +19,9 @@ from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 from link_shortener.commands.redirect import redirect_link
 
+from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
+                                            NotFoundException)
 from link_shortener.core.decorators import credential_whitelist_check
-from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
 
 
 view_blueprint = Blueprint('views')
@@ -28,15 +29,15 @@ view_blueprint = Blueprint('views')
 
 @view_blueprint.route('/<link_endpoint>', methods=['GET'])
 async def redirect_link_view(request, link_endpoint):
-    payload, status = await redirect_link(request, link_endpoint)
-    if status:
+    try:
+        target = await redirect_link(request, link_endpoint)
+        return redirect(target, status=301)
+    except NotFoundException:
         return html(template_loader(
                         template_file='message.html',
-                        payload=payload,
-                        status_code=str(status)
-                    ), status=status)
-
-    return redirect(payload, status=301)
+                        payload='Link inactive or does not exist',
+                        status_code='404'
+                    ), status=404)
 
 
 @view_blueprint.route('/', methods=['GET'])

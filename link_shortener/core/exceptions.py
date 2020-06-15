@@ -18,3 +18,9 @@ class DuplicateActiveLinkForbidden(Exception):
     the same endpoint already exists.
     '''
     pass
+
+
+class NotFoundException(Exception):
+    '''
+    '''
+    pass

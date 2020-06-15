@@ -61,40 +61,24 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    try:
-        link_data = await retrieve_links(request, {'is_active': True})
-        return html(template_loader(
-                        template_file='all_links.html',
-                        domain_name=config('DOMAIN_NAME'),
-                        data=link_data
-                    ), status=200)
-
-    except Exception:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Template failed loading',
-                        status_code='500'
-                    ), status=500)
+    link_data = await retrieve_links(request, filters={'is_active': True})
+    return html(template_loader(
+                    template_file='all_links.html',
+                    domain_name=config('DOMAIN_NAME'),
+                    data=link_data
+                ), status=200)
 
 
 @view_blueprint.route('/links/me', methods=['GET'])
 @login_required
 @credential_whitelist_check
 async def owner_specific_links(request, user):
-    try:
-        link_data = await retrieve_links(request, {'owner_id': user.id})
-        return html(template_loader(
-                        template_file='my_links.html',
-                        domain_name=config('DOMAIN_NAME'),
-                        link_data=link_data
-                    ), status=200)
-
-    except Exception:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Template failed loading',
-                        status_code='500'
-                    ), status=500)
+    link_data = await retrieve_links(request, filters={'owner_id': user.id})
+    return html(template_loader(
+                    template_file='my_links.html',
+                    domain_name=config('DOMAIN_NAME'),
+                    link_data=link_data
+                ), status=200)
 
 
 @view_blueprint.route('/delete/<link_id>', methods=['GET'])

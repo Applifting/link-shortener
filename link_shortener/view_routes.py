@@ -4,8 +4,6 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from decouple import config
 
-from aiomysql.sa.exc import InvalidRequestError
-
 from sanic import Blueprint
 from sanic.response import html, redirect
 
@@ -47,15 +45,7 @@ async def landing_page(request):
 
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
-    try:
-        return html(template_loader(template_file='about.html'), status=200)
-
-    except Exception:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Template failed loading',
-                        status_code='500'
-                    ), status=500)
+    return html(template_loader(template_file='about.html'), status=200)
 
 
 @view_blueprint.route('/links/all', methods=['GET'])
@@ -101,7 +91,7 @@ async def activate_link_view(request, user, link_id):
     try:
         await activate_link(request, link_id)
         status, message = 200, 'Link activated successfully'
-    except InvalidRequestError:
+    except NotFoundException:
         status, message = 404, 'Link does not exist'
     except DuplicateActiveLinkForbidden:
         status, message = 400, 'An active link with that name already exists'
@@ -111,12 +101,6 @@ async def activate_link_view(request, user, link_id):
                         payload=message,
                         status_code=str(status)
                     ), status=status)
-    # message, status_code = await activate_link(request, link_id)
-    # return html(template_loader(
-    #                 template_file='message.html',
-    #                 payload=message,
-    #                 status_code=str(status_code)
-    #             ), status=status_code)
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -126,7 +110,7 @@ async def deactivate_link_view(request, user, link_id):
     try:
         await deactivate_link(request, link_id)
         status, message = 200, 'Link deactivated successfully'
-    except InvalidRequestError:
+    except NotFoundException:
         status, message = 404, 'Link does not exist'
     finally:
         return html(template_loader(
@@ -134,12 +118,6 @@ async def deactivate_link_view(request, user, link_id):
                         payload=message,
                         status_code=str(status)
                     ), status=status)
-    # message, status_code = await deactivate_link(request, link_id)
-    # return html(template_loader(
-    #                 template_file='message.html',
-    #                 payload=message,
-    #                 status_code=str(status_code)
-    #             ), status=status_code)
 
 
 @view_blueprint.route('/reset/<link_id>', methods=['GET'])

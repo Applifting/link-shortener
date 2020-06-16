@@ -76,12 +76,17 @@ async def owner_specific_links(request, user):
 @login_required
 @credential_whitelist_check
 async def delete_link_view(request, user, link_id):
-    message, status_code = await delete_link(request, link_id)
-    return html(template_loader(
-                    template_file='message.html',
-                    payload=message,
-                    status_code=str(status_code)
-                ), status=status_code)
+    try:
+        await delete_link(request, link_id)
+        status, message = 200, 'Link deleted successfully'
+    except NotFoundException:
+        status, message = 404, 'Link does not exist'
+    finally:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=message,
+                        status_code=str(status)
+                    ), status=status)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

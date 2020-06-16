@@ -129,9 +129,14 @@ async def deactivate_link_view(request, user, link_id):
 @login_required
 @credential_whitelist_check
 async def reset_password_view(request, user, link_id):
-    message, status_code = await reset_password(request, link_id)
-    return html(template_loader(
-                    template_file='message.html',
-                    payload=message,
-                    status_code=str(status_code)
-                ), status=status_code)
+    try:
+        await reset_password(request, link_id)
+        status, message = 200, 'Password reset successfully'
+    except NotFoundException:
+        status, message = 404, 'Link has no password or does not exist'
+    finally:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=message,
+                        status_code=str(status)
+                    ), status=status)

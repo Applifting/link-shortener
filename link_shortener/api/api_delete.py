@@ -2,8 +2,6 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from decouple import config
-
 from sanic import Blueprint
 from sanic.response import json
 

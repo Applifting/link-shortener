@@ -19,6 +19,9 @@ from link_shortener.commands.update import check_update_form, update_link
 from link_shortener.commands.create import create_link
 
 from link_shortener.core.decorators import credential_whitelist_check
+from link_shortener.core.exceptions import (AccessDeniedException,
+                                            NotFoundException,
+                                            FormInvalidException)
 
 
 form_blueprint = Blueprint('forms')
@@ -46,35 +49,41 @@ class PasswordForm(SanicForm):
 
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])
 async def link_password_form(request, link_id):
-    form = PasswordForm(request)
-    file, payload, status = await check_auth_form(request, link_id)
-    return html(template_loader(
-                    template_file=file,
-                    form=form,
-                    payload=payload,
-                    status_code=str(status)
-                ), status=status)
+    try:
+        form = PasswordForm(request)
+        data = await check_auth_form(request, link_id)
+        return html(template_loader(
+                        template_file='password_form.html',
+                        form=form,
+                        payload=data,
+                        status_code='200'
+                    ), status=200)
+    except NotFoundException:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Link has no password or does not exist',
+                        status_code='404'
+                    ), status=404)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])
 async def link_password_save(request, link_id):
-    form = PasswordForm(request)
-    if not form.validate():
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Form invalid',
-                        status_code='400'
-                    ), status=400)
+    try:
+        form = PasswordForm(request)
+        link = await check_password(request, link_id, form)
+        return redirect(link, status=307)
+    except FormInvalidException:
+        status, message = 400, 'Form invalid'
+    except NotFoundException:
+        status, message = 404, 'Link has no password or does not exist'
+    except AccessDeniedException:
+        status, message = 401, 'Password incorrect'
 
-    payload, status = await check_password(request, link_id, form)
-    if status:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=payload,
-                        status_code=str(status)
-                    ), status=status)
-
-    return redirect(payload, status=302)
+    return html(template_loader(
+                    template_file='message.html',
+                    payload=message,
+                    status_code=str(status)
+                ), status=status)
 
 
 @form_blueprint.route('/create', methods=['GET'])

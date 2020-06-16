@@ -29,7 +29,7 @@ view_blueprint = Blueprint('views')
 async def redirect_link_view(request, link_endpoint):
     try:
         target = await redirect_link(request, link_endpoint)
-        return redirect(target, status=301)
+        return redirect(target, status=307)
     except NotFoundException:
         return html(template_loader(
                         template_file='message.html',

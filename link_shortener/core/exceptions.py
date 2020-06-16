@@ -22,5 +22,14 @@ class DuplicateActiveLinkForbidden(Exception):
 
 class NotFoundException(Exception):
     '''
+    Used when retrieving a specific link from the database via its ID.
+    Raised when no link with the specified ID exists.
+    '''
+    pass
+
+
+class FormInvalidException:
+    '''
+    Used on a POST request to a form. Raised when the form is not valid.
     '''
     pass

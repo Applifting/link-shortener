@@ -100,7 +100,7 @@ async def reset_password(request, link_id):
                 links.columns['id'] == link_data.id
             ).values(password=None))
             await conn.execute(salts.delete().where(
-                links.columns['id'] == link_data.id
+                salts.columns['link_id'] == link_data.id
             ))
             await trans.commit()
             await trans.close()

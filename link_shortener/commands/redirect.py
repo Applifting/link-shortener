@@ -16,7 +16,7 @@ async def redirect_link(request, link_endpoint):
                 links.columns['is_active'] == True
             ))
             link_data = await query.fetchone()
-            if link_data.password:
+            if link_data.password is not None:
                 return '/authorize/{}'.format(link_data.id)
 
             return link_data.url

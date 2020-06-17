@@ -122,14 +122,21 @@ async def create_link_save(request, user):
 @login_required
 @credential_whitelist_check
 async def update_link_form(request, user, link_id):
-    form = UpdateForm(request)
-    file, payload, status = await check_update_form(request, link_id)
-    return html(template_loader(
-                    template_file=file,
-                    form=form,
-                    payload=payload,
-                    status_code=str(status)
-                ), status=status)
+    try:
+        form = UpdateForm(request)
+        data = await check_update_form(request, link_id)
+        return html(template_loader(
+                        template_file='edit_form.html',
+                        form=form,
+                        payload=data,
+                        status_code='200'
+                    ), status=200)
+    except NotFoundException:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Link does not exist',
+                        status_code='404'
+                    ), status=404)
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['POST'])
@@ -138,24 +145,15 @@ async def update_link_form(request, user, link_id):
 async def update_link_save(request, user, link_id):
     try:
         form = UpdateForm(request)
-        data = {
-            'password': form.password.data,
-            'url': form.url.data,
-            'switch_date': form.switch_date.data
-        }
-        if not form.validate():
-            raise Exception
-
-        message, status = await update_link(request, link_id, data)
+        await update_link(request, link_id, data=form, from_api=False)
+        status, message = 200, 'Link updated successfully'
+    except FormInvalidException:
+        status, message = 400, 'Form invalid'
+    except NotFoundException:
+        status, message = 404, 'Link does not exist'
+    finally:
         return html(template_loader(
                         template_file='message.html',
                         payload=message,
                         status_code=str(status)
                     ), status=status)
-
-    except Exception:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Form or data invalid',
-                        status_code='400'
-                    ), status=400)

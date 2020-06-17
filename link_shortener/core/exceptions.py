@@ -28,8 +28,24 @@ class NotFoundException(Exception):
     pass
 
 
-class FormInvalidException:
+class FormInvalidException(Exception):
     '''
     Used on a POST request to a form. Raised when the form is not valid.
+    '''
+    pass
+
+
+class MissingDataException(Exception):
+    '''
+    Used while checking request data from a POST request. Raised when one
+    or more mandatory attributes do not have a value.
+    '''
+    pass
+
+
+class IncorrectDataFormat(Exception):
+    '''
+    Used while processing request data from a POST request. Raised when
+    an attribute has an incorrect format.
     '''
     pass

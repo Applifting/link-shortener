@@ -20,8 +20,9 @@ from link_shortener.commands.create import create_link
 
 from link_shortener.core.decorators import credential_whitelist_check
 from link_shortener.core.exceptions import (AccessDeniedException,
-                                            NotFoundException,
-                                            FormInvalidException)
+                                            DuplicateActiveLinkForbidden,
+                                            FormInvalidException,
+                                            NotFoundException)
 
 
 form_blueprint = Blueprint('forms')
@@ -103,30 +104,18 @@ async def create_link_form(request, user):
 async def create_link_save(request, user):
     try:
         form = CreateForm(request)
-        if not form.validate():
-            raise Exception
-
-        data = {
-            'owner': user.email,
-            'owner_id': user.id,
-            'password': form.password.data,
-            'endpoint': form.endpoint.data,
-            'url': form.url.data,
-            'switch_date': form.switch_date.data
-        }
-        message, status = await create_link(request, data)
+        await create_link(request, data=form, user_data=user, from_api=False)
+        status, message = 201, 'Link created successfully'
+    except FormInvalidException:
+        status, message = 400, 'Form invalid'
+    except DuplicateActiveLinkForbidden:
+        status, message = 409, 'An active link with that name already exists'
+    finally:
         return html(template_loader(
                         template_file='message.html',
                         payload=message,
                         status_code=str(status)
                     ), status=status)
-
-    except Exception:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Form or data invalid',
-                        status_code='400'
-                    ), status=400)
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])

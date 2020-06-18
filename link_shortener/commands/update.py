@@ -10,6 +10,7 @@ from datetime import date
 from link_shortener.models import links, salts
 
 from link_shortener.core.exceptions import (FormInvalidException,
+                                            IncorrectDataFormat,
                                             MissingDataException,
                                             NotFoundException)
 
@@ -45,6 +46,8 @@ async def update_link(request, link_id, data, from_api=True):
             }
         except KeyError:
             raise MissingDataException
+        except TypeError:
+            raise IncorrectDataFormat
 
     else:
         if not data.validate():

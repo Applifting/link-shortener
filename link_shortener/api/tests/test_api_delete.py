@@ -44,13 +44,13 @@ class TestDeleteLinkAPI(TestCase):
     def test_a_delete_link_without_token_fails(self):
         '''
         Test that a delete request to delete an existing link without
-        a token yields an HTTP_400_BAD_REQUEST response.
+        a token yields an HTTP_401_UNAUTHORIZED response.
         '''
         response = self.app.test_client.delete(
             self.endpoint,
             gather_request=False
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
     def test_b_delete_link_with_wrong_token_fails(self):

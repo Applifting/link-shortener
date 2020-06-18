@@ -102,7 +102,7 @@ class TestCreateLinkAPI(TestCase):
         self.assertEqual(response.status, 400)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
 
-        message = 'Bad request and/or payload'
+        message = 'Please provide correctly formatted data'
         self.assertEqual(loads(response.text)['message'], message)
 
     def test_post_duplicate_data_fails(self):
@@ -133,14 +133,14 @@ class TestCreateLinkAPI(TestCase):
     def test_post_data_without_token_fails(self):
         '''
         Test that a post request to create a new active link without a token
-        yields an HTTP_400_BAD_REQUEST response.
+        yields an HTTP_401_UNAUTHORIZED response.
         '''
         response = self.app.test_client.post(
             self.endpoint,
             gather_request=False,
             data=dumps(self.data)
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
 
     def test_post_data_with_wrong_token_fails(self):

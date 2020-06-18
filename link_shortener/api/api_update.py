@@ -11,6 +11,7 @@ from link_shortener.commands.update import update_link
 from link_shortener.commands.authorize import check_token
 
 from link_shortener.core.exceptions import (AccessDeniedException,
+                                            IncorrectDataFormat,
                                             MissingDataException,
                                             NotFoundException)
 
@@ -28,6 +29,8 @@ async def api_update_link(request, link_id):
         status, message = 401, 'Unauthorized'
     except MissingDataException:
         status, message = 400, 'Please provide all data'
+    except IncorrectDataFormat:
+        status, message = 400, 'Please provide correctly formatted data'
     except NotFoundException:
         status, message = 404, 'Link does not exist'
     finally:

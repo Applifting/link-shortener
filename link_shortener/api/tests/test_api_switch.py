@@ -60,13 +60,13 @@ class TestActivateLinkAPI(TestCase):
     def test_activate_link_without_token_fails(self):
         '''
         Test that a get request to activate a specific link without a token
-        yields an HTTP_400_BAD_REQUEST response.
+        yields an HTTP_401_UNAUTHORIZED response.
         '''
         response = self.app.test_client.get(
             self.endpoint,
             gather_request=False
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-15:], self.endpoint)
 
     def test_activate_link_with_wrong_token_fails(self):
@@ -135,13 +135,13 @@ class TestDeactivateLinkAPI(TestCase):
     def test_deactivate_link_without_token_fails(self):
         '''
         Test that a get request to deactivate a specific link without a token
-        yields an HTTP_400_BAD_REQUEST response.
+        yields an HTTP_401_UNAUTHORIZED response.
         '''
         response = self.app.test_client.get(
             self.endpoint,
             gather_request=False
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-17:], self.endpoint)
 
     def test_deactivate_link_with_wrong_token_fails(self):

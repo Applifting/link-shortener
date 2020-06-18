@@ -94,7 +94,7 @@ class TestUpdateLinkAPI(TestCase):
         self.assertEqual(response.status, 400)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
-        message = 'Bad request and/or payload'
+        message = 'Please provide correctly formatted data'
         self.assertEqual(loads(response.text)['message'], message)
 
     def test_put_data_nonexisting_id_fails(self):
@@ -115,14 +115,14 @@ class TestUpdateLinkAPI(TestCase):
     def test_put_data_without_token_fails(self):
         '''
         Test that a put request to update an existing link without a token
-        yields an HTTP_400_BAD_REQUEST response.
+        yields an HTTP_401_UNAUTHORIZED response.
         '''
         response = self.app.test_client.put(
             self.endpoint,
             gather_request=False,
             data=dumps(self.data)
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
     def test_put_data_with_wrong_token_fails(self):

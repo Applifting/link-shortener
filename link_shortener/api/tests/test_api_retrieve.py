@@ -36,13 +36,13 @@ class TestRetrieveLinksAPI(TestCase):
     def test_get_list_without_token_fails(self):
         '''
         Test that a get request for a list of all links without a token
-        yields an HTTP_400_BAD_REQUEST response.
+        yields an HTTP_401_UNAUTHORIZED response.
         '''
         response = self.app.test_client.get(
             self.endpoint,
             gather_request=False
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
 
     def test_get_list_with_wrong_token_fails(self):
@@ -114,13 +114,13 @@ class TestRetrieveLinkAPI(TestCase):
     def test_get_detail_without_token_fails(self):
         '''
         Test that a get request for a specific link without a token
-        yields an HTTP_400_BAD_REQUEST response.
+        yields an HTTP_401 response.
         '''
         response = self.app.test_client.get(
             self.endpoint,
             gather_request=False
         )
-        self.assertEqual(response.status, 400)
+        self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
     def test_get_detail_with_wrong_token_fails(self):

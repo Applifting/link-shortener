@@ -46,8 +46,7 @@ data = [
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg',
         None,
-        True,
-        3
+        True
     ],
     [
         'radek.holy@applifting.cz',
@@ -74,8 +73,7 @@ data = [
         'meta',
         'https://github.com/Applifting/link-shortener',
         None,
-        True,
-        6
+        True
     ],
     [
         'vojtech.janousek@applifting.cz',
@@ -103,6 +101,15 @@ data = [
         'https://google.com',
         None,
         False
+    ],
+    [
+        'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
+        None,
+        'anothertunak',
+        'https://www.britannica.com/animal/tuna-fish',
+        datetime.date(2020, 6, 1),
+        True
     ]
 ]
 

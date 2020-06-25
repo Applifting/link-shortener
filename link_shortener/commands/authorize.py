@@ -23,7 +23,7 @@ async def check_auth_form(request, link_id):
             ))
             link_data = await query.fetchone()
             if not link_data:
-                raise AttributeError
+                raise NotFoundException
 
             return link_data
 

@@ -23,7 +23,7 @@ async def check_update_form(request, link_id):
             ))
             link_data = await query.fetchone()
             if not link_data:
-                raise AttributeError
+                raise NotFoundException
 
             return link_data
 
@@ -69,7 +69,7 @@ async def update_link(request, link_id, data, from_api=True):
             ))
             link_data = await query.fetchone()
             if not link_data:
-                raise AttributeError
+                raise NotFoundException
 
         except AttributeError:
             await trans.close()

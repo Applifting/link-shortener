@@ -156,7 +156,15 @@ async def update_link_form(request, user, link_id):
 async def update_link_save(request, user, link_id):
     try:
         form = UpdateForm(request)
-        await update_link(request, link_id, data=form, from_api=False)
+        if not form.validate():
+            raise FormInvalidException
+
+        form_data = {
+            'password': form.password.data,
+            'url': form.url.data,
+            'switch_date': form.switch_date.data
+        }
+        await update_link(request, link_id=link_id, data=form_data)
         status, message = 200, 'Link updated successfully'
     except FormInvalidException:
         status, message = 400, 'Form invalid'

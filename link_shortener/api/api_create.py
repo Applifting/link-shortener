@@ -25,19 +25,30 @@ api_create_blueprint = Blueprint('api_create')
 async def api_create_link(request):
     try:
         await check_token(request)
-        r_body = request.body
-        payload = loads(r_body)
-        if not isinstance(payload['endpoint'], str):
-            raise TypeError
+        payload = loads(request.body)
+        for column in ('owner', 'owner_id', 'endpoint', 'url'):
+            value = payload.get(column, None)
+            if not value:
+                missing = column
+                raise MissingDataException
+            if not isinstance(value, str):
+                raise IncorrectDataFormat
 
         data = {'password': None}
         data['owner'] = payload['owner']
         data['owner_id'] = payload['owner_id']
         data['endpoint'] = payload['endpoint']
         data['url'] = payload['url']
-        if payload['switch_date'] is not None:
+        if payload.get('switch_date', None):
             sd = payload['switch_date']
-            data['switch_date'] = date(sd['Year'], sd['Month'], sd['Day'])
+            try:
+                data['switch_date'] = date(
+                    sd['Year'],
+                    sd['Month'],
+                    sd['Day']
+                )
+            except (KeyError, TypeError):
+                raise IncorrectDataFormat
         else:
             data['switch_date'] = None
 
@@ -47,9 +58,10 @@ async def api_create_link(request):
         status, message = 401, 'Unauthorized'
     except JSONDecodeError:
         status, message = 400, 'Please provide data in JSON format'
-    except KeyError:
-        status, message = 400, 'Please provide all data'
-    except TypeError:
+    except MissingDataException:
+        status = 400
+        message = 'Please provide all data. Missing: {}'.format(missing)
+    except IncorrectDataFormat:
         status, message = 400, 'Please provide correctly formatted data'
     except DuplicateActiveLinkForbidden:
         status, message = 409, 'An active link with that name already exists'

@@ -74,7 +74,7 @@ class TestCreateLinkAPI(TestCase):
         self.assertEqual(response.status, 400)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
 
-        message = 'Please provide all data'
+        message = 'Please provide all data. Missing: owner'
         self.assertEqual(loads(response.text)['message'], message)
 
     def test_post_incorrect_payload_fails(self):

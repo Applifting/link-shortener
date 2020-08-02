@@ -5,14 +5,9 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import os
 import hashlib
 
-from datetime import date
-
 from link_shortener.models import links, salts
 
-from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
-                                            FormInvalidException,
-                                            IncorrectDataFormat,
-                                            MissingDataException)
+from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
 
 
 async def create_link(request, data):

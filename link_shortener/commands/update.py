@@ -5,14 +5,9 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import os
 import hashlib
 
-from datetime import date
-
 from link_shortener.models import links, salts
 
-from link_shortener.core.exceptions import (FormInvalidException,
-                                            IncorrectDataFormat,
-                                            MissingDataException,
-                                            NotFoundException)
+from link_shortener.core.exceptions import NotFoundException
 
 
 async def check_update_form(request, link_id):
@@ -31,35 +26,7 @@ async def check_update_form(request, link_id):
             raise NotFoundException
 
 
-async def update_link(request, link_id, data, from_api=True):
-    # Handle input data
-    if from_api:
-        try:
-            update_data = {
-                'password': None,
-                'url': data['url'],
-                'switch_date': date(
-                    data['switch_date']['Year'],
-                    data['switch_date']['Month'],
-                    data['switch_date']['Day']
-                )
-            }
-        except KeyError:
-            raise MissingDataException
-        except TypeError:
-            raise IncorrectDataFormat
-
-    else:
-        if not data.validate():
-            raise FormInvalidException
-
-        update_data = {
-            'password': data.password.data,
-            'url': data.url.data,
-            'switch_date': data.switch_date.data
-        }
-
-    # Update data in the database
+async def update_link(request, link_id, data):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
         link_update = links.update().where(links.columns['id'] == link_id)
@@ -69,17 +36,18 @@ async def update_link(request, link_id, data, from_api=True):
             ))
             link_data = await query.fetchone()
             if not link_data:
+                await trans.close()
                 raise NotFoundException
 
         except AttributeError:
             await trans.close()
             raise NotFoundException
 
-        if update_data['password']:
+        if data['password']:
             salt = os.urandom(32)
             password = hashlib.pbkdf2_hmac(
                 'sha256',
-                update_data['password'].encode('utf-8'),
+                data['password'].encode('utf-8'),
                 salt,
                 100000
             )
@@ -94,15 +62,15 @@ async def update_link(request, link_id, data, from_api=True):
                 ))
 
             await conn.execute(link_update.values(
-                url=update_data['url'],
-                switch_date=update_data['switch_date'],
+                url=data['url'],
+                switch_date=data['switch_date'],
                 password=password
             ))
 
         else:
             await conn.execute(link_update.values(
-                url=update_data['url'],
-                switch_date=update_data['switch_date']
+                url=data['url'],
+                switch_date=data['switch_date']
             ))
 
         await trans.commit()

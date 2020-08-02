@@ -104,7 +104,18 @@ async def create_link_form(request, user):
 async def create_link_save(request, user):
     try:
         form = CreateForm(request)
-        await create_link(request, data=form, user_data=user, from_api=False)
+        if not form.validate():
+            raise FormInvalidException
+
+        form_data = {
+            'owner': user.email,
+            'owner_id': user.id,
+            'password': form.password.data,
+            'endpoint': form.endpoint.data,
+            'url': form.url.data,
+            'switch_date': form.switch_date.data
+        }
+        await create_link(request, data=form_data)
         status, message = 201, 'Link created successfully'
     except FormInvalidException:
         status, message = 400, 'Form invalid'

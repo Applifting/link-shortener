@@ -15,76 +15,41 @@ from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             MissingDataException)
 
 
-async def create_link(request, data, user_data=None, from_api=True):
-    # Handle input data
-    if from_api:
-        try:
-            link_data = {
-                'owner': data['owner'],
-                'owner_id': data['owner_id'],
-                'password': None,
-                'endpoint': data['endpoint'],
-                'url': data['url']
-            }
-            if not isinstance(data['endpoint'], str):
-                raise TypeError
-
-            if data['switch_date'] is not None:
-                link_data['switch_date'] = date(
-                    data['switch_date']['Year'],
-                    data['switch_date']['Month'],
-                    data['switch_date']['Day']
-                )
-            else:
-                link_data['switch_date'] = None
-        except KeyError:
-            raise MissingDataException
-        except TypeError:
-            raise IncorrectDataFormat
-
-    else:
-        if not data.validate():
-            raise FormInvalidException
-
-        link_data = {
-            'owner': user_data.email,
-            'owner_id': user_data.id,
-            'password': data.password.data,
-            'endpoint': data.endpoint.data,
-            'url': data.url.data,
-            'switch_date': data.switch_date.data
-        }
-
-    # Insert data into database
+async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
-        query = await conn.execute(links.select().where(
-            links.columns['endpoint'] == link_data['endpoint']
-        ).where(
-            links.columns['is_active'] == True
-        ))
-        if await query.fetchone():
+        try:
+            query = await conn.execute(links.select().where(
+                links.columns['endpoint'] == data['endpoint']
+            ).where(
+                links.columns['is_active'] == True
+            ))
+            link_data = await query.fetchone()
+            if link_data:
+                await trans.close()
+                raise DuplicateActiveLinkForbidden
+
+        except AttributeError:
             await trans.close()
             raise DuplicateActiveLinkForbidden
 
-        if link_data['password']:
+        if data['password']:
             salt = os.urandom(32)
             password = hashlib.pbkdf2_hmac(
                 'sha256',
-                link_data['password'].encode('utf-8'),
+                data['password'].encode('utf-8'),
                 salt,
-                100000
-            )
+                100000)
         else:
             password = None
 
         link_object = await conn.execute(links.insert().values(
-            owner=link_data['owner'],
-            owner_id=link_data['owner_id'],
+            owner=data['owner'],
+            owner_id=data['owner_id'],
             password=password,
-            endpoint=link_data['endpoint'],
-            url=link_data['url'],
-            switch_date=link_data['switch_date'],
+            endpoint=data['endpoint'],
+            url=data['url'],
+            switch_date=data['switch_date'],
             is_active=True
         ))
         if password:

@@ -38,6 +38,9 @@ class TestUpdateLinkAPI(TestCase):
         self.assertEqual(response.status, 200)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
+        message = 'Link updated successfully'
+        self.assertEqual(loads(response.text)['message'], message)
+
     def test_put_data_correct_payload_output_check(self):
         '''
         Test that a get request for a link updated in the test above
@@ -112,6 +115,9 @@ class TestUpdateLinkAPI(TestCase):
         self.assertEqual(response.status, 404)
         self.assertEqual(str(response.url)[-16:], endpoint)
 
+        message = 'Link does not exist'
+        self.assertEqual(loads(response.text)['message'], message)
+
     def test_put_data_without_token_fails(self):
         '''
         Test that a put request to update an existing link without a token
@@ -124,6 +130,9 @@ class TestUpdateLinkAPI(TestCase):
         )
         self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+        message = 'Unauthorized'
+        self.assertEqual(loads(response.text)['message'], message)
 
     def test_put_data_with_wrong_token_fails(self):
         '''
@@ -140,6 +149,9 @@ class TestUpdateLinkAPI(TestCase):
         )
         self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+        message = 'Unauthorized'
+        self.assertEqual(loads(response.text)['message'], message)
 
     def test_put_data_wrong_method_fails(self):
         '''

@@ -41,6 +41,9 @@ class TestCreateLinkAPI(TestCase):
         self.assertEqual(response.status, 201)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
 
+        message = 'Link created successfully'
+        self.assertEqual(loads(response.text)['message'], message)
+
     def test_post_correct_payload_output_check(self):
         '''
         Test that a get request for a link created in the test above
@@ -130,6 +133,9 @@ class TestCreateLinkAPI(TestCase):
         self.assertEqual(response.status, 409)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
 
+        message = 'An active link with that name already exists'
+        self.assertEqual(loads(response.text)['message'], message)
+
     def test_post_data_without_token_fails(self):
         '''
         Test that a post request to create a new active link without a token
@@ -142,6 +148,9 @@ class TestCreateLinkAPI(TestCase):
         )
         self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+        message = 'Unauthorized'
+        self.assertEqual(loads(response.text)['message'], message)
 
     def test_post_data_with_wrong_token_fails(self):
         '''
@@ -158,6 +167,9 @@ class TestCreateLinkAPI(TestCase):
         )
         self.assertEqual(response.status, 401)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+        message = 'Unauthorized'
+        self.assertEqual(loads(response.text)['message'], message)
 
     def test_post_data_wrong_method_fails(self):
         '''

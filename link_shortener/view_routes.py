@@ -13,7 +13,7 @@ from sqlalchemy.sql.expression import select as sql_select
 
 from prometheus_client import Counter, generate_latest
 
-from link_shortener.models import actives, inactives, salts
+from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links

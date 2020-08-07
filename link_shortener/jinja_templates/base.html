@@ -1,111 +1,95 @@
 <!DOCTYPE html>
+
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <meta charset="utf-8" />
     <title>Link Shortener</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
-        font-family: 'Lato', sans-serif;
-        text-align: center;
+        font-family: "Poppins", sans-serif;
+        background-color: #e9eff6;
+        margin: 0;
+        padding: 0;
       }
-      #navbar ul {
-      	margin: 1em;
-      	padding: 1em;
-      	list-style-type: none;
-      	text-align: center;
-        width: 100%;
-      }
-      #navbar ul li {
-        display: inline;
-      }
-      #navbar ul li a {
-      	text-decoration: none;
-      	padding: .2em 1em;
-        margin: 0.8em;
-      	color: #484d4d;
-      	background-color: #fff;
-        font-size: 2em;
-        border: 0.1em solid #484d4d;
-        border-radius: 0.5em;
-      }
-      #navbar ul li a:hover {
-      	color: #fff;
-      	background-color: #484d4d;
-      }
-      table td {
-        border-left: 100px solid white;
-        border-right: 100px solid white;
-        border-radius: 50px;
-      }
+
       .all-links-table {
-        border-collapse: collapse;
         width: 100%;
+
+        background-color: #fff;
+        color: #11103c;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        margin: auto;
+      }
+      .form {
+        padding: 20px;
+      }
+      .all-links-table tr {
+        max-width: 1280px;
       }
       .all-links-table th {
-        background-color: #484d4d;
-        color: white;
+        background-color: #e6e6ef;
+        color: #aaa9bc;
+        text-transform: uppercase;
       }
-      .all-links-table td, .all-links-table th {
-        border: 1px solid #ddd;
-        padding: 8px;
+      .all-links-table td,
+      .all-links-table th {
+        padding: 16px 26px;
       }
-      .all-links-table tr:nth-child(even) {
-        background-color: #f2f2f2;
+      .all-links-table tr:nth-child(odd) {
+        background-color: #f4f4fb;
       }
-      .all-links-table tr:hover {
-        background-color: #ddd;
+      .all-links-table a {
+        text-decoration: none;
+        padding: 5px;
       }
       form {
-        text-align: center;
-        margin-left: 16em;
-        margin-right: 16em;
-        margin-top: 4em;
-        border: 0.2em solid #484d4d;
-        border-radius: 0.6em;
+        margin: auto;
+        box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
+        background-color: white;
+        width: 480px;
       }
+
       form ul {
         display: block;
         list-style-type: none;
-        padding: 0px;
+        padding: 0;
       }
-      form ul li {
-        display: block;
-        text-align: center;
-        margin-bottom: 10px;
-        min-height: 35px;
+      form ul label {
+        margin: 0.5rem 41px;
       }
-      form ul li button {
-        margin-left: 0.5em;
-        margin-right: 0.5em;
+      form ul li input {
+        width: 83.33%;
+        margin: 0.5rem 40px;
+        padding: 0.6rem;
+        border: 1px solid #11103c;
       }
       #form-header {
-        color: #fff;
-        background-color: #484d4d;
-      }
-      form input[type="submit"] {
-        margin: 1em;
+        text-align: center;
+        padding-top: 30px;
       }
 
       #edit-anchor a {
-      	text-decoration: none;
-        padding: .2em 1em;
-        width: 50%;
+        text-decoration: none;
+        padding: 0.2em 1em;
 
-        margin: 0.3em;
         font-size: 1.2em;
-        border-radius: 0.3em;
-        display: inline-block;
+        display: block;
       }
-      .deactivate {
-        color: red;
-        border: 0.2em solid red;
-      }
-      .deactivate:hover {
-        color: #fff;
-        background-color: red;
-      }
+
       .activate {
         color: green;
         border: 0.2em solid green;
@@ -114,28 +98,238 @@
         color: #fff;
         background-color: green;
       }
-      .reset-delete {
-        color: #484d4d;
-        border: 0.2em solid #484d4d;
+      .reset-delete,
+      .deactivate {
+        width: 83.33%;
+        margin: 0.5rem 40px;
+        padding: 0.6rem;
+        border: 1px solid #11103c;
       }
       .reset-delete:hover {
         color: #fff;
         background-color: #484d4d;
       }
+      #links {
+        text-decoration: none;
+        color: #11103c;
+      }
+      .domain {
+        color: #aaa9bc;
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 160%;
+      }
 
+      #endpoint1 {
+        color: #322faf;
+        font-family: "Poppins";
+        font-style: normal;
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 160%;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+
+      /* Hide default HTML checkbox */
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      /* The slider */
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #d1ebeb;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+      }
+
+      input:checked + .slider {
+        background: #f8dec3;
+      }
+
+      input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      /* Rounded sliders */
+      .slider.round {
+        border-radius: 34px;
+      }
+
+      .slider.round:before {
+        border-radius: 50%;
+      }
+
+      #owner {
+        width: 240px;
+        height: 40px;
+        border: 1px solid #e6e6ef;
+        border-radius: 4px;
+        color: #e6e6ef;
+        margin-left: 30px;
+      }
+
+      .search {
+        width: 240px;
+        height: 40px;
+        border: 1px solid #e6e6ef;
+        border-radius: 4px;
+      }
+      .search::placeholder {
+        color: #e6e6ef;
+      }
+      #advanced {
+        cursor: pointer;
+      }
+      #aa {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+
+      #back {
+        display: block;
+        margin: 40px 0;
+        margin-left: 30%;
+      }
+
+      #createShort {
+        width: 232px;
+        background: #322faf;
+        border: none;
+        color: white;
+        height: 40px;
+        padding: 8px 15px;
+        margin-left: 30px;
+        text-decoration: none;
+      }
+      .row1 {
+        display: flex;
+        flex-direction: row;
+      }
+      .toggle::before {
+        content: "Active";
+      }
+      .toggle::after {
+        content: "Disbabled";
+      }
+      #fueled {
+        background-color: #e9eff6;
+        display: block;
+        width: 100%;
+        margin: 40px 0;
+        height: 69px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+      #submit {
+        margin-bottom: 40px;
+      }
+      .form {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: inherit;
+        background-color: white;
+      }
+      .container h4 {
+        margin: 0.5rem 41px;
+        font-size: 14px;
+      }
+      .container {
+        padding: 0;
+        margin-top: 100px;
+        box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
+      }
+
+      .copy:before {
+        content: "";
+        width: 1px;
+        background-color: black;
+        height: 18px;
+        position: absolute;
+        border: 1px solid black;
+        top: 253px;
+        left: 1063px;
+        border-radius: 2px;
+      }
+
+      .copy:after {
+        content: "";
+        width: 18px;
+        height: 0;
+        position: absolute;
+        border: 1px solid black;
+        top: 252px;
+        left: 1063px;
+        border-radius: 2px;
+      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div id="navbar">
-        <ul>
-      	<li><a href="/links/about">About</a></li>
-      	<li><a href="/links/all">Active links</a></li>
-      	<li><a href="/links/me">My links</a></li>
-        </ul>
-      </div>
-    </div>
-    {% block content %}
-    {% endblock %}
+    <div class="container"></div>
+    {% block content %} {% endblock %}
   </body>
+  <script>
+    let ahoj = document.getElementById("advanced");
+    let orgUrl = document.getElementById("orgUrl");
+    console.log(orgUrl);
+    let shortLink = document.getElementById("shortlink");
+    ahoj.addEventListener("click", function () {
+      let cus = document.getElementById("aa");
+      this.classList.toggle("active");
+      if (cus.style.maxHeight) {
+        cus.style.maxHeight = null;
+      } else {
+        cus.style.maxHeight = cus.scrollHeight + "px";
+      }
+    });
+
+    // let submit = document.getElementById("submit");
+
+    // if (orgUrl === "") {
+    //   submit.setAttribute("disabled", true);
+    // } else {
+    //   submitButton.setAttribute("disabled", false);
+    // }
+
+    $(document).ready(function () {
+      $(".search").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $(".myTable tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+      });
+    });
+  </script>
 </html>

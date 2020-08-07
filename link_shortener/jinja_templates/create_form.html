@@ -1,20 +1,35 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<div class="">
+  <a id="back" href="/links/all">Back</a>
 
-{% block content %}
-  <div class="container">
-    <form action="" method="POST">
-      <h1 id="form-header">Create a new link</h1>
-      {{ '<br>'.join(form.csrf_token.errors) }}
-      {{ form.csrf_token }}
-      {{ '<br>'.join(form.endpoint.errors) }}
-      <br>
-      <ul>
-        <li>{{ form.endpoint(size=30, placeholder="Endpoint") }}</li>
-        <li>{{ form.url(size=30, placeholder="URL") }}</li>
+  <form action="" method="POST">
+    <h1 id="form-header">Create a new link</h1>
+    {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
+    }}
+    <br />
+    <ul>
+      <label>Original URL *</label>
+      <li>
+        {{ form.endpoint(size=30, placeholder="original.url/original",
+        id="orgUrl") }}
+      </li>
+      <label>Shortlink *</label>
+      <li>
+        {{ form.url(size=30, placeholder="example/suffix", id="shortlink") }}
+      </li>
+      <label id="advanced">Advanced Settings</label>
+      <div id="aa">
         <li>{{ form.password(size=30, placeholder="Password") }}</li>
-        <li>{{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD") }}</li>
-        <li>{{ form.submit }}</li>
-      </ul>
-    </form>
-  </div>
+        <li>
+          {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD")
+          }}
+        </li>
+      </div>
+      <span id="fueled"
+        >www.fueled.by/example/suffix <img src="delete.svg" alt=""
+      /></span>
+      <li>{{ form.submit(id='submit') }}</li>
+    </ul>
+  </form>
+</div>
 {% endblock %}

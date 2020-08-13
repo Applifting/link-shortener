@@ -3,7 +3,24 @@
 <html lang="en" dir="ltr">
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
 
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+    />
     <meta charset="utf-8" />
     <title>Link Shortener</title>
     <link
@@ -16,6 +33,11 @@
       href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
       :root {
         --primary-color: #0c2233;
@@ -31,17 +53,13 @@
       }
 
       .all-links-table {
-        width: 100%;
-
+        width: inherit;
         background-color: #fff;
         color: #11103c;
         font-style: normal;
         font-weight: normal;
         font-size: 14px;
         margin: auto;
-      }
-      .form {
-        padding: 20px;
       }
       .all-links-table tr {
         max-width: 1280px;
@@ -50,9 +68,10 @@
         background-color: #e6e6ef;
         color: #aaa9bc;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 10px 26px;
       }
-      .all-links-table td,
-      .all-links-table th {
+      .all-links-table td {
         padding: 16px 26px;
       }
       .all-links-table tr:nth-child(odd) {
@@ -62,11 +81,12 @@
         text-decoration: none;
         padding: 5px;
       }
+
       form {
         margin: auto;
         box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
         background-color: white;
-        width: 480px;
+        width: 33.33%;
       }
 
       form ul {
@@ -119,12 +139,12 @@
         text-decoration: none;
         color: #11103c;
       }
-      .domain {
+      #domain {
         color: #aaa9bc;
         font-family: "Poppins";
         font-style: normal;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 14px;
         line-height: 160%;
       }
 
@@ -133,15 +153,15 @@
         font-family: "Poppins";
         font-style: normal;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 14px;
         line-height: 160%;
       }
 
       .switch {
         position: relative;
         display: inline-block;
-        width: 60px;
-        height: 34px;
+        width: 48px;
+        height: 24px;
       }
 
       /* Hide default HTML checkbox */
@@ -167,10 +187,9 @@
       .slider:before {
         position: absolute;
         content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
+        height: 20px;
+        width: 20px;
+        margin: 2px;
         background-color: white;
         -webkit-transition: 0.4s;
         transition: 0.4s;
@@ -200,18 +219,21 @@
         height: 40px;
         border: 1px solid #e6e6ef;
         border-radius: 4px;
-        color: #e6e6ef;
-        margin-left: 30px;
+        color: #aaa9bc;
+        margin: 0 30px 0 20px;
       }
-
-      .search {
+      #search {
         width: 240px;
         height: 40px;
         border: 1px solid #e6e6ef;
         border-radius: 4px;
       }
-      .search::placeholder {
-        color: #e6e6ef;
+      #search::placeholder {
+        color: #aaa9bc;
+      }
+      #clear {
+        color: #aaa9bc;
+        text-decoration: underline;
       }
       #advanced {
         cursor: pointer;
@@ -235,18 +257,43 @@
         color: white;
         height: 40px;
         padding: 8px 15px;
-        margin-left: 30px;
+        margin: 0 30px 0 30px;
         text-decoration: none;
+        display: flex;
+        justify-content: center;
       }
+
       .row1 {
         display: flex;
         flex-direction: row;
       }
-      .toggle::before {
-        content: "Active";
+      .toggle {
+        display: flex;
+        align-items: center;
       }
-      .toggle::after {
-        content: "Disbabled";
+      #statusactive {
+        margin: 0 20px;
+        color: #1f7a78;
+      }
+      #statusdisabled {
+        margin: 0 20px;
+        color: #aaa9bc;
+      }
+      .active {
+        background-color: #d1ebeb;
+        color: #1f7a78;
+        border-radius: 4px;
+        width: 64px;
+        height: 30px;
+        padding: 4px 10px;
+      }
+      .disabled {
+        background-color: #f8dec3;
+        color: #cf7317;
+        border-radius: 4px;
+        width: 64px;
+        height: 30px;
+        padding: 4px 10px;
       }
       #fueled {
         background-color: #e9eff6;
@@ -260,13 +307,21 @@
       }
       #submit {
         margin-bottom: 40px;
+        background-color: #322faf;
+        color: white;
+        border: none;
+      }
+      #submit:disabled {
+        background-color: #e9e9e9;
+        color: #aaa9bc;
       }
       .form {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        width: inherit;
         background-color: white;
+        padding: 20px;
+        width: inherit;
       }
       .edit h4 {
         margin: 0.5rem 41px;
@@ -276,41 +331,74 @@
         padding: 0;
         margin-top: 100px;
         box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
+        width: 1280px;
+        margin-left: 80px;
+      }
+      .copy {
+        border: none;
+        background-color: transparent;
+      }
+      #clear {
+        background-color: transparent;
+        border: none;
+        margin-left: 20px;
+      }
+      #linkcreate {
+        padding: 10px 40px;
+        background: #2181e8;
+        color: white;
       }
 
-      .copy:before {
-        content: "";
-        width: 1px;
-        background-color: black;
-        height: 18px;
-        position: absolute;
-        border: 1px solid black;
-        top: 253px;
-        left: 1063px;
-        border-radius: 2px;
+      #linkcreate.show {
+        animation: appear 2s ease-in-out;
+        opacity: 0;
       }
-
-      .copy:after {
-        content: "";
-        width: 18px;
-        height: 0;
+      #linkcreate.hide {
+        display: none;
+      }
+      @keyframes appear {
+        0% {
+          opacity: 0;
+        }
+        75% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+      #box {
+        display: none;
+        z-index: 1;
         position: absolute;
-        border: 1px solid black;
-        top: 252px;
-        left: 1063px;
-        border-radius: 2px;
+      }
+      .actions {
+        display: flex;
+        justify-content: space-evenly;
       }
     </style>
   </head>
   <body>
-    <div class="container"></div>
     {% block content %} {% endblock %}
   </body>
   <script>
     let ahoj = document.getElementById("advanced");
     let orgUrl = document.getElementById("orgUrl");
-    console.log(orgUrl);
     let shortLink = document.getElementById("shortlink");
+    let tr = document.querySelectorAll(".tr");
+
+    shortLink.addEventListener("keyup", function () {
+      console.log(shortLink.value);
+      console.log(orgUrl.value);
+      if (shortLink.value === "") {
+        submit.disabled = true;
+      } else {
+        submit.disabled = false;
+      }
+    });
+    let submit = document.getElementById("submit");
+    submit.disabled = true;
+    //open close feature
     ahoj.addEventListener("click", function () {
       let cus = document.getElementById("aa");
       this.classList.toggle("active");
@@ -320,22 +408,57 @@
         cus.style.maxHeight = cus.scrollHeight + "px";
       }
     });
+    //notification
+    function show() {
+      console.log("ss");
+      let linkcreate = document.getElementById("linkcreate");
+      linkcreate.classList.remove("hide");
+      linkcreate.classList.add("show");
+    }
 
-    // let submit = document.getElementById("submit");
-
-    // if (orgUrl === "") {
-    //   submit.setAttribute("disabled", true);
-    // } else {
-    //   submitButton.setAttribute("disabled", false);
-    // }
-
-    $(document).ready(function () {
-      $(".search").on("keyup", function () {
-        var value = $(this).val().toLowerCase();
-        $(".myTable tr").filter(function () {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        });
+    // date picker
+    $(function () {
+      $('input[name="birthday"]').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        minYear: 1901,
+        maxYear: parseInt(moment().format("YYYY"), 10),
       });
     });
+    // copy function
+    function copys() {
+      console.log("s");
+      let domain = document.getElementById("domain").innerHTML;
+      let link = document.getElementById("endpoint1");
+      console.log(link);
+      var range = document.createRange();
+      range.selectNode(link);
+      window.getSelection().addRange(range);
+      document.execCommand("copy");
+    }
+    //show social media links
+
+    function display() {
+      let box = document.getElementById("box");
+      for (i = 0; i < tr.length; i++) {
+        console.log(tr);
+        box[i].style.display = "block";
+      }
+    }
+
+    //change color of active
+
+    function myFunction() {
+      let check = document.getElementById("check");
+      let active = document.getElementById("active");
+      let disabled = document.getElementById("disabled");
+      if (check.checked == true) {
+        active.style.color = "#AAA9BC";
+        disabled.style.color = "#CF7317";
+      } else {
+        active.style.color = "#1F7A78";
+        disabled.style.color = "#AAA9BC";
+      }
+    }
   </script>
 </html>

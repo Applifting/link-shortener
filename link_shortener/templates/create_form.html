@@ -10,25 +10,27 @@
     <ul>
       <label>Original URL *</label>
       <li>
-        {{ form.endpoint(size=30, placeholder="original.url/original",
-        id="orgUrl") }}
+        {{ form.url(size=30, placeholder="original.url/original", id="orgUrl" )
+        }}
       </li>
       <label>Shortlink *</label>
       <li>
-        {{ form.url(size=30, placeholder="example/suffix", id="shortlink") }}
+        {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink")
+        }}
       </li>
       <label id="advanced">Advanced Settings</label>
       <div id="aa">
         <li>{{ form.password(size=30, placeholder="Password") }}</li>
         <li>
-          {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD")
-          }}
+          {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD",
+          type='date') }}
+          <input type="text" name="birthday" placeholder="Deactivate on" />
         </li>
       </div>
       <span id="fueled"
         >www.fueled.by/example/suffix <img src="delete.svg" alt=""
       /></span>
-      <li>{{ form.submit(id='submit') }}</li>
+      <li>{{ form.submit(id='submit')}}</li>
     </ul>
   </form>
 </div>

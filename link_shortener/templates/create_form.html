@@ -2,7 +2,7 @@
 <div class="">
   <a id="back" href="/links/all">Back</a>
 
-  <form action="" method="POST">
+  <form id="form" action="" method="POST">
     <h1 id="form-header">Create a new link</h1>
     {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
     }}
@@ -10,16 +10,16 @@
     <ul>
       <label>Original URL *</label>
       <li>
-        {{ form.url(size=30, placeholder="original.url/original", id="orgUrl" )
-        }}
+        {{ form.url(size=30, placeholder="original.url/original", id="orgUrl",
+        class='inputs' ) }}
       </li>
       <label>Shortlink *</label>
       <li>
-        {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink")
-        }}
+        {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink",
+        class='inputs') }}
       </li>
       <label id="advanced">Advanced Settings</label>
-      <div id="aa">
+      <div id="extrareq">
         <li>{{ form.password(size=30, placeholder="Password") }}</li>
         <li>
           {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD",
@@ -28,8 +28,18 @@
         </li>
       </div>
       <span id="fueled"
-        >www.fueled.by/example/suffix <img src="delete.svg" alt=""
-      /></span>
+        ><span id="printout">www.fueled.by/</span>
+        <a class="copy" onclick="copyinline()">
+          <span id="copycat"></span>
+          <div class="hovercopy">
+            <div class="trianglecover"><span id="triangle-up"></span></div>
+            <div class="hovercover">
+              <span class="square">copy</span>
+            </div>
+          </div>
+        </a>
+      </span>
+
       <li>{{ form.submit(id='submit')}}</li>
     </ul>
   </form>

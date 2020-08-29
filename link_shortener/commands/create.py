@@ -13,18 +13,13 @@ from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
 async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
-        try:
-            query = await conn.execute(links.select().where(
-                links.columns['endpoint'] == data['endpoint']
-            ).where(
-                links.columns['is_active'] == True
-            ))
-            link_data = await query.fetchone()
-            if link_data:
-                await trans.close()
-                raise DuplicateActiveLinkForbidden
-
-        except AttributeError:
+        query = await conn.execute(links.select().where(
+            links.columns['endpoint'] == data['endpoint']
+        ).where(
+            links.columns['is_active'] == True
+        ))
+        link_data = await query.fetchone()
+        if link_data:
             await trans.close()
             raise DuplicateActiveLinkForbidden
 

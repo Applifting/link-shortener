@@ -15,20 +15,16 @@ from link_shortener.core.exceptions import (AccessDeniedException,
 
 async def check_auth_form(request, link_id):
     async with request.app.engine.acquire() as conn:
-        try:
-            query = await conn.execute(links.select().where(
-                links.columns['id'] == link_id
-            ).where(
-                links.columns['password'] != None
-            ))
-            link_data = await query.fetchone()
-            if not link_data:
-                raise NotFoundException
-
-            return link_data
-
-        except AttributeError:
+        query = await conn.execute(links.select().where(
+            links.columns['id'] == link_id
+        ).where(
+            links.columns['password'] != None
+        ))
+        link_data = await query.fetchone()
+        if not link_data:
             raise NotFoundException
+
+        return link_data
 
 
 async def check_password(request, link_id, form):

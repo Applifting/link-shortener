@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block content %}
 <div class="">
-  <a id="back" href="/links/all">Back</a>
+  <a id="back" href="/links/all"> <img src="/links/arrow.svg" alt="" /> Back</a>
 
   <form id="form" action="" method="POST">
     <h1 id="form-header">Create a new link</h1>
@@ -18,7 +18,10 @@
         {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink",
         class='inputs') }}
       </li>
-      <label id="advanced">Advanced Settings</label>
+      <label id="advanced">
+        <span id="wrapicon"> <i id="icon" class="fa fa-angle-right"></i> </span
+        >Advanced Settings</label
+      >
       <div id="extrareq">
         <li>{{ form.password(size=30, placeholder="Password") }}</li>
         <li>
@@ -28,9 +31,14 @@
         </li>
       </div>
       <span id="fueled"
-        ><span id="printout">www.fueled.by/</span>
+        ><span id="shortlinked">www.fueled.by/</span>
         <a class="copy" onclick="copyinline()">
-          <span id="copycat"></span>
+          <img src="/links/copyicon.svg" alt="copyicon" />
+          <img
+            src="/links/hovercopy.svg"
+            alt="hovercopy"
+            class="copyiconcreate"
+          />
           <div class="hovercopy">
             <div class="trianglecover"><span id="triangle-up"></span></div>
             <div class="hovercover">

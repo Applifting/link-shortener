@@ -1,24 +1,27 @@
 {% extends 'base.html' %} {% block content %}
-<a id="back" href="/links/all">Back</a>
+<a id="back" href="/links/all"> <img src="/links/arrow.svg" alt="" /> Back</a>
 <div class="">
   <form id="form" action="" method="POST">
     <h1 id="form-header">Edit Shortlink</h1>
-    <div style="text-align: center;">
-      <span style="color: #aaa9bc;">owned by</span> {{payload.owner}}
+    <div style="text-align: center">
+      <span style="color: #aaa9bc">owned by</span> {{payload.owner}}
     </div>
     {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.url.errors)
     }}
     <ul>
       <br />
       <li><h4>URL to shorten *</h4></li>
-      <li>
-        {{ form.url(size=40, value=payload.url) }}
-      </li>
+      <li>{{ form.url(size=40, value=payload.url) }}</li>
       <li><h4>Suffix *</h4></li>
       <li>
         <input type="text" value="{{ payload.endpoint }}" id="shortlink" />
       </li>
-      <label id="settings">Advanced Settings</label>
+
+      <!--<dd></dd> -->
+      <label id="settings">
+        <span id="wrapicon"> <i id="icon" class="fa fa-angle-right"></i> </span
+        >Advanced Settings</label
+      >
       <div id="extra">
         {% if payload.password %}
         <li><h4>Change password:</h4></li>
@@ -43,7 +46,12 @@
       <span id="fueled">
         <span id="shortlinked"> www.fueled.by/{{payload.endpoint}}</span>
         <a class="copy" onclick="copyinline()">
-          <span id="copycat"></span>
+          <img src="/links/copyicon.svg" alt="copyicon" />
+          <img
+            src="/links/hovercopy.svg"
+            alt="hovercopy"
+            class="copyiconcreate"
+          />
           <div class="hovercopy">
             <div class="trianglecover"><span id="triangle-up"></span></div>
             <div class="hovercover">

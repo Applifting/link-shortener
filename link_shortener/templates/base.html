@@ -38,6 +38,13 @@
       rel="stylesheet"
     />
 
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
     <style>
       :root {
         --primary-color: #0c2233;
@@ -184,10 +191,10 @@
         color: #fff;
         background-color: #484d4d;
       }
-      #links {
+      #linkfade {
         text-decoration: none;
         color: #11103c;
-        background-image: linear-gradient(90deg, #000000 0%, rgba(0, 0, 0, 0));
+        background-image: linear-gradient(90deg, #11103c 80%, rgba(0, 0, 0, 0));
         overflow: hidden;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -280,15 +287,23 @@
         color: #aaa9bc;
         margin: 0 30px 0 20px;
       }
-      #search {
-        width: 240px;
-        height: 40px;
+      #searchborder {
         border: 1px solid #e6e6ef;
+        border-radius: 4px;
+      }
+      #search {
+        width: 220px;
+        height: 40px;
+        border: none;
         border-radius: 4px;
         color: #322faf;
       }
       #search::placeholder {
         color: #aaa9bc;
+      }
+      .fa-search {
+        margin: 0 0px 0 14.4px;
+        color: #e6e6ef;
       }
       #clear {
         color: #aaa9bc;
@@ -329,7 +344,7 @@
         margin: 0 30px 0 30px;
         text-decoration: none;
         display: flex;
-        justify-content: center;
+        justify-content: space-evenly;
         font-weight: bold;
       }
 
@@ -416,11 +431,13 @@
         border: none;
         background-color: transparent;
         cursor: pointer;
+        position: relative;
       }
 
       .hovercopy {
         display: none;
         position: absolute;
+        margin-left: 5px;
       }
       .square {
         height: 32px;
@@ -442,19 +459,8 @@
         display: block;
       }
 
-      #copycat:hover + .hovercopy {
+      .copy:hover .hovercopy {
         display: block;
-      }
-      #copycat {
-        height: 18px;
-        width: 18px;
-        border-radius: 4px;
-        display: block;
-        background: #aaa9bc;
-        margin-top: 4px;
-      }
-      #copycat:hover {
-        background-color: #322faf;
       }
       #linkcreate {
         padding: 10px 40px;
@@ -578,22 +584,104 @@
       .deletebtn:hover .delete {
         opacity: 0;
       }
+      .arrow {
+        width: 20px;
+        border-top: 2px;
+        height: 1px;
+        background-color: black;
+        display: inline-block;
+        margin-bottom: 6px;
+      }
+      .copyiconhover {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 5px 6px 6px 5px;
+        width: 24px;
+        height: 24px;
+      }
+      .copyiconcreate {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 24px;
+        height: 24px;
+      }
+      .copy:hover .copyiconhover {
+        opacity: 1;
+      }
+      .copy:hover .copyicon {
+        opacity: 0;
+      }
+      .copy:hover .copyiconcreate {
+        opacity: 1;
+      }
+      .fa-angle-right {
+        transform: rotate(0deg);
+        transition: transform 0.3s linear;
+        color: #aaa9bc;
+      }
+
+      .fa-angle-right.open {
+        transform: rotate(90deg);
+        transition: transform 0.3s linear;
+      }
+      .rowowner {
+        color: #11103c;
+      }
     </style>
   </head>
   <body>
     {% block content %} {% endblock %}
   </body>
   <script>
+    // persist checkbox
+    var checkboxValues =
+      JSON.parse(localStorage.getItem("checkboxValues")) || {};
+    var $checkboxes = $(".toggle :checkbox");
+
+    $checkboxes.on("change", function () {
+      $checkboxes.each(function () {
+        checkboxValues[this.id] = this.checked;
+      });
+      localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
+    });
+    $.each(checkboxValues, function (key, value) {
+      $("#" + key).prop("checked", value);
+    });
+    // check if checked
+    // let checkbox = document.getElementById("checkbox");
+    // checkbox &&
+    //   checkbox.addEventListener("change", function () {
+    //     if (checkbox.checked) {
+    //       checkbox.value = "true";
+    //       console.log("tru");
+    //     } else {
+    //       console.log("false");
+    //       checkbox.value = "false";
+    //     }
+    //   });
+
     let openmode = document.getElementById("advanced");
     console.log(openmode);
     let orgUrl = document.getElementById("orgUrl");
     let shortLink = document.getElementById("shortlink");
     let tr = document.querySelectorAll(".tr");
     let shortLinked = document.getElementById("shortlinked");
+    let shareBox = null;
 
     // open close EDIT
     let setopen = document.getElementById("settings");
-    let shareBox = null;
+    // arrow animation
+    var div = document.getElementById("wrapicon");
+    var icon = document.getElementById("icon");
+    var open = false;
 
     setopen &&
       setopen.addEventListener("click", function () {
@@ -605,6 +693,13 @@
         } else {
           modal.style.maxHeight = modal.scrollHeight + "px";
         }
+        if (open) {
+          icon.className = "fa fa-angle-right";
+        } else {
+          icon.className = "fa fa-angle-right open";
+        }
+
+        open = !open;
       });
     // button disable
     let inputs = document.getElementsByClassName("inputs");
@@ -622,14 +717,15 @@
     // dynamic text update
     shortLink &&
       shortLink.addEventListener("keyup", function () {
-        let printout = document.getElementById("printout");
+        let printout = document.getElementById("shortlinked");
         var x = shortLink.value;
         printout.innerHTML = "www.fueled.by/" + x;
       });
-    document.getElementById("printout").style.color = "#AAA9BC";
-    document.getElementById("printout").style.fontWeight = "bold";
+    document.getElementById("shortlinked").style.color = "#AAA9BC";
+    document.getElementById("shortlinked").style.fontWeight = "bold";
 
     //open close feature CREATE
+    // arrow animation
     openmode &&
       openmode.addEventListener("click", function () {
         let modal = document.getElementById("extrareq");
@@ -639,6 +735,13 @@
         } else {
           modal.style.maxHeight = modal.scrollHeight + "px";
         }
+        if (open) {
+          icon.className = "fa fa-angle-right";
+        } else {
+          icon.className = "fa fa-angle-right open";
+        }
+
+        open = !open;
       });
     // copy
     function copys(rowid) {
@@ -700,8 +803,8 @@
 
     //change color of active
 
-    function myFunction() {
-      let check = document.getElementById("check");
+    function toggleActive() {
+      let check = document.getElementById("checkbox");
       let active = document.getElementById("statusactive");
       let disabled = document.getElementById("statusdisabled");
       if (check.checked == true) {

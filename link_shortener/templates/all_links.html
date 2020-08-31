@@ -3,26 +3,29 @@
 <span id='linkcreate' class="hide">Link Created</span>
 </div>
 <button onclick="show()">show</button>
-<div class="container">
-  <form class="form">
+<div class="container" >
+  <form name='form'class="form" method="GET" action="http://localhost:8000/links/all">
     <div class="tbHead">
       <div class="toggle">
         <div id='statusactive'>Active</div>
         <label class="switch">
-          <input type="checkbox" id="check" onclick="myFunction()">         
+          <input  onChange="this.form.submit()"name='disable'type="checkbox"  id='checkbox'value='true'onclick="toggleActive()">         
           <span class="slider round"></span>         
         </label>
         <div id='statusdisabled'>Disabled</div>
       </div>
-      <select name="cars" id="ownerfilter">
+      <select onChange="this.form.submit()" name="owner" id="ownerfilter">
         <option value="volvo">Owner</option>
         <option class='ownerfilter' value="saab"></option>
-      </select>
-      <input id="search" type="text" placeholder="Search"/>
+      </select> 
+      <div id='searchborder'>
+      <i class="fa fa-search"></i>
+      <input onkeyup="this.form.submit()" name='search' id="search" type="text" placeholder="Search" value="">
+    </div>
       <input type='reset' id="clear" value="Clear Filters"></input>
     </div>
 <div>
-      <a href="/create" id="createShort">+ Create Shortlink</a>
+      <a href="/create" id="createShort"> <img src="plus.svg" alt=""> Create Shortlink</a>
     </div>
   </form>
   <table class="all-links-table">
@@ -44,8 +47,8 @@
         {% endif %}
       </td>
       <td class='rowowner'>{{ row.owner }}</td>
-      <td>
-        <span><a id="links" href="{{ row.url }}">{{ row.url }}</a></span>
+      <td id="linkfade">
+        <span ><a class='rowurl'href="{{ row.url }}">{{ row.url }}</a></span>
       </td>
       <td id="shortlinked-{{row.id}}">
         <span id="domain">www.{{domain_name}}</span><!-- / --><span id="endpoint1">/{{ row.endpoint}}</span>
@@ -53,7 +56,8 @@
       
       <td class="actions">
         <a class="copy" onclick="copys('{{row.id}}')">
-          <span id='copycat'></span>
+          <img src="copyicon.svg" alt="copyicon" class="copyicon">
+          <img src="hovercopy.svg" alt="hovercopy" class='copyiconhover'>
           <div class="hovercopy"> <div class="trianglecover"> <span id='triangle-up'></span></div>
             <div class='hovercover'><span class="square square-{{row.id}}">copy</span></div></div>
           </a>

@@ -10,6 +10,9 @@ from sanic_oauth.blueprint import oauth_blueprint
 
 from sanic_session import InMemorySessionInterface
 
+from sentry_sdk import init
+from sentry_sdk.integrations.sanic import SanicIntegration
+
 from link_shortener.core.initialise_db import initdb_blueprint
 from link_shortener.core.authentication import auth_blueprint
 
@@ -55,6 +58,8 @@ def create_app():
     # ------------------------------------------------------------------------
     # CONFIGURATION
     # ------------------------------------------------------------------------
+
+    init(dsn=config('SENTRY_DSN'), integrations=[SanicIntegration()])
 
     app.blueprint(initdb_blueprint)
     app.blueprint(oauth_blueprint)

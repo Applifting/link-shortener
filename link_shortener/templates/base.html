@@ -2,6 +2,8 @@
 
 <html lang="en" dir="ltr">
   <head>
+    {% block html_head %}{% endblock %}
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script
       type="text/javascript"
@@ -44,7 +46,6 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
-
     <style>
       :root {
         --primary-color: #0c2233;
@@ -332,6 +333,7 @@
         margin: 40px 0;
         margin-left: 34%;
         color: #11103c;
+        text-decoration: none;
       }
 
       #createShort {
@@ -381,6 +383,7 @@
         padding: 4px 10px;
       }
       #fueled {
+        color: #aaa9bc;
         background-color: #e9eff6;
         display: block;
         width: 100%;
@@ -424,8 +427,8 @@
         padding: 0;
         margin-top: 100px;
         box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
-        width: 1280px;
-        margin-left: 80px;
+        max-width: 1280px;
+        margin-left: auto;
       }
       .copy {
         border: none;
@@ -633,7 +636,7 @@
         transition: transform 0.3s linear;
       }
       .rowowner {
-        color: #11103c;
+        /* color: #11103c; */
       }
     </style>
   </head>
@@ -752,10 +755,12 @@
       window.getSelection().addRange(range); // to select text
       document.execCommand("copy");
       window.getSelection().removeAllRanges();
-      for (i = 0; i < hovercopy.length; i++) {
-        hovercopy[i].innerHTML = "copied!";
-      }
+      hovercopy[i].innerHTML = "copied!";
+      setTimeout(function () {
+        hovercopy[i].innerHTML = "copy";
+      }, 800);
     }
+
     //copy inline
     function copyinline() {
       let hovercopy = document.getElementsByClassName("square");
@@ -765,9 +770,10 @@
       window.getSelection().addRange(range); // to select text
       document.execCommand("copy");
       window.getSelection().removeAllRanges();
-      for (i = 0; i < hovercopy.length; i++) {
-        hovercopy[i].innerHTML = "copied!";
-      }
+      hovercopy[0].innerHTML = "copied!";
+      setTimeout(function () {
+        hovercopy[0].innerHTML = "copy";
+      }, 800);
     }
     //notification
     function show() {

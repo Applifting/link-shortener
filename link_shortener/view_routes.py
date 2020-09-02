@@ -9,6 +9,8 @@ from sanic.response import html, redirect
 
 from sanic_oauth.blueprint import login_required
 
+from prometheus_client import Counter, generate_latest
+
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links

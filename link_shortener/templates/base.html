@@ -636,7 +636,7 @@
         transition: transform 0.3s linear;
       }
       .rowowner {
-        /* color: #11103c; */
+        color: #11103c;
       }
     </style>
   </head>
@@ -644,33 +644,27 @@
     {% block content %} {% endblock %}
   </body>
   <script>
-    // persist checkbox
-    var checkboxValues =
-      JSON.parse(localStorage.getItem("checkboxValues")) || {};
-    var $checkboxes = $(".toggle :checkbox");
+    // persist checkbox value
+    const filterParam = window.location.search;
+    const filter = {
+      disable: false,
+      owner: "",
+      search: "",
+    };
 
-    $checkboxes.on("change", function () {
-      $checkboxes.each(function () {
-        checkboxValues[this.id] = this.checked;
-      });
-      localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
-    });
-    $.each(checkboxValues, function (key, value) {
-      $("#" + key).prop("checked", value);
-    });
-    // check if checked
-    // let checkbox = document.getElementById("checkbox");
-    // checkbox &&
-    //   checkbox.addEventListener("change", function () {
-    //     if (checkbox.checked) {
-    //       checkbox.value = "true";
-    //       console.log("tru");
-    //     } else {
-    //       console.log("false");
-    //       checkbox.value = "false";
-    //     }
-    //   });
-
+    for (const [key, value] of new URLSearchParams(filterParam).entries()) {
+      console.log(key, value);
+      filter[key] = value;
+    }
+    $("#checkbox").prop("checked", filter.disable);
+    if (filter.disable) {
+      $("#statusdisabled").css("color", "#CF7317");
+      $("#statusactive").css("color", "#AAA9BC");
+    } else {
+      $("#statusdisabled").css("color", "#AAA9BC");
+      $("#statusactive").css("color", "#1F7A78");
+    }
+    //
     let openmode = document.getElementById("advanced");
     console.log(openmode);
     let orgUrl = document.getElementById("orgUrl");

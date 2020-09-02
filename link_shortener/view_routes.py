@@ -25,6 +25,20 @@ from link_shortener.core.decorators import credential_whitelist_check
 
 
 view_blueprint = Blueprint('views')
+redirect_counter = Counter(
+    'redirect_count',
+    'Number of successful link redirections',
+    ['link_id', 'referer']
+)
+
+
+@view_blueprint.route('/metrics', methods=['GET'])
+async def requests_count(request):
+    try:
+        count = generate_latest(redirect_counter)
+        return text(count.decode())
+    except Exception as error:
+        return json({'message': error}, status=500)
 
 
 @view_blueprint.route('/<link_endpoint>', methods=['GET'])

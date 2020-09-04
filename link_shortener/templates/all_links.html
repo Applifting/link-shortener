@@ -2,7 +2,7 @@
 <div>
 <span id='linkcreate' class="hide">Link Created</span>
 </div>
-<button onclick="show()">show</button>
+<button onclick="showNotification()">show</button>
 <div class="container" >
   <form name='form'class="form" method="GET" action="http://localhost:8000/links/all">
     <div class="tbHead">
@@ -57,7 +57,7 @@
       </td>
       
       <td class="actions">
-        <a class="copy" onclick="copys('{{row.id}}')">
+        <a class="copy" onclick="copyLink('{{row.id}}')">
           <img src="copyicon.svg" alt="copyicon" class="copyicon">
           <img src="hovercopy.svg" alt="hovercopy" class='copyiconhover'>
           <div class="hovercopy"> <div class="trianglecover"> <span id='triangle-up'></span></div>
@@ -68,7 +68,7 @@
           <img src="edithover.svg" alt="edit" class="hoveredit">
         </a>
         <div class='display'>
-        <a class="display displatBtn" onclick="display('{{row.id}}')">
+        <a class="display displatBtn" onclick="toggleShareBox('{{row.id}}')">
           <img src="Vector.svg" height="20" width="20" alt="Not found" class="share" />
           <img src="sharehover.svg" alt="share" class='sharehover'>
         </a>

@@ -3,7 +3,6 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import os
-import uuid
 import hashlib
 import datetime
 
@@ -15,84 +14,102 @@ from aiomysql.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
 
-from link_shortener.models import actives, inactives, salts
+from link_shortener.models import links, salts
 
 
 initdb_blueprint = Blueprint('intitialise_db')
 
 
-active_data = [
+data = [
     [
-        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
         'pomuzemesi',
         'https://staging.pomuzeme.si',
-        None
+        None,
+        True
     ],
     [
-        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         None,
         'vlk',
         'http://www.vlk.cz',
-        datetime.date(2020, 5, 6)
+        datetime.date(2020, 5, 6),
+        True
     ],
     [
-        str(uuid.uuid1()),
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
         'bigfish',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg',
-        None
+        None,
+        True
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
         'dollar',
         'https://splittingmytime.com/wp-content/uploads/2019/03/bfd.jpg',
-        datetime.date(2020, 5, 8)
+        datetime.date(2020, 5, 8),
+        True
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         None,
         'kodex',
         'https://github.com/Applifting/culture',
-        None
+        None,
+        True
     ],
     [
-        str(uuid.uuid1()),
         'radek.holy@applifting.cz',
         'unknown',
         'metapass',
         'meta',
         'https://github.com/Applifting/link-shortener',
-        None
-    ]
-]
-inactive_data = [
-    [
-        str(uuid.uuid1()),
-        'vojtech.janousek@applifting.cz',
-        '100793120005790639839',
-        'tunak',
-        'https://www.britannica.com/animal/tuna-fish',
-        datetime.date(2020, 6, 1)
+        None,
+        True
     ],
     [
-        str(uuid.uuid1()),
+        'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
+        None,
+        'tunak',
+        'https://www.britannica.com/animal/tuna-fish',
+        datetime.date(2020, 6, 1),
+        False
+    ],
+    [
         'radek.holy@applifting.cz',
         'unknown',
+        None,
         'nope',
         'https://www.youtube.com/watch?v=gvdf5n-zI14',
-        None
+        None,
+        False
+    ],
+    [
+        'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
+        None,
+        'vlk',
+        'https://google.com',
+        None,
+        False
+    ],
+    [
+        'vojtech.janousek@applifting.cz',
+        '100793120005790639839',
+        None,
+        'anothertunak',
+        'https://www.britannica.com/animal/tuna-fish',
+        datetime.date(2020, 6, 1),
+        True
     ]
 ]
 
@@ -120,48 +137,41 @@ async def initialise_db(app, loop):
     async with app.engine.acquire() as conn:
         try:
             trans = await conn.begin()
-
-            await conn.execute(CreateTable(actives))
-            await conn.execute(CreateTable(inactives))
+            await conn.execute(CreateTable(links))
             await conn.execute(CreateTable(salts))
-            for values in active_data:
-                if values[3] is not None:
+            for values in data:
+                if values[2]:
                     salt = os.urandom(32)
-                    values[3] = hashlib.pbkdf2_hmac(
+                    values[2] = hashlib.pbkdf2_hmac(
                         'sha256',
-                        values[3].encode('utf-8'),
+                        values[2].encode('utf-8'),
                         salt,
                         100000
                     )
-                    await conn.execute(
-                        salts.insert().values(
-                            identifier=values[0],
-                            salt=salt
-                        )
-                    )
-
-                await conn.execute(
-                    actives.insert().values(
-                        identifier=values[0],
-                        owner=values[1],
-                        owner_id=values[2],
-                        password=values[3],
-                        endpoint=values[4],
-                        url=values[5],
-                        switch_date=values[6]
-                    )
-                )
-            for values in inactive_data:
-                await conn.execute(
-                    inactives.insert().values(
-                        identifier=values[0],
-                        owner=values[1],
-                        owner_id=values[2],
+                    link_object = await conn.execute(links.insert().values(
+                        owner=values[0],
+                        owner_id=values[1],
+                        password=values[2],
                         endpoint=values[3],
                         url=values[4],
-                        switch_date=values[5]
-                    )
-                )
+                        switch_date=values[5],
+                        is_active=values[6]
+                    ))
+                    await conn.execute(salts.insert().values(
+                        link_id=link_object.lastrowid,
+                        salt=salt
+                    ))
+                else:
+                    await conn.execute(links.insert().values(
+                        owner=values[0],
+                        owner_id=values[1],
+                        password=values[2],
+                        endpoint=values[3],
+                        url=values[4],
+                        switch_date=values[5],
+                        is_active=values[6]
+                    ))
+
             await trans.commit()
             await trans.close()
 

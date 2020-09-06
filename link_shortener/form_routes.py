@@ -2,12 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import os
-import uuid
-import hashlib
-
 from sanic import Blueprint
-from sanic.response import redirect, html, json
+from sanic.response import redirect, html
 
 from sanic_oauth.blueprint import login_required
 
@@ -16,10 +12,17 @@ from sanic_wtf import SanicForm
 from wtforms import StringField, SubmitField, PasswordField, DateField
 from wtforms.validators import DataRequired
 
-from link_shortener.models import actives, inactives, salts
 from link_shortener.templates import template_loader
 
+from link_shortener.commands.authorize import check_auth_form, check_password
+from link_shortener.commands.update import check_update_form, update_link
+from link_shortener.commands.create import create_link
+
 from link_shortener.core.decorators import credential_whitelist_check
+from link_shortener.core.exceptions import (AccessDeniedException,
+                                            DuplicateActiveLinkForbidden,
+                                            FormInvalidException,
+                                            NotFoundException)
 
 
 form_blueprint = Blueprint('forms')
@@ -47,58 +50,41 @@ class PasswordForm(SanicForm):
 
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])
 async def link_password_form(request, link_id):
-    form = PasswordForm(request)
     try:
-        async with request.app.engine.acquire() as conn:
-            query = await conn.execute(
-                actives.select().where(
-                    actives.columns['id'] == link_id
-                )
-            )
-            link = await query.fetchone()
-            return html(template_loader(
-                            template_file='password_form.html',
-                            form=form,
-                            link=link
-                        ), status=200)
-
-    except Exception:
-        return json({'message': 'Link does not exist'}, status=400)
+        form = PasswordForm(request)
+        data = await check_auth_form(request, link_id)
+        return html(template_loader(
+                        template_file='password_form.html',
+                        form=form,
+                        payload=data,
+                        status_code='200'
+                    ), status=200)
+    except NotFoundException:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Link has no password or does not exist',
+                        status_code='404'
+                    ), status=404)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])
 async def link_password_save(request, link_id):
-    form = PasswordForm(request)
-    if not form.validate():
-        return json({'message': 'form invalid'}, status=400)
-
     try:
-        async with request.app.engine.acquire() as conn:
-            link_query = await conn.execute(
-                actives.select().where(
-                    actives.columns['id'] == link_id
-                )
-            )
-            link_data = await link_query.fetchone()
-            salt_query = await conn.execute(
-                salts.select().where(
-                    salts.columns['identifier'] == link_data.identifier
-                )
-            )
-            salt_data = await salt_query.fetchone()
-            password = hashlib.pbkdf2_hmac(
-                'sha256',
-                form.password.data.encode('utf-8'),
-                salt_data.salt,
-                100000
-            )
-            if (link_data.password == password):
-                return redirect(link_data.url)
+        form = PasswordForm(request)
+        link = await check_password(request, link_id, form)
+        return redirect(link, status=307)
+    except FormInvalidException:
+        status, message = 400, 'Form invalid'
+    except NotFoundException:
+        status, message = 404, 'Link has no password or does not exist'
+    except AccessDeniedException:
+        status, message = 401, 'Password incorrect'
 
-            return json({'message': 'incorrect password'}, status=401)
-
-    except Exception:
-        return json({'message': 'link inactive or does not exist'}, status=400)
+    return html(template_loader(
+                    template_file='message.html',
+                    payload=message,
+                    status_code=str(status)
+                ), status=status)
 
 
 @form_blueprint.route('/create', methods=['GET'])
@@ -116,150 +102,77 @@ async def create_link_form(request, user):
 @login_required
 @credential_whitelist_check
 async def create_link_save(request, user):
-    form = CreateForm(request)
-    if not form.validate():
-        return json({'message': 'form invalid'}, status=400)
-
     try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            identifier = str(uuid.uuid1())
-            if form.password.data:
-                salt = os.urandom(32)
-                password = hashlib.pbkdf2_hmac(
-                    'sha256',
-                    form.password.data.encode('utf-8'),
-                    salt,
-                    100000
-                )
-                await conn.execute(
-                    salts.insert().values(
-                        identifier=identifier,
-                        salt=salt
-                    )
-                )
-            else:
-                password = None
+        form = CreateForm(request)
+        if not form.validate():
+            raise FormInvalidException
 
-            await conn.execute(
-                actives.insert().values(
-                    identifier=identifier,
-                    owner=user.email,
-                    owner_id=user.id,
-                    password=password,
-                    endpoint=form.endpoint.data,
-                    url=form.url.data,
-                    switch_date=form.switch_date.data
-                )
-            )
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me')
-
-    except Exception:
-        await trans.close()
-        return json(
-            {'message': 'an active link with that endpoint already exists'},
-            status=400
-        )
+        form_data = {
+            'owner': user.email,
+            'owner_id': user.id,
+            'password': form.password.data,
+            'endpoint': form.endpoint.data,
+            'url': form.url.data,
+            'switch_date': form.switch_date.data
+        }
+        await create_link(request, data=form_data)
+        status, message = 201, 'Link created successfully'
+    except FormInvalidException:
+        status, message = 400, 'Form invalid'
+    except DuplicateActiveLinkForbidden:
+        status, message = 409, 'An active link with that name already exists'
+    finally:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=message,
+                        status_code=str(status)
+                    ), status=status)
 
 
-@form_blueprint.route('/edit/<status>/<link_id>', methods=['GET'])
+@form_blueprint.route('/edit/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
-async def update_link_form(request, user, status, link_id):
-    form = UpdateForm(request)
-    if (status == 'active'):
-        table = actives
-    elif (status == 'inactive'):
-        table = inactives
-    else:
-        return json({'message': 'path does not exist'}, status=400)
-
+async def update_link_form(request, user, link_id):
     try:
-        async with request.app.engine.acquire() as conn:
-            query = await conn.execute(
-                table.select().where(
-                    table.columns['id'] == link_id
-                )
-            )
-            link = await query.fetchone()
-            if link.password is None:
-                has_password = False
-            else:
-                has_password = True
-
-            return html(template_loader(
-                            template_file='edit_form.html',
-                            form=form,
-                            link=link,
-                            status=status,
-                            has_password=has_password
-                        ), status=200)
-
-    except Exception:
-        return json({'message': 'getting update form failed'}, status=500)
+        form = UpdateForm(request)
+        data = await check_update_form(request, link_id)
+        return html(template_loader(
+                        template_file='edit_form.html',
+                        form=form,
+                        payload=data,
+                        status_code='200'
+                    ), status=200)
+    except NotFoundException:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Link does not exist',
+                        status_code='404'
+                    ), status=404)
 
 
-@form_blueprint.route('/edit/<status>/<link_id>', methods=['POST'])
+@form_blueprint.route('/edit/<link_id>', methods=['POST'])
 @login_required
 @credential_whitelist_check
-async def update_link_save(request, user, status, link_id):
-    form = UpdateForm(request)
-    if (status == 'active'):
-        table = actives
-    elif (status == 'inactive'):
-        table = inactives
-    else:
-        return json({'message': 'path does not exist'}, status=400)
-
-    if not form.validate():
-        return json({'message': 'form invalid'}, status=400)
-
+async def update_link_save(request, user, link_id):
     try:
-        async with request.app.engine.acquire() as conn:
-            trans = await conn.begin()
-            link_update = table.update().where(table.columns['id'] == link_id)
+        form = UpdateForm(request)
+        if not form.validate():
+            raise FormInvalidException
 
-            if form.password.data:
-                fresh_salt = os.urandom(32)
-                password = hashlib.pbkdf2_hmac(
-                    'sha256',
-                    form.password.data.encode('utf-8'),
-                    fresh_salt,
-                    100000
-                )
-                link_query = await conn.execute(table.select().where(
-                    table.columns['id'] == link_id
-                ))
-                link_data = await link_query.fetchone()
-
-                if link_data.password:
-                    await conn.execute(salts.update().where(
-                        salts.columns['identifier'] == link_data.identifier
-                    ).values(salt=fresh_salt))
-                else:
-                    await conn.execute(salts.insert().values(
-                            identifier=link_data.identifier,
-                            salt=fresh_salt
-                    ))
-
-                await conn.execute(link_update.values(
-                    url=form.url.data,
-                    switch_date=form.switch_date.data,
-                    password=password
-                ))
-
-            else:
-                await conn.execute(link_update.values(
-                    url=form.url.data,
-                    switch_date=form.switch_date.data
-                ))
-
-            await trans.commit()
-            await trans.close()
-            return redirect('/links/me')
-
-    except Exception:
-        await trans.close()
-        return json({'message': 'Link does not exist'}, status=400)
+        form_data = {
+            'password': form.password.data,
+            'url': form.url.data,
+            'switch_date': form.switch_date.data
+        }
+        await update_link(request, link_id=link_id, data=form_data)
+        status, message = 200, 'Link updated successfully'
+    except FormInvalidException:
+        status, message = 400, 'Form invalid'
+    except NotFoundException:
+        status, message = 404, 'Link does not exist'
+    finally:
+        return html(template_loader(
+                        template_file='message.html',
+                        payload=message,
+                        status_code=str(status)
+                    ), status=status)

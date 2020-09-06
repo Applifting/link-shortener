@@ -6,9 +6,17 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --primary-color: #0c2233;
+        --secondary-color1: #065471;
+        --secondary-color2: #0a91ab;
+        --accessory-color: #ffc045;
+      }
       body {
         font-family: 'Lato', sans-serif;
         text-align: center;
+        background-color: var(--primary-color);
+        color: var(--accessory-color);
       }
       #navbar ul {
       	margin: 1em;
@@ -24,15 +32,15 @@
       	text-decoration: none;
       	padding: .2em 1em;
         margin: 0.8em;
-      	color: #484d4d;
-      	background-color: #fff;
+      	color: var(--accessory-color);
+      	background-color: var(--primary-color);
         font-size: 2em;
-        border: 0.1em solid #484d4d;
+        border: 0.1em solid var(--accessory-color);
         border-radius: 0.5em;
       }
       #navbar ul li a:hover {
-      	color: #fff;
-      	background-color: #484d4d;
+      	color: var(--accessory-color);
+      	background-color: var(--secondary-color1);
       }
       table td {
         border-left: 100px solid white;
@@ -44,25 +52,39 @@
         width: 100%;
       }
       .all-links-table th {
-        background-color: #484d4d;
-        color: white;
+        background-color: var(--accessory-color);
+        color: var(--secondary-color1);
       }
       .all-links-table td, .all-links-table th {
-        border: 1px solid #ddd;
+        border: 1px solid var(--primary-color);
         padding: 8px;
       }
       .all-links-table tr:nth-child(even) {
-        background-color: #f2f2f2;
+        background-color: var(--secondary-color1);
+        color: var(--accessory-color);
+      }
+      .all-links-table tr:nth-child(odd) {
+        background-color: var(--secondary-color2);
+        color: var(--accessory-color);
       }
       .all-links-table tr:hover {
-        background-color: #ddd;
+        background-color: var(--accessory-color);
+        color: var(--primary-color);
+      }
+      .all-links-table tr:hover a {
+        background-color: var(--accessory-color);
+        color: var(--primary-color);
+      }
+      .all-links-table tr a {
+        color: var(--accessory-color);
       }
       form {
         text-align: center;
         margin-left: 16em;
         margin-right: 16em;
         margin-top: 4em;
-        border: 0.2em solid #484d4d;
+        border: 0.2em solid var(--accessory-color);
+        background-color: var(--primary-color);
         border-radius: 0.6em;
       }
       form ul {
@@ -81,8 +103,8 @@
         margin-right: 0.5em;
       }
       #form-header {
-        color: #fff;
-        background-color: #484d4d;
+        color: var(--primary-color);
+        background-color: var(--accessory-color);
       }
       form input[type="submit"] {
         margin: 1em;

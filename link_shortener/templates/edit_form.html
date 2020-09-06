@@ -3,47 +3,47 @@
 {% block content %}
   <div class="container">
     <form action="" method="POST">
-      <h1 id="form-header">/{{ link.endpoint }}</h1>
+      <h1 id="form-header">/{{ payload.endpoint }}</h1>
       {{ '<br>'.join(form.csrf_token.errors) }}
       {{ form.csrf_token }}
       {{ '<br>'.join(form.url.errors) }}
       <ul>
         <li>
           <div id="edit-anchor">
-            {% if status == 'active' %}
-              <a class="deactivate" href="/deactivate/{{ link.id }}">Deactivate link</a>
-              {% if has_password %}
-                <a class="reset-delete" href="/reset/active/{{ link.id }}">Reset password</a>
+            {% if payload.is_active %}
+              <a class="deactivate" href="/deactivate/{{ payload.id }}">Deactivate link</a>
+              {% if payload.password %}
+                <a class="reset-delete" href="/reset/{{ payload.id }}">Reset password</a>
               {% endif %}
             {% else %}
-              <a class="activate" href="/activate/{{ link.id }}">Activate link</a>
-              {% if has_password %}
-                <a class="reset-delete" href="/reset/inactive/{{ link.id }}">Reset password</a>
+              <a class="activate" href="/activate/{{ payload.id }}">Activate link</a>
+              {% if payload.password %}
+                <a class="reset-delete" href="/reset/{{ payload.id }}">Reset password</a>
               {% endif %}
             {% endif %}
-            <a class="reset-delete" href="/delete/{{ status }}/{{ link.id }}">Delete link</a>
+            <a class="reset-delete" href="/delete/{{ payload.id }}">Delete link</a>
           </div>
         </li>
         <br>
         <li><h4>Change URL:</h4></li>
-        <li>{{ form.url(size=40, value=link.url) }}</li>
+        <li>{{ form.url(size=40, value=payload.url) }}</li>
         <br>
-        {% if has_password %}
+        {% if payload.password %}
           <li><h4>Change password:</h4></li>
         {% else %}
           <li><h4>Set a password:</h4></li>
         {% endif %}
         <li>{{ form.password(size=40) }}</li>
         <br>
-        {% if link.switch_date %}
-          {% if status == 'active' %}
+        {% if payload.switch_date %}
+          {% if payload.is_active %}
             <h4>Link will deactivate on:</h4>
           {% else %}
             <h4>Link will activate on:</h4>
           {% endif %}
-          <li>{{ form.switch_date(size=40, value=link.switch_date) }}</li>
+          <li>{{ form.switch_date(size=40, value=payload.switch_date) }}</li>
         {% else %}
-          {% if status == 'active' %}
+          {% if payload.is_active %}
             <h4>Set a date to deactivate link</h4>
           {% else %}
             <h4>Set a date to activate link</h4>

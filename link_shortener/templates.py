@@ -9,7 +9,7 @@ def template_loader(template_file, *args, **kwargs):
     '''
     Loads and renders Django-style templates using Jinja.
     '''
-    file_loader = PackageLoader(__name__, 'jinja_templates')
+    file_loader = PackageLoader(__name__, 'templates')
     env = Environment(loader=file_loader)
     template = env.get_template(template_file)
     output = template.render(*args, **kwargs)

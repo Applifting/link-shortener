@@ -7,13 +7,14 @@ from link_shortener.models import links
 from link_shortener.core.exceptions import NotFoundException
 
 
-async def retrieve_links(request, filters):
+async def retrieve_links(request, filters=None):
     async with request.app.engine.acquire() as conn:
         link_select = links.select()
-        for filter in filters.items():
-            link_select = link_select.where(
-                links.columns[filter[0]] == filter[1]
-            )
+        if filters:
+            for filter in filters.items():
+                link_select = link_select.where(
+                    links.columns[filter[0]] == filter[1]
+                )
         queryset = await conn.execute(link_select)
         data = []
         for link in await queryset.fetchall():

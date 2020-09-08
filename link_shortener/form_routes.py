@@ -60,11 +60,8 @@ async def link_password_form(request, link_id):
                         status_code='200'
                     ), status=200)
     except NotFoundException:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Link has no password or does not exist',
-                        status_code='404'
-                    ), status=404)
+        params = '?from=authorize&status=404'
+        return redirect(f'/links/all{params}')
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])
@@ -74,17 +71,14 @@ async def link_password_save(request, link_id):
         link = await check_password(request, link_id, form)
         return redirect(link, status=307)
     except FormInvalidException:
-        status, message = 400, 'Form invalid'
+        status = 400
     except NotFoundException:
-        status, message = 404, 'Link has no password or does not exist'
+        status = 404
     except AccessDeniedException:
-        status, message = 401, 'Password incorrect'
+        status = 401
 
-    return html(template_loader(
-                    template_file='message.html',
-                    payload=message,
-                    status_code=str(status)
-                ), status=status)
+    params = f'?from=authorize&status={status}'
+    return redirect(f'/authorize/{link_id}/{params}')
 
 
 @form_blueprint.route('/create', methods=['GET'])
@@ -92,6 +86,7 @@ async def link_password_save(request, link_id):
 @credential_whitelist_check
 async def create_link_form(request, user):
     form = CreateForm(request)
+
     return html(template_loader(
                     template_file='create_form.html',
                     form=form
@@ -117,40 +112,34 @@ async def create_link_save(request, user):
             'switch_date': form.switch_date.data
         }
         await create_link(request, data=form_data)
-        headers["status"], headers["message"] = 201, 'Link created successfully'
+        status = 201
     except FormInvalidException:
-        status, message = 400, 'Form invalid'
+        status = 400
     except DuplicateActiveLinkForbidden:
-        status, message = 409, 'An active link with that name already exists'
+        status = 409
     finally:
-        return redirect('/links/all', headers=headers)
+        params = f'?from=create&status={status}'
+        return redirect(f'/links/all/{params}')
 
-        '''html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
-'''
 
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
 async def update_link_form(request, user, link_id):
     try:
+        message = request.args if request.args else None
         form = UpdateForm(request)
         data = await check_update_form(request, link_id)
         return html(template_loader(
                         template_file='edit_form.html',
                         form=form,
                         payload=data,
+                        message=message,
                         status_code='200'
                     ), status=200)
     except NotFoundException:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Link does not exist',
-                        status_code='404'
-                    ), status=404)
+        params = f'?from=edit&status=404'
+        return redirect(f'/links/all{params}')
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['POST'])
@@ -168,14 +157,11 @@ async def update_link_save(request, user, link_id):
             'switch_date': form.switch_date.data
         }
         await update_link(request, link_id=link_id, data=form_data)
-        status, message = 200, 'Link updated successfully'
+        status = 200
     except FormInvalidException:
-        status, message = 400, 'Form invalid'
+        status = 400
     except NotFoundException:
-        status, message = 404, 'Link does not exist'
+        status = 404
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?from=edit&status={status}'
+        return redirect(f'/links/all{params}')

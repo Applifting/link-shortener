@@ -636,7 +636,7 @@
         transition: transform 0.3s linear;
       }
       .rowowner {
-        /* color: #11103c; */
+        color: #11103c;
       }
     </style>
   </head>
@@ -644,110 +644,93 @@
     {% block content %} {% endblock %}
   </body>
   <script>
-    // persist checkbox
-    var checkboxValues =
-      JSON.parse(localStorage.getItem("checkboxValues")) || {};
-    var $checkboxes = $(".toggle :checkbox");
+    // persist checkbox value
+    function persistCheck() {
+      const filterParam = window.location.search;
+      const filter = {
+        disable: false,
+        owner: "",
+        search: "",
+      };
 
-    $checkboxes.on("change", function () {
-      $checkboxes.each(function () {
-        checkboxValues[this.id] = this.checked;
-      });
-      localStorage.setItem("checkboxValues", JSON.stringify(checkboxValues));
-    });
-    $.each(checkboxValues, function (key, value) {
-      $("#" + key).prop("checked", value);
-    });
-    // check if checked
-    // let checkbox = document.getElementById("checkbox");
-    // checkbox &&
-    //   checkbox.addEventListener("change", function () {
-    //     if (checkbox.checked) {
-    //       checkbox.value = "true";
-    //       console.log("tru");
-    //     } else {
-    //       console.log("false");
-    //       checkbox.value = "false";
-    //     }
-    //   });
-
+      for (const [key, value] of new URLSearchParams(filterParam).entries()) {
+        filter[key] = value;
+      }
+      function colorSwitch() {
+        $("#checkbox").prop("checked", filter.disable);
+        if (filter.disable) {
+          $("#statusdisabled").css("color", "#CF7317");
+          $("#statusactive").css("color", "#AAA9BC");
+        } else {
+          $("#statusdisabled").css("color", "#AAA9BC");
+          $("#statusactive").css("color", "#1F7A78");
+        }
+      }
+      colorSwitch();
+    }
+    persistCheck();
+    //
     let openmode = document.getElementById("advanced");
-    console.log(openmode);
     let orgUrl = document.getElementById("orgUrl");
     let shortLink = document.getElementById("shortlink");
     let tr = document.querySelectorAll(".tr");
     let shortLinked = document.getElementById("shortlinked");
     let shareBox = null;
-
-    // open close EDIT
+    //
     let setopen = document.getElementById("settings");
-    // arrow animation
-    var div = document.getElementById("wrapicon");
     var icon = document.getElementById("icon");
     var open = false;
-
-    setopen &&
-      setopen.addEventListener("click", function () {
-        console.log("da");
-        let modal = document.getElementById("extra");
-        this.classList.toggle("active");
-        if (modal.style.maxHeight) {
-          modal.style.maxHeight = null;
-        } else {
-          modal.style.maxHeight = modal.scrollHeight + "px";
-        }
-        if (open) {
-          icon.className = "fa fa-angle-right";
-        } else {
-          icon.className = "fa fa-angle-right open";
-        }
-
-        open = !open;
-      });
-    // button disable
-    let inputs = document.getElementsByClassName("inputs");
-    for (i = 0; i < inputs.length; i++) {
-      submit.disabled = true;
-      inputs &&
-        inputs[i].addEventListener("keyup", function () {
-          if (shortLink.value === "" || orgUrl.value === "") {
-            submit.disabled = true;
+    function toggleAdvSettings() {
+      setopen &&
+        setopen.addEventListener("click", function () {
+          let modal = document.getElementById("extra");
+          this.classList.toggle("active");
+          if (modal.style.maxHeight) {
+            modal.style.maxHeight = null;
           } else {
-            submit.disabled = false;
+            modal.style.maxHeight = modal.scrollHeight + "px";
           }
+          if (open) {
+            icon.className = "fa fa-angle-right";
+          } else {
+            icon.className = "fa fa-angle-right open";
+          }
+
+          open = !open;
         });
     }
-    // dynamic text update
-    shortLink &&
-      shortLink.addEventListener("keyup", function () {
-        let printout = document.getElementById("shortlinked");
-        var x = shortLink.value;
-        printout.innerHTML = "www.fueled.by/" + x;
-      });
-    document.getElementById("shortlinked").style.color = "#AAA9BC";
-    document.getElementById("shortlinked").style.fontWeight = "bold";
+    toggleAdvSettings();
+    // button disable
+    function disableBtn() {
+      let inputs = document.getElementsByClassName("inputs");
+      for (i = 0; i < inputs.length; i++) {
+        submit.disabled = true;
+        inputs &&
+          inputs[i].addEventListener("keyup", function () {
+            if (shortLink.value === "" || orgUrl.value === "") {
+              submit.disabled = true;
+            } else {
+              submit.disabled = false;
+            }
+          });
+      }
+    }
+    disableBtn();
 
-    //open close feature CREATE
-    // arrow animation
-    openmode &&
-      openmode.addEventListener("click", function () {
-        let modal = document.getElementById("extrareq");
-        this.classList.toggle("active");
-        if (modal.style.maxHeight) {
-          modal.style.maxHeight = null;
-        } else {
-          modal.style.maxHeight = modal.scrollHeight + "px";
-        }
-        if (open) {
-          icon.className = "fa fa-angle-right";
-        } else {
-          icon.className = "fa fa-angle-right open";
-        }
+    function txtUpdateOnChange() {
+      shortLink &&
+        shortLink.addEventListener("keyup", function () {
+          let printout = document.getElementById("shortlinked");
+          var x = shortLink.value;
+          printout.innerHTML = "www.fueled.by/" + x;
+        });
+      document.getElementById("shortlinked").style.color = "#AAA9BC";
+      document.getElementById("shortlinked").style.fontWeight = "bold";
+    }
 
-        open = !open;
-      });
-    // copy
-    function copys(rowid) {
+    txtUpdateOnChange();
+
+    function copyLink(rowid) {
       let hovercopy = document.getElementsByClassName("square-" + rowid);
       var range = document.createRange();
       range.selectNode(document.getElementById("shortlinked-" + rowid));
@@ -762,7 +745,7 @@
     }
 
     //copy inline
-    function copyinline() {
+    function copySingle() {
       let hovercopy = document.getElementsByClassName("square");
       var range = document.createRange();
       range.selectNode(document.getElementById("shortlinked"));
@@ -776,25 +759,27 @@
       }, 800);
     }
     //notification
-    function show() {
-      console.log("ss");
+    function showNotification() {
       let linkcreate = document.getElementById("linkcreate");
       linkcreate.classList.remove("hide");
       linkcreate.classList.add("show");
     }
 
     // date picker
-    $(function () {
-      $('input[name="birthday"]').daterangepicker({
-        singleDatePicker: true,
-        showDropdowns: true,
-        minYear: 1901,
-        maxYear: parseInt(moment().format("YYYY"), 10),
+    function datePicker() {
+      $(function () {
+        $('input[name="birthday"]').daterangepicker({
+          singleDatePicker: true,
+          showDropdowns: true,
+          minYear: 1901,
+          maxYear: parseInt(moment().format("YYYY"), 10),
+        });
       });
-    });
-    //show social media links
+    }
+    datePicker();
 
-    function display(rowid) {
+    //show social media link
+    function toggleShareBox(rowid) {
       let clickedBox = document.getElementById("box-" + rowid);
       if (shareBox && clickedBox !== shareBox) {
         shareBox.style.display = "none";
@@ -807,28 +792,14 @@
       }
     }
 
-    //change color of active
-
-    function toggleActive() {
-      let check = document.getElementById("checkbox");
-      let active = document.getElementById("statusactive");
-      let disabled = document.getElementById("statusdisabled");
-      if (check.checked == true) {
-        active.style.color = "#AAA9BC";
-        disabled.style.color = "#CF7317";
-      } else {
-        active.style.color = "#1F7A78";
-        disabled.style.color = "#AAA9BC";
+    // hardcoded for now setting owner
+    function getRowOwner() {
+      let rowOwner = document.getElementsByClassName("rowowner");
+      let ownerFilter = document.getElementsByClassName("ownerfilter");
+      for (i = 0; i < rowOwner.length; i++) {
+        ownerFilter[i].innerHTML = rowOwner[i].innerHTML;
       }
     }
-    // hardcoded for now setting owner
-    let rowOwner = document.getElementsByClassName("rowowner");
-    console.log(rowOwner[1].innerHTML);
-    let ownerFilter = document.getElementsByClassName("ownerfilter");
-    console.log(ownerFilter[0].innerHTML);
-    for (i = 0; i < rowOwner.length; i++) {
-      console.log("ss");
-      ownerFilter[i].innerHTML = rowOwner[i].innerHTML;
-    }
+    getRowOwner();
   </script>
 </html>

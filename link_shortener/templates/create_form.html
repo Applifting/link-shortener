@@ -18,11 +18,11 @@
         {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink",
         class='inputs') }}
       </li>
-      <label id="advanced">
+      <label id="settings">
         <span id="wrapicon"> <i id="icon" class="fa fa-angle-right"></i> </span
         >Advanced Settings</label
       >
-      <div id="extrareq">
+      <div id="extra">
         <li>{{ form.password(size=30, placeholder="Password") }}</li>
         <li>
           {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD",
@@ -32,7 +32,7 @@
       </div>
       <span id="fueled"
         ><span id="shortlinked">www.fueled.by/</span>
-        <a class="copy" onclick="copyinline()">
+        <a class="copy" onclick="copySingle()">
           <img src="/links/copyicon.svg" alt="copyicon" />
           <img
             src="/links/hovercopy.svg"

@@ -108,6 +108,7 @@ input:checked + .slider:before {
   border-radius: 4px;
   color: #aaa9bc;
   margin: 0 30px 0 20px;
+  background: white;
 }
 #searchborder {
   border: 1px solid #e6e6ef;
@@ -133,6 +134,7 @@ input:checked + .slider:before {
   background-color: transparent;
   border: none;
   margin-left: 20px;
+  width: 100px;
 }
 #createShort {
   width: 232px;

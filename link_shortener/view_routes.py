@@ -104,7 +104,7 @@ async def delete_link_view(request, user, link_id):
                         status_code=str(status)
                     ), status=status)
 
-@view_blueprint.route('/delete/<link_id>/confirm/', methods=['GET'])
+@view_blueprint.route('/delete/<link_id>/confirm', methods=['GET'])
 @login_required
 @credential_whitelist_check
 async def confirm_delete_link_view(request, user, link_id):

@@ -68,12 +68,13 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-
+    message = {"from":"edit", "status": 201}
     link_data = await retrieve_links(request, filters={'is_active': True})
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),
-                    data=link_data
+                    data=link_data,
+        message=messsage
                 ), status=200)
 
 

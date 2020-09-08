@@ -68,6 +68,7 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
+
     link_data = await retrieve_links(request, filters={'is_active': True})
     return html(template_loader(
                     template_file='all_links.html',

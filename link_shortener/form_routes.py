@@ -102,6 +102,7 @@ async def create_link_form(request, user):
 @login_required
 @credential_whitelist_check
 async def create_link_save(request, user):
+    headers = {}
     try:
         form = CreateForm(request)
         if not form.validate():
@@ -116,18 +117,20 @@ async def create_link_save(request, user):
             'switch_date': form.switch_date.data
         }
         await create_link(request, data=form_data)
-        status, message = 201, 'Link created successfully'
+        headers["status"], headers["message"] = 201, 'Link created successfully'
     except FormInvalidException:
         status, message = 400, 'Form invalid'
     except DuplicateActiveLinkForbidden:
         status, message = 409, 'An active link with that name already exists'
     finally:
-        return html(template_loader(
+        return redirect('/links/all', headers=headers)
+
+        '''html(template_loader(
                         template_file='message.html',
                         payload=message,
                         status_code=str(status)
                     ), status=status)
-
+'''
 
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])
 @login_required

@@ -65,6 +65,7 @@
         margin: 0;
         padding: 0;
       }
+
     </style>
   </head>
   <body>
@@ -85,6 +86,7 @@
       }
       $("#ownerfilter").val(filter.owner);
       $("#search").val(filter.search);
+
       function colorSwitch() {
         $("#checkbox").prop("checked", filter.disable);
         if (filter.disable) {
@@ -125,6 +127,7 @@
             icon.className = "fa fa-angle-right open";
           }
 
+
           open = !open;
         });
     }
@@ -145,7 +148,9 @@
       }
     }
     disableBtn();
+
     // dynamic text update
+
     function txtUpdateOnChange() {
       shortLink &&
         shortLink.addEventListener("keyup", function () {
@@ -158,6 +163,7 @@
     }
     txtUpdateOnChange();
     // copy
+
     function copyLink(rowid) {
       let hovercopy = document.getElementsByClassName("square-" + rowid);
       var range = document.createRange();
@@ -206,7 +212,6 @@
     }
     datePicker();
     //show social media links
-
     function toggleShareBox(rowid) {
       let clickedBox = document.getElementById("box-" + rowid);
       if (shareBox && clickedBox !== shareBox) {

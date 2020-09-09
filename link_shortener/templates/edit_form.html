@@ -12,14 +12,8 @@
           <div id="edit-anchor">
             {% if payload.is_active %}
               <a class="deactivate" href="/deactivate/{{ payload.id }}">Deactivate link</a>
-              {% if payload.password %}
-                <a class="reset-delete" href="/reset/{{ payload.id }}">Reset password</a>
-              {% endif %}
             {% else %}
               <a class="activate" href="/activate/{{ payload.id }}">Activate link</a>
-              {% if payload.password %}
-                <a class="reset-delete" href="/reset/{{ payload.id }}">Reset password</a>
-              {% endif %}
             {% endif %}
             <a class="reset-delete" href="/delete/{{ payload.id }}/confirm">Delete link</a>
           </div>

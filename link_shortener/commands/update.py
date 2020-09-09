@@ -5,6 +5,8 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import os
 import hashlib
 
+from sqlalchemy import and_
+
 from link_shortener.models import links, salts
 
 from link_shortener.core.exceptions import NotFoundException
@@ -72,10 +74,10 @@ async def reset_password(request, link_id):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
         query = await conn.execute(links.select().where(
-            links.columns['id'] == link_id
-        ).where(
+            and_(
+            links.columns['id'] == link_id,
             links.columns['password'] != None
-        ))
+        )))
         link_data = await query.fetchone()
         if not link_data:
             await trans.close()

@@ -4,6 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import os
 import hashlib
+from sqlalchemy import and_
 
 from link_shortener.models import links, salts
 
@@ -14,10 +15,10 @@ async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
         query = await conn.execute(links.select().where(
-            links.columns['endpoint'] == data['endpoint']
-        ).where(
+            and_(
+            links.columns['endpoint'] == data['endpoint'],
             links.columns['is_active'] == True
-        ))
+        )))
         link_data = await query.fetchone()
         if link_data:
             await trans.close()

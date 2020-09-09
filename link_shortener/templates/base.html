@@ -71,6 +71,46 @@
     {% block content %} {% endblock %}
   </body>
   <script>
+    // getting unique owners
+    function addOwnersToSelection() {
+      let ownerarr = [];
+      let owners = document.getElementsByClassName("rowowner");
+      let ownerfilter = document.getElementById("ownerfilter");
+      for (i = 0; i < owners.length; i++) {
+        ownerarr.push(owners[i].innerHTML);
+      }
+      let ownernew = [...new Set(ownerarr)];
+      for (i = 0; i < ownernew.length; i++) {
+        let opt = document.createElement("option");
+        opt.appendChild(document.createTextNode(ownernew[i]));
+        ownerfilter.appendChild(opt);
+      }
+    }
+    addOwnersToSelection();
+    //clear filter
+    function clearFilters() {
+      window.history.replaceState({}, document.title, "/" + "links/all");
+      location.reload();
+      return false;
+    }
+    //delay search
+    function delayTextSearch() {
+      var delay = (function () {
+        var timer = 0;
+        return function (callback, ms) {
+          clearTimeout(timer);
+          timer = setTimeout(callback, ms);
+          console.log(timer);
+        };
+      })();
+
+      $("#search").keyup(function () {
+        delay(function () {
+          document.getElementById("forms").submit();
+        }, 800);
+      });
+    }
+    delayTextSearch();
     // persist checkbox value
     function persistCheck() {
       const filterParam = window.location.search;

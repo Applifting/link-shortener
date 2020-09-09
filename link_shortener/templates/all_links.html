@@ -1,118 +1,44 @@
-{% extends 'base.html' %} {% block content %}
-<div>
-<span id='linkcreate' class="hide">Link Created</span>
-</div>
-<button onclick="showNotification()">show</button>
-<div class="container" >
-  <form name='form'class="form" id="forms" method="GET"action="http://localhost:8000/links/all">
-    <div class="tbHead">
-      <div class="toggle">
-        <div id='statusactive'>Active</div>
-        <label class="switch">
-          <input  onChange="this.form.submit()"name='disable'type="checkbox"  id='checkbox' value='true' onclick="toggleActive()"/>
-          <span class="slider round"></span>
-        </label>
-        <div id='statusdisabled'>Disabled</div>
-      </div>
-      <select onChange="this.form.submit()" name="owner" id="ownerfilter">
-        <option value=''>Owner</option>
-        <!-- <option class='ownerfilter' value="saab"></option>
-        <option class='ownerfilter' value="as">aa</option> -->
-      </select>
-      <div id='searchborder'>
-      <i class="fa fa-search"></i>
-        <input
-          name="search"
-          id="search"
-          type="text"
-          placeholder="Search"
-          value=""
-        />
-      </div>
-      <input onclick="clearthat()" id="clear" value="Clear Filters"></input>
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <br><br>
+    <div id="create">
+      <a href="/create">
+        <img src="plus.png" height="50" width="50" alt="Not found">
+      </a>
     </div>
-    <div>
-      <a href="/create" id="createShort">
-        <img src="plus.svg" alt="" /> Create Shortlink</a
-      >
-    </div>
-  </form>
-  <table class="all-links-table">
-    <tr>
-      <th>Status</th>
-      <th>Owner</th>
-      <th>Link</th>
-      <th>Shortlink</th>
-      <th>Actions</th>
-    </tr>
-
-    {% for row in data %}
-    <tr class="tr">
-      <td id="isactive">
-        {% if row.is_active %}
-        <span class="actives">Active</span>
-        {% else %}
-        <span class="disabled">Disabled</span>
-        {% endif %}
-      </td>
-      <td class="rowowner">{{ row.owner }}</td>
-      <td id="linkfade">
-        <span><a class="rowurl" href="{{ row.url }}">{{ row.url }}</a></span>
-      </td>
-      <td id="shortlinked-{{row.id}}">
-        <span id="domain">www.{{domain_name}}</span
-        ><!-- / --><span id="endpoint1">/{{ row.endpoint}}</span>
-      </td>
-
-      <td class="actions">
-        <a class="copy" onclick="copyLink('{{row.id}}')">
-          <img src="copyicon.svg" alt="copyicon" class="copyicon" />
-          <img src="hovercopy.svg" alt="hovercopy" class="copyiconhover" />
-          <div class="hovercopy">
-            <div class="trianglecover"><span id="triangle-up"></span></div>
-            <div class="hovercover">
-              <span class="square square-{{row.id}}">copy</span>
-            </div>
-          </div>
-        </a>
-        <a class="editbtn" href="/edit/{{ row.id }}">
-          <img
-            src="Edit.svg"
-            height="20"
-            width="20"
-            alt="Not found"
-            class="edits"
-          />
-          <img src="edithover.svg" alt="edit" class="hoveredit" />
-
-        </a>
-        <div class="display">
-          <a class="display displatBtn" onclick="toggleShareBox('{{row.id}}')">
-            <img
-              src="Vector.svg"
-              height="20"
-              width="20"
-              alt="Not found"
-              class="share"
-            />
-            <img src="sharehover.svg" alt="share" class="sharehover" />
-          </a>
-          <div id="box-{{row.id}}" class="box">ahoj</div>
-        </div>
-        <a href="/delete/active/{{ row.id }}" class="deletebtn">
-          <img
-            src="delete.svg"
-            height="20"
-            width="20"
-            alt="Not found"
-            class="delete"
-          />
-          <img src="deletehover.svg" alt="deletehover" class="deletehover" />
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-</div>
-
+    <br><br>
+  {% if status %}
+    {{ status }}
+  {% endif %}
+    <table class="all-links-table">
+      <tr>
+        <th>Endpoint</th>
+        <th>Owner</th>
+        <th>Link</th>
+        <th>Short link</th>
+        <th></th>
+        <th></th>
+      </tr>
+      {% for row in data %}
+        <tr>
+          <td>/{{ row.endpoint }}</td>
+          <td>{{ row.owner }}</td>
+          <td><a href="{{ row.url }}">{{ row.url }}</a></td>
+          <td>{{ domain_name }}/{{ row.endpoint }}</td>
+          <td>
+            <a href="/edit/{{ row.id }}">
+              <img src="edit.png" height="20" width="20" alt="Not found">
+            </a>
+          </td>
+          <td>
+            <a href="/delete/{{ row.id }}/confirm">
+              <img src="delete.png" height="20" width="20" alt="Not found">
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
 {% endblock %}

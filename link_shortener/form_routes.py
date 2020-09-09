@@ -31,14 +31,14 @@ form_blueprint = Blueprint('forms')
 class CreateForm(SanicForm):
     endpoint = StringField('Endpoint', validators=[DataRequired()])
     url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password')
+    password = StringField('Password')
     switch_date = DateField('Status switch date')
     submit = SubmitField('Create')
 
 
 class UpdateForm(SanicForm):
     url = StringField('URL', validators=[])
-    password = PasswordField('Password', validators=[])
+    password = StringField('Password', validators=[])
     switch_date = DateField('Status switch date')
     submit = SubmitField('Update')
 

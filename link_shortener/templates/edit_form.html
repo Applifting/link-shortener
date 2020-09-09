@@ -33,7 +33,7 @@
         {% else %}
           <li><h4>Set a password:</h4></li>
         {% endif %}
-        <li>{{ form.password(size=40) }}</li>
+        <li>{{ form.password(size=40, value=20*'\u25CF' if payload.password, type="password") }}</li>
         <br>
         {% if payload.switch_date %}
           {% if payload.is_active %}

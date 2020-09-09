@@ -46,6 +46,12 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
+    <link rel="stylesheet" href="/links/all_links.css" />
+    <link rel="stylesheet" href="/links/create.css" />
+    <link rel="stylesheet" href="/links/edit.css" />
+    <link rel="stylesheet" href="/links/delete.css" />
+    <link rel="stylesheet" href="/links/common.css" />
+
     <style>
       :root {
         --primary-color: #0c2233;
@@ -60,584 +66,6 @@
         padding: 0;
       }
 
-      .all-links-table {
-        width: inherit;
-        background-color: #fff;
-        color: #11103c;
-        font-style: normal;
-        font-weight: normal;
-        font-size: 14px;
-        margin: auto;
-      }
-      .all-links-table tr {
-        max-width: 1280px;
-      }
-      .all-links-table th {
-        background-color: #e6e6ef;
-        color: #aaa9bc;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        padding: 10px 26px;
-      }
-      .all-links-table td {
-        padding: 16px 26px;
-      }
-      .all-links-table tr:nth-child(even) {
-        background-color: #f4f4fb;
-      }
-      .all-links-table a {
-        text-decoration: none;
-        padding: 5px;
-      }
-
-      #form {
-        margin: auto;
-        box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
-        background-color: white;
-        width: 33.33%;
-        padding-bottom: 10px;
-      }
-
-      #form ul {
-        display: block;
-        list-style-type: none;
-        padding: 0;
-      }
-      #form ul label {
-        margin: 0.5rem 41px;
-        color: #11103c;
-      }
-      #form ul li input {
-        width: 83.33%;
-        margin: 0.5rem 40px;
-        padding: 0.6rem;
-        border: 1px solid #11103c;
-      }
-      #form-header {
-        text-align: center;
-        padding-top: 30px;
-        color: #11103c;
-      }
-      #form h4 {
-        margin: 0.5rem 41px;
-        font-size: 14px;
-        color: #11103c;
-      }
-      #form button {
-        width: 83.33%;
-        margin: 0.5rem 40px;
-        padding: 0.6rem;
-        height: 50px;
-        font-weight: bold;
-      }
-      #deletebtn {
-        background-color: #c93636;
-        color: white;
-        border: none;
-      }
-      #cancelbtn {
-        border: 2px solid #322faf;
-        color: #322faf;
-        background-color: white;
-        margin-bottom: 40px;
-      }
-      #deleteQ {
-        line-height: 160%;
-        font-size: 20px;
-        text-align: center;
-        margin: 40px;
-      }
-
-      #edit-anchor a {
-        text-decoration: none;
-        padding: 0.2em 1em;
-      }
-      .activate {
-        color: #1f7a78;
-        border: 2.5px solid #1f7a78;
-        width: 83.33%;
-        margin: 0.5em 40px;
-        font-size: 14px;
-        font-weight: bold;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .deactivate {
-        color: #322faf;
-        border: 3px solid #322faf;
-        width: 83.33%;
-        margin: 0.5em 40px;
-        font-size: 14px;
-        font-weight: bold;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .activate:hover {
-        color: #1f7a78;
-      }
-      .deactivate:hover {
-        color: #322faf;
-      }
-      .reset-delete {
-        width: 83.33%;
-        margin: 0.5rem 40px;
-        padding: 0.6rem;
-        border: 1px solid #11103c;
-      }
-      .reset-delete:hover {
-        color: #fff;
-        background-color: #484d4d;
-      }
-      #linkfade {
-        text-decoration: none;
-        color: #11103c;
-        background-image: linear-gradient(90deg, #11103c 80%, rgba(0, 0, 0, 0));
-        overflow: hidden;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        position: relative;
-        display: inline-block;
-        max-width: 305px;
-        text-overflow: clip;
-        white-space: nowrap;
-      }
-      #domain {
-        color: #aaa9bc;
-        font-family: "Poppins";
-        font-style: normal;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 160%;
-      }
-
-      #endpoint1 {
-        color: #322faf;
-        font-family: "Poppins";
-        font-style: normal;
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 160%;
-      }
-
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 48px;
-        height: 24px;
-      }
-
-      /* Hide default HTML checkbox */
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      /* The slider */
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: #d1ebeb;
-        -webkit-transition: 0.4s;
-        transition: 0.4s;
-      }
-
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 20px;
-        width: 20px;
-        margin: 2px;
-        background-color: white;
-        -webkit-transition: 0.4s;
-        transition: 0.4s;
-      }
-
-      input:checked + .slider {
-        background: #f8dec3;
-      }
-
-      input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-      }
-
-      /* Rounded sliders */
-      .slider.round {
-        border-radius: 34px;
-      }
-
-      .slider.round:before {
-        border-radius: 50%;
-      }
-
-      #ownerfilter {
-        width: 240px;
-        height: 40px;
-        border: 1px solid #e6e6ef;
-        border-radius: 4px;
-        color: #aaa9bc;
-        margin: 0 30px 0 20px;
-      }
-      #searchborder {
-        border: 1px solid #e6e6ef;
-        border-radius: 4px;
-      }
-      #search {
-        width: 220px;
-        height: 40px;
-        border: none;
-        border-radius: 4px;
-        color: #322faf;
-      }
-      #search::placeholder {
-        color: #aaa9bc;
-      }
-      .fa-search {
-        margin: 0 0px 0 14.4px;
-        color: #e6e6ef;
-      }
-      #clear {
-        color: #aaa9bc;
-        text-decoration: underline;
-        background-color: transparent;
-        border: none;
-        margin-left: 20px;
-      }
-      #advanced {
-        cursor: pointer;
-      }
-      #extrareq {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-        margin: 0 !important;
-      }
-      #extra {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
-        margin: 0 !important;
-      }
-      #back {
-        display: block;
-        margin: 40px 0;
-        margin-left: 34%;
-        color: #11103c;
-        text-decoration: none;
-      }
-
-      #createShort {
-        width: 232px;
-        background: #322faf;
-        border: none;
-        color: white;
-        height: 40px;
-        padding: 8px 15px;
-        margin: 0 30px 0 30px;
-        text-decoration: none;
-        display: flex;
-        justify-content: space-evenly;
-        font-weight: bold;
-      }
-
-      .tbHead {
-        display: flex;
-        flex-direction: row;
-      }
-      .toggle {
-        display: flex;
-        align-items: center;
-      }
-      #statusactive {
-        margin: 0 20px;
-        color: #1f7a78;
-      }
-      #statusdisabled {
-        margin: 0 20px;
-        color: #aaa9bc;
-      }
-      .actives {
-        background-color: #d1ebeb;
-        color: #1f7a78;
-        border-radius: 4px;
-        width: 64px;
-        height: 30px;
-        padding: 4px 10px;
-      }
-      .disabled {
-        background-color: #f8dec3;
-        color: #cf7317;
-        border-radius: 4px;
-        width: 64px;
-        height: 30px;
-        padding: 4px 10px;
-      }
-      #fueled {
-        color: #aaa9bc;
-        background-color: #e9eff6;
-        display: block;
-        width: 100%;
-        margin: 20px 0;
-        height: 69px;
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-      }
-      #submit {
-        margin-bottom: 20px !important;
-        background-color: #322faf;
-        color: white;
-        border: none !important;
-        height: 50px;
-      }
-      #submit:disabled {
-        background-color: #e9e9e9;
-        color: #aaa9bc;
-      }
-      #edit {
-        background-color: #322faf;
-        color: white;
-        border: none !important;
-        height: 50px;
-      }
-      .form {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        background-color: white;
-        padding: 20px;
-        width: inherit;
-      }
-      .edit h4 {
-        margin: 0.5rem 41px;
-        font-size: 14px;
-      }
-
-      .container {
-        padding: 0;
-        margin-top: 100px;
-        box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
-        max-width: 1280px;
-        margin-left: auto;
-      }
-      .copy {
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        position: relative;
-      }
-
-      .hovercopy {
-        display: none;
-        position: absolute;
-        margin-left: 5px;
-      }
-      .square {
-        height: 32px;
-        width: 95px;
-        background: #11103c;
-        z-index: 1;
-        display: flex;
-        color: white;
-        margin-right: 20px;
-        align-items: center;
-        justify-content: center;
-      }
-      #triangle-up {
-        width: 0;
-        height: 0;
-        border-left: 17px solid transparent;
-        border-right: 17px solid transparent;
-        border-bottom: 20px solid #11103c;
-        display: block;
-      }
-
-      .copy:hover .hovercopy {
-        display: block;
-      }
-      #linkcreate {
-        padding: 10px 40px;
-        background: #2181e8;
-        color: white;
-      }
-
-      #linkcreate.show {
-        animation: appear 2s ease-in-out;
-        opacity: 0;
-      }
-      #linkcreate.hide {
-        display: none;
-      }
-      .shortlinked input {
-        display: none;
-      }
-      @keyframes appear {
-        0% {
-          opacity: 0;
-        }
-        75% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-      #box {
-        z-index: 1;
-        position: absolute;
-        height: 30px;
-        width: 50px;
-        background-color: #0c2233;
-        margin: 30px 0px 0 40px;
-        color: white;
-      }
-      .display {
-        position: relative;
-      }
-      .displatBtn {
-        background-color: transparent;
-        border: none;
-        cursor: pointer;
-        display: block;
-      }
-      .box {
-        display: none;
-        position: absolute;
-        z-index: 1;
-        height: 44px;
-        width: 112px;
-        background-color: white;
-        color: blueviolet;
-        box-shadow: 0px 2px 8px rgba(46, 46, 46, 0.2);
-      }
-      .actions {
-        display: flex;
-        justify-content: space-evenly;
-      }
-
-      .hovercover {
-        margin-left: -35px;
-        margin-top: -10px;
-      }
-      .trianglecover {
-        margin-left: -7px;
-      }
-      .editbtn {
-        position: relative;
-      }
-      .hoveredit {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 5.5px 6px 6px 5px;
-        width: 20px;
-        height: 20px;
-      }
-      .editbtn:hover .hoveredit {
-        opacity: 1;
-      }
-      .editbtn:hover .edits {
-        opacity: 0;
-      }
-      .sharehover {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 5.5px 6px 6px 6px;
-      }
-      .display:hover .sharehover {
-        opacity: 1;
-      }
-      .display:hover .share {
-        opacity: 0;
-      }
-      .deletehover {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 5.5px 6px 6px 5px;
-        width: 20px;
-        height: 20px;
-      }
-      .deletebtn {
-        position: relative;
-      }
-      .deletebtn:hover .deletehover {
-        opacity: 1;
-      }
-      .deletebtn:hover .delete {
-        opacity: 0;
-      }
-      .arrow {
-        width: 20px;
-        border-top: 2px;
-        height: 1px;
-        background-color: black;
-        display: inline-block;
-        margin-bottom: 6px;
-      }
-      .copyiconhover {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        margin: 5px 6px 6px 5px;
-        width: 24px;
-        height: 24px;
-      }
-      .copyiconcreate {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 24px;
-        height: 24px;
-      }
-      .copy:hover .copyiconhover {
-        opacity: 1;
-      }
-      .copy:hover .copyicon {
-        opacity: 0;
-      }
-      .copy:hover .copyiconcreate {
-        opacity: 1;
-      }
-      .fa-angle-right {
-        transform: rotate(0deg);
-        transition: transform 0.3s linear;
-        color: #aaa9bc;
-      }
-
-      .fa-angle-right.open {
-        transform: rotate(90deg);
-        transition: transform 0.3s linear;
-      }
-      .rowowner {
-        color: #11103c;
-      }
     </style>
   </head>
   <body>
@@ -656,6 +84,9 @@
       for (const [key, value] of new URLSearchParams(filterParam).entries()) {
         filter[key] = value;
       }
+      $("#ownerfilter").val(filter.owner);
+      $("#search").val(filter.search);
+
       function colorSwitch() {
         $("#checkbox").prop("checked", filter.disable);
         if (filter.disable) {
@@ -676,7 +107,7 @@
     let tr = document.querySelectorAll(".tr");
     let shortLinked = document.getElementById("shortlinked");
     let shareBox = null;
-    //
+
     let setopen = document.getElementById("settings");
     var icon = document.getElementById("icon");
     var open = false;
@@ -695,6 +126,7 @@
           } else {
             icon.className = "fa fa-angle-right open";
           }
+
 
           open = !open;
         });
@@ -717,6 +149,8 @@
     }
     disableBtn();
 
+    // dynamic text update
+
     function txtUpdateOnChange() {
       shortLink &&
         shortLink.addEventListener("keyup", function () {
@@ -727,8 +161,8 @@
       document.getElementById("shortlinked").style.color = "#AAA9BC";
       document.getElementById("shortlinked").style.fontWeight = "bold";
     }
-
     txtUpdateOnChange();
+    // copy
 
     function copyLink(rowid) {
       let hovercopy = document.getElementsByClassName("square-" + rowid);
@@ -777,8 +211,7 @@
       });
     }
     datePicker();
-
-    //show social media link
+    //show social media links
     function toggleShareBox(rowid) {
       let clickedBox = document.getElementById("box-" + rowid);
       if (shareBox && clickedBox !== shareBox) {

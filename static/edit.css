@@ -1,0 +1,61 @@
+.activate {
+  color: #1f7a78;
+  border: 2.5px solid #1f7a78;
+  width: 83.33%;
+  margin: 0.5em 40px;
+  font-size: 14px;
+  font-weight: bold;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.deactivate {
+  color: #322faf;
+  border: 3px solid #322faf;
+  width: 83.33%;
+  margin: 0.5em 40px;
+  font-size: 14px;
+  font-weight: bold;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.activate:hover {
+  color: #1f7a78;
+}
+.deactivate:hover {
+  color: #322faf;
+}
+#extra {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  margin: 0 !important;
+}
+.edit h4 {
+  margin: 0.5rem 41px;
+  font-size: 14px;
+}
+#edit {
+  background-color: #322faf;
+  color: white;
+  border: none !important;
+  height: 50px;
+}
+#edit-anchor a {
+  text-decoration: none;
+  padding: 0.2em 1em;
+}
+
+.reset-delete {
+  width: 83.33%;
+  margin: 0.5rem 40px;
+  padding: 0.6rem;
+  border: 1px solid #11103c;
+}
+.reset-delete:hover {
+  color: #fff;
+  background-color: #484d4d;
+}

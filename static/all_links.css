@@ -1,0 +1,327 @@
+.container {
+  padding: 0;
+  margin-top: 100px;
+  box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
+  max-width: 1280px;
+  margin-left: auto;
+}
+.form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: white;
+  padding: 20px;
+  width: inherit;
+}
+.tbHead {
+  display: flex;
+  flex-direction: row;
+}
+.toggle {
+  display: flex;
+  align-items: center;
+}
+#statusactive {
+  margin: 0 20px;
+  color: #1f7a78;
+}
+#statusdisabled {
+  margin: 0 20px;
+  color: #aaa9bc;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #d1ebeb;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  margin: 2px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background: #f8dec3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.actives {
+  background-color: #d1ebeb;
+  color: #1f7a78;
+  border-radius: 4px;
+  width: 64px;
+  height: 30px;
+  padding: 4px 10px;
+}
+.disabled {
+  background-color: #f8dec3;
+  color: #cf7317;
+  border-radius: 4px;
+  width: 64px;
+  height: 30px;
+  padding: 4px 10px;
+}
+#ownerfilter {
+  width: 240px;
+  height: 40px;
+  border: 1px solid #e6e6ef;
+  border-radius: 4px;
+  color: #aaa9bc;
+  margin: 0 30px 0 20px;
+  background: white;
+}
+#searchborder {
+  border: 1px solid #e6e6ef;
+  border-radius: 4px;
+}
+#search {
+  width: 220px;
+  height: 40px;
+  border: none;
+  border-radius: 4px;
+  color: #322faf;
+}
+#search::placeholder {
+  color: #aaa9bc;
+}
+.fa-search {
+  margin: 0 0px 0 14.4px;
+  color: #e6e6ef;
+}
+#clear {
+  color: #aaa9bc;
+  text-decoration: underline;
+  background-color: transparent;
+  border: none;
+  margin-left: 20px;
+  width: 100px;
+}
+#createShort {
+  width: 232px;
+  background: #322faf;
+  border: none;
+  color: white;
+  height: 40px;
+  padding: 8px 15px;
+  margin: 0 30px 0 30px;
+  text-decoration: none;
+  display: flex;
+  justify-content: space-evenly;
+  font-weight: bold;
+}
+.all-links-table {
+  width: inherit;
+  background-color: #fff;
+  color: #11103c;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  margin: auto;
+}
+.all-links-table tr {
+  max-width: 1280px;
+}
+.all-links-table th {
+  background-color: #e6e6ef;
+  color: #aaa9bc;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 10px 26px;
+}
+.all-links-table td {
+  padding: 16px 26px;
+}
+.all-links-table tr:nth-child(even) {
+  background-color: #f4f4fb;
+}
+.all-links-table a {
+  text-decoration: none;
+  padding: 5px;
+}
+#linkfade {
+  text-decoration: none;
+  color: #11103c;
+  background-image: linear-gradient(90deg, #11103c 80%, rgba(0, 0, 0, 0));
+  overflow: hidden;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+  max-width: 305px;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+.rowowner {
+  color: #11103c;
+}
+.box {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  height: 44px;
+  width: 112px;
+  background-color: white;
+  color: blueviolet;
+  box-shadow: 0px 2px 8px rgba(46, 46, 46, 0.2);
+}
+.display {
+  position: relative;
+}
+.displatBtn {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: block;
+}
+.editbtn {
+  position: relative;
+}
+.hoveredit {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 5.5px 6px 6px 5px;
+  width: 20px;
+  height: 20px;
+}
+.editbtn:hover .hoveredit {
+  opacity: 1;
+}
+.editbtn:hover .edits {
+  opacity: 0;
+}
+.actions {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.hovercover {
+  margin-left: -35px;
+  margin-top: -10px;
+}
+.trianglecover {
+  margin-left: -7px;
+}
+
+.sharehover {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 5.5px 6px 6px 6px;
+}
+.display:hover .sharehover {
+  opacity: 1;
+}
+.display:hover .share {
+  opacity: 0;
+}
+.deletehover {
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 5.5px 6px 6px 5px;
+  width: 20px;
+  height: 20px;
+}
+.deletebtn {
+  position: relative;
+}
+.deletebtn:hover .deletehover {
+  opacity: 1;
+}
+.deletebtn:hover .delete {
+  opacity: 0;
+}
+/* created animation*/
+#linkcreate {
+  padding: 10px 40px;
+  background: #2181e8;
+  color: white;
+}
+
+#linkcreate.show {
+  animation: appear 2s ease-in-out;
+  opacity: 0;
+}
+#linkcreate.hide {
+  display: none;
+}
+.shortlinked input {
+  display: none;
+}
+@keyframes appear {
+  0% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+#domain {
+  color: #aaa9bc;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 160%;
+}
+#endpoint1 {
+  color: #322faf;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 160%;
+}

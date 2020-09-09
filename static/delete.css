@@ -1,0 +1,17 @@
+#deletebtn {
+  background-color: #c93636;
+  color: white;
+  border: none;
+}
+#cancelbtn {
+  border: 2px solid #322faf;
+  color: #322faf;
+  background-color: white;
+  margin-bottom: 40px;
+}
+#deleteQ {
+  line-height: 160%;
+  font-size: 20px;
+  text-align: center;
+  margin: 40px;
+}

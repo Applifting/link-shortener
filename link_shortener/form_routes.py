@@ -97,7 +97,6 @@ async def create_link_form(request, user):
 @login_required
 @credential_whitelist_check
 async def create_link_save(request, user):
-    headers = {}
     try:
         form = CreateForm(request)
         if not form.validate():

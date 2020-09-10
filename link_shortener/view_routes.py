@@ -18,6 +18,7 @@ from link_shortener.commands.update import reset_password
 from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 from link_shortener.commands.redirect import redirect_link
+from link_shortener.commands.filter import filter_links
 
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
@@ -68,12 +69,14 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    filter_set = {'is_active', 'owner'}
-    filters = {filter: request.args.get(filter) for filter in filter_set}
+    filter_set = {'is_active', 'owner', 'search'}
+    filters = {element: request.args.get(element) for element in filter_set}
+
     if filters['is_active'] is None:
         filters['is_active'] = True
 
-    link_data = await retrieve_links(request, filters)
+    data_db = await retrieve_links(request, {'is_active': filters['is_active']})
+    link_data = await filter_links(data_db, filters)
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),

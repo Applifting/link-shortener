@@ -11,10 +11,9 @@ async def retrieve_links(request, filters):
     async with request.app.engine.acquire() as conn:
         link_select = links.select()
         for filter in filters.items():
-            if filter[1] is not None:
-                link_select = link_select.where(
-                    links.columns[filter[0]] == filter[1]
-                )
+            link_select = link_select.where(
+                links.columns[filter[0]] == filter[1]
+            )
         queryset = await conn.execute(link_select)
         data = []
         for link in await queryset.fetchall():

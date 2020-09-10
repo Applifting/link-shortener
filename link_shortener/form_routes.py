@@ -126,7 +126,7 @@ async def create_link_save(request, user):
 @credential_whitelist_check
 async def update_link_form(request, user, link_id):
     try:
-        message = request.args if request.args else None
+        message = {message: request.args.get(message) for message in {'from', 'status'}}
         form = UpdateForm(request)
         data = await check_update_form(request, link_id)
         return html(template_loader(

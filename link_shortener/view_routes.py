@@ -63,7 +63,7 @@ async def landing_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    message = request.args if request.args else None
+    message = {message: request.args.get(message) for message in {'from', 'status'}}
     link_data = await retrieve_links(request, filters={'is_active': True})
     return html(template_loader(
                     template_file='all_links.html',

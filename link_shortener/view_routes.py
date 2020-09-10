@@ -68,7 +68,12 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    link_data = await retrieve_links(request)
+    filter_set = {'is_active', 'owner'}
+    filters = {filter: request.args.get(filter) for filter in filter_set}
+    if filters['is_active'] is None:
+        filters['is_active'] = True
+
+    link_data = await retrieve_links(request, filters)
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),

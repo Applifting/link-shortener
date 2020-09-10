@@ -281,34 +281,11 @@ input:checked + .slider:before {
 .deletebtn:hover .delete {
   opacity: 0;
 }
-/* created animation*/
-#linkcreate {
-  padding: 10px 40px;
-  background: #2181e8;
-  color: white;
-}
 
-#linkcreate.show {
-  animation: appear 2s ease-in-out;
-  opacity: 0;
-}
-#linkcreate.hide {
-  display: none;
-}
 .shortlinked input {
   display: none;
 }
-@keyframes appear {
-  0% {
-    opacity: 0;
-  }
-  75% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
+
 #domain {
   color: #aaa9bc;
   font-family: "Poppins";

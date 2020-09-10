@@ -5,7 +5,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from decouple import config
 
 from sanic import Blueprint
-from sanic.response import html, redirect
+from sanic.response import html, redirect, text, json
 
 from sanic_oauth.blueprint import login_required
 
@@ -103,6 +103,15 @@ async def delete_link_view(request, user, link_id):
                         payload=message,
                         status_code=str(status)
                     ), status=status)
+
+
+@view_blueprint.route('/delete/<link_id>/confirm', methods=['GET'])
+@login_required
+@credential_whitelist_check
+async def confirm_delete_link_view(request, user, link_id):
+    return html(template_loader(
+                    template_file='delete_link.html',
+                    link_id=link_id), status=200)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

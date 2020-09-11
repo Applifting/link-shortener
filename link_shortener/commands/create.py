@@ -44,7 +44,7 @@ async def create_link(request, data):
         ))
         if password:
             await conn.execute(salts.insert().values(
-                link_id=link_object.lastrowid,
+                link_id=link_object.cursor.lastrowid,
                 salt=salt
             ))
 

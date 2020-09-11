@@ -10,7 +10,9 @@ from decouple import config
 
 from sanic import Blueprint
 
-from aiomysql.sa import create_engine
+#from aiomysql.sa import create_engine
+from aiopg.sa import create_engine
+
 
 from sqlalchemy.schema import CreateTable
 
@@ -42,7 +44,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        'bigfish',
+        None,
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg',
         None,
@@ -69,7 +71,7 @@ data = [
     [
         'radek.holy@applifting.cz',
         'unknown',
-        'metapass',
+        None,
         'meta',
         'https://github.com/Applifting/link-shortener',
         None,
@@ -126,13 +128,14 @@ async def initialise_db(app, loop):
             loop=loop
         )
     else:
+        #app.engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost:5432/db")
         app.engine = await create_engine(
-            host='db',
-            port=3306,
-            user='user',
-            password='password',
-            db='db',
-            loop=loop
+            host='localhost',
+            port=5432,
+            user='postgres',
+            password='postgres',
+            database='db',
+            loop=loop,
         )
     async with app.engine.acquire() as conn:
         try:
@@ -158,7 +161,7 @@ async def initialise_db(app, loop):
                         is_active=values[6]
                     ))
                     await conn.execute(salts.insert().values(
-                        link_id=link_object.lastrowid,
+                        link_id=link_object.cursor.lastrowid,
                         salt=salt
                     ))
                 else:

@@ -26,7 +26,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        None,
+        'yolo',
         'pomuzemesi',
         'https://staging.pomuzeme.si',
         None,
@@ -62,7 +62,7 @@ data = [
     [
         'radek.holy@applifting.cz',
         'unknown',
-        None,
+        'dsadsa',
         'kodex',
         'https://github.com/Applifting/culture',
         None,
@@ -80,7 +80,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        None,
+        'dasdsa',
         'tunak',
         'https://www.britannica.com/animal/tuna-fish',
         datetime.date(2020, 6, 1),
@@ -160,8 +160,11 @@ async def initialise_db(app, loop):
                         switch_date=values[5],
                         is_active=values[6]
                     ))
+
+                    link_id = await link_object.fetchone()
+                    link_id = link_id[0]
                     await conn.execute(salts.insert().values(
-                        link_id=link_object.cursor.lastrowid,
+                        link_id=link_id,
                         salt=salt
                     ))
                 else:

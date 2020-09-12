@@ -65,13 +65,51 @@
         margin: 0;
         padding: 0;
       }
-
     </style>
   </head>
   <body>
     {% block content %} {% endblock %}
   </body>
   <script>
+    // getting unique owners
+    function addOwnersToSelection() {
+      let ownerarr = [];
+      let owners = document.getElementsByClassName("rowowner");
+      let ownerfilter = document.getElementById("ownerfilter");
+      for (i = 0; i < owners.length; i++) {
+        ownerarr.push(owners[i].innerHTML);
+      }
+      let ownernew = [...new Set(ownerarr)];
+      for (i = 0; i < ownernew.length; i++) {
+        let opt = document.createElement("option");
+        opt.appendChild(document.createTextNode(ownernew[i]));
+        ownerfilter.appendChild(opt);
+      }
+    }
+    //clear filter
+    function clearFilters() {
+      window.history.replaceState({}, document.title, "/" + "links/all");
+      location.reload();
+      return false;
+    }
+    //delay search
+    function makeDelay(ms) {
+      var timer = 0;
+      return function (callback) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+      };
+    }
+
+    function delayTextSearch() {
+      var delay = makeDelay(800);
+      $("#search").keyup(function () {
+        delay(function () {
+          document.getElementById("forms").submit();
+        });
+      });
+    }
+
     // persist checkbox value
     function persistCheck() {
       const filterParam = window.location.search;
@@ -99,7 +137,6 @@
       }
       colorSwitch();
     }
-    persistCheck();
     //
     let openmode = document.getElementById("advanced");
     let orgUrl = document.getElementById("orgUrl");
@@ -127,11 +164,9 @@
             icon.className = "fa fa-angle-right open";
           }
 
-
           open = !open;
         });
     }
-    toggleAdvSettings();
     // button disable
     function disableBtn() {
       let inputs = document.getElementsByClassName("inputs");
@@ -147,8 +182,6 @@
           });
       }
     }
-    disableBtn();
-
     // dynamic text update
 
     function txtUpdateOnChange() {
@@ -158,10 +191,12 @@
           var x = shortLink.value;
           printout.innerHTML = "www.fueled.by/" + x;
         });
-      document.getElementById("shortlinked").style.color = "#AAA9BC";
-      document.getElementById("shortlinked").style.fontWeight = "bold";
+
+      if ($(".editAndCreate").length) {
+        document.getElementById("shortlinked").style.color = "#AAA9BC";
+        document.getElementById("shortlinked").style.fontWeight = "bold";
+      }
     }
-    txtUpdateOnChange();
     // copy
 
     function copyLink(rowid) {
@@ -200,17 +235,18 @@
     }
 
     // date picker
-    function datePicker() {
-      $(function () {
-        $('input[name="birthday"]').daterangepicker({
-          singleDatePicker: true,
-          showDropdowns: true,
-          minYear: 1901,
-          maxYear: parseInt(moment().format("YYYY"), 10),
+    if ($(".editAndCreate").length) {
+      function datePicker() {
+        $(function () {
+          $('input[name="birthday"]').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 1901,
+            maxYear: parseInt(moment().format("YYYY"), 10),
+          });
         });
-      });
+      }
     }
-    datePicker();
     //show social media links
     function toggleShareBox(rowid) {
       let clickedBox = document.getElementById("box-" + rowid);
@@ -224,15 +260,13 @@
         shareBox.style.display = "block";
       }
     }
-
-    // hardcoded for now setting owner
-    function getRowOwner() {
-      let rowOwner = document.getElementsByClassName("rowowner");
-      let ownerFilter = document.getElementsByClassName("ownerfilter");
-      for (i = 0; i < rowOwner.length; i++) {
-        ownerFilter[i].innerHTML = rowOwner[i].innerHTML;
-      }
-    }
-    getRowOwner();
+    $(document).ready(function () {
+      addOwnersToSelection();
+      delayTextSearch();
+      persistCheck();
+      toggleAdvSettings();
+      disableBtn();
+      txtUpdateOnChange();
+    });
   </script>
 </html>

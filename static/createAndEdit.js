@@ -1,5 +1,9 @@
+//
+let openmode = document.getElementById("advanced");
 let orgUrl = document.getElementById("orgUrl");
 let shortLink = document.getElementById("shortlink");
+let tr = document.querySelectorAll(".tr");
+let shortLinked = document.getElementById("shortlinked");
 let shareBox = null;
 
 let setopen = document.getElementById("settings");
@@ -24,7 +28,6 @@ function toggleAdvSettings() {
       open = !open;
     });
 }
-toggleAdvSettings();
 // button disable
 function disableBtn() {
   let inputs = document.getElementsByClassName("inputs");
@@ -40,8 +43,8 @@ function disableBtn() {
       });
   }
 }
-disableBtn();
 // dynamic text update
+
 function txtUpdateOnChange() {
   shortLink &&
     shortLink.addEventListener("keyup", function () {
@@ -49,10 +52,12 @@ function txtUpdateOnChange() {
       var x = shortLink.value;
       printout.innerHTML = "www.fueled.by/" + x;
     });
-  document.getElementById("shortlinked").style.color = "#AAA9BC";
-  document.getElementById("shortlinked").style.fontWeight = "bold";
+
+  if ($(".editAndCreate").length) {
+    document.getElementById("shortlinked").style.color = "#AAA9BC";
+    document.getElementById("shortlinked").style.fontWeight = "bold";
+  }
 }
-txtUpdateOnChange();
 
 //copy inline
 function copySingle() {
@@ -69,14 +74,15 @@ function copySingle() {
   }, 800);
 }
 // date picker
-function datePicker() {
-  $(function () {
-    $('input[name="birthday"]').daterangepicker({
-      singleDatePicker: true,
-      showDropdowns: true,
-      minYear: 1901,
-      maxYear: parseInt(moment().format("YYYY"), 10),
+if ($(".editAndCreate").length) {
+  function datePicker() {
+    $(function () {
+      $('input[name="birthday"]').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        minYear: 1901,
+        maxYear: parseInt(moment().format("YYYY"), 10),
+      });
     });
-  });
+  }
 }
-datePicker();

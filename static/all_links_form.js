@@ -19,25 +19,23 @@ function addOwnersToSelection() {
     ownerfilter.appendChild(opt);
   }
 }
-addOwnersToSelection();
 //delay search
-function delayTextSearch() {
-  var delay = (function () {
-    var timer = 0;
-    return function (callback, ms) {
-      clearTimeout(timer);
-      timer = setTimeout(callback, ms);
-      console.log(timer);
-    };
-  })();
+function makeDelay(ms) {
+  var timer = 0;
+  return function (callback) {
+    clearTimeout(timer);
+    timer = setTimeout(callback, ms);
+  };
+}
 
+function delayTextSearch() {
+  var delay = makeDelay(800);
   $("#search").keyup(function () {
     delay(function () {
       document.getElementById("forms").submit();
-    }, 800);
+    });
   });
 }
-delayTextSearch();
 // persist checkbox value
 function persistCheck() {
   const filterParam = window.location.search;
@@ -52,6 +50,7 @@ function persistCheck() {
   }
   $("#ownerfilter").val(filter.owner);
   $("#search").val(filter.search);
+
   function colorSwitch() {
     $("#checkbox").prop("checked", filter.disable);
     if (filter.disable) {
@@ -64,10 +63,10 @@ function persistCheck() {
   }
   colorSwitch();
 }
-persistCheck();
 //
 
 // copy
+
 function copyLink(rowid) {
   let hovercopy = document.getElementsByClassName("square-" + rowid);
   var range = document.createRange();
@@ -81,8 +80,8 @@ function copyLink(rowid) {
     hovercopy[i].innerHTML = "copy";
   }, 800);
 }
-//show social media links
 
+//show social media links
 function toggleShareBox(rowid) {
   let clickedBox = document.getElementById("box-" + rowid);
   if (shareBox && clickedBox !== shareBox) {

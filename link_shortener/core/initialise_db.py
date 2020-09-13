@@ -118,11 +118,11 @@ data = [
 async def initialise_db(app, loop):
     if config('PRODUCTION', default=False, cast=bool):
         app.engine = await create_engine(
-            host=config('MYSQL_HOST'),
-            port=config('MYSQL_PORT', cast=int),
-            user=config('MYSQL_USER'),
-            password=config('MYSQL_PASSWORD'),
-            db=config('MYSQL_DB'),
+            host=config('POSTGRES_HOST'),
+            port=config('POSTGRES_PORT', cast=int),
+            user=config('POSTGRES_USER'),
+            password=config('POSTGRES_PASSWORD'),
+            db=config('POSTGRES_DB'),
             loop=loop
         )
     else:

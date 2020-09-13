@@ -42,7 +42,7 @@ async def update_link(request, link_id, data):
                 salt,
                 100000
             )
-            if link_data.password:
+            if link_data[0]: # V tejto novej podobe to mi prijde zbytocne. Porozpravajme sa o tom.
                 await conn.execute(salts.update().where(
                     salts.columns['link_id'] == link_id
                 ).values(salt=salt))

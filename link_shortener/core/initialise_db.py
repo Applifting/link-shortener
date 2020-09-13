@@ -26,7 +26,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        'yolo',
+        'a',
         'pomuzemesi',
         'https://staging.pomuzeme.si',
         None,
@@ -98,7 +98,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        None,
+        'ovca',
         'vlk',
         'https://google.com',
         None,

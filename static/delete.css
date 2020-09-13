@@ -1,9 +1,9 @@
-#deletebtn {
+#deleteBtn {
   background-color: #c93636;
   color: white;
   border: none;
 }
-#cancelbtn {
+#cancelBtn {
   border: 2px solid #322faf;
   color: #322faf;
   background-color: white;

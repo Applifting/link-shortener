@@ -6,17 +6,17 @@ function clearFilters() {
 }
 // getting unique owners
 function addOwnersToSelection() {
-  let ownerarr = [];
-  let owners = document.getElementsByClassName("rowowner");
-  let ownerfilter = document.getElementById("ownerfilter");
+  let ownerArray = [];
+  let owners = document.getElementsByClassName("rowOwner");
+  let ownerFilter = document.getElementById("ownerFilter");
   for (i = 0; i < owners.length; i++) {
-    ownerarr.push(owners[i].innerHTML);
+    ownerArray.push(owners[i].innerHTML);
   }
-  let ownernew = [...new Set(ownerarr)];
-  for (i = 0; i < ownernew.length; i++) {
+  let ownerNewArr = [...new Set(ownerArray)];
+  for (i = 0; i < ownerNewArr.length; i++) {
     let opt = document.createElement("option");
-    opt.appendChild(document.createTextNode(ownernew[i]));
-    ownerfilter.appendChild(opt);
+    opt.appendChild(document.createTextNode(ownerNewArr[i]));
+    ownerFilter.appendChild(opt);
   }
 }
 //delay search
@@ -37,7 +37,7 @@ function delayTextSearch() {
   });
 }
 // persist checkbox value
-function persistCheck() {
+function getParamValues() {
   const filterParam = window.location.search;
   const filter = {
     disable: false,
@@ -48,17 +48,19 @@ function persistCheck() {
   for (const [key, value] of new URLSearchParams(filterParam).entries()) {
     filter[key] = value;
   }
-  $("#ownerfilter").val(filter.owner);
-  $("#search").val(filter.search);
-
-  function colorSwitch() {
+  function persistStateOfFormValues() {
+    $("#ownerFilter").val(filter.owner);
+    $("#search").val(filter.search);
     $("#checkbox").prop("checked", filter.disable);
+  }
+  persistStateOfFormValues();
+  function colorSwitch() {
     if (filter.disable) {
-      $("#statusdisabled").css("color", "#CF7317");
-      $("#statusactive").css("color", "#AAA9BC");
+      $("#statusDisabled").css("color", "#CF7317");
+      $("#statusActive").css("color", "#AAA9BC");
     } else {
-      $("#statusdisabled").css("color", "#AAA9BC");
-      $("#statusactive").css("color", "#1F7A78");
+      $("#statusDisabled").css("color", "#AAA9BC");
+      $("#statusActive").css("color", "#1F7A78");
     }
   }
   colorSwitch();
@@ -67,22 +69,24 @@ function persistCheck() {
 
 // copy
 
-function copyLink(rowid) {
-  let hovercopy = document.getElementsByClassName("square-" + rowid);
+function copyShortLink(rowid) {
+  let hoverCopy = document.getElementsByClassName("square-" + rowid);
   var range = document.createRange();
   range.selectNode(document.getElementById("shortlinked-" + rowid));
   window.getSelection().removeAllRanges(); // clear current selection
   window.getSelection().addRange(range); // to select text
   document.execCommand("copy");
   window.getSelection().removeAllRanges();
-  hovercopy[i].innerHTML = "copied!";
+  hoverCopy[i].innerHTML = "copied!";
   setTimeout(function () {
-    hovercopy[i].innerHTML = "copy";
+    hoverCopy[i].innerHTML = "copy";
   }, 800);
 }
 
 //show social media links
 function toggleShareBox(rowid) {
+  let shareBox = null;
+
   let clickedBox = document.getElementById("box-" + rowid);
   if (shareBox && clickedBox !== shareBox) {
     shareBox.style.display = "none";

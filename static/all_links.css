@@ -21,11 +21,11 @@
   display: flex;
   align-items: center;
 }
-#statusactive {
+#statusActive {
   margin: 0 20px;
   color: #1f7a78;
 }
-#statusdisabled {
+#statusDisabled {
   margin: 0 20px;
   color: #aaa9bc;
 }
@@ -101,7 +101,7 @@ input:checked + .slider:before {
   height: 30px;
   padding: 4px 10px;
 }
-#ownerfilter {
+#ownerFilter {
   width: 240px;
   height: 40px;
   border: 1px solid #e6e6ef;
@@ -110,7 +110,7 @@ input:checked + .slider:before {
   margin: 0 30px 0 20px;
   background: white;
 }
-#searchborder {
+#searchBorder {
   border: 1px solid #e6e6ef;
   border-radius: 4px;
 }
@@ -178,7 +178,7 @@ input:checked + .slider:before {
   text-decoration: none;
   padding: 5px;
 }
-#linkfade {
+#linkFade {
   text-decoration: none;
   color: #11103c;
   background-image: linear-gradient(90deg, #11103c 80%, rgba(0, 0, 0, 0));
@@ -191,7 +191,7 @@ input:checked + .slider:before {
   text-overflow: clip;
   white-space: nowrap;
 }
-.rowowner {
+.rowOwner {
   color: #11103c;
 }
 .box {
@@ -213,10 +213,10 @@ input:checked + .slider:before {
   cursor: pointer;
   display: block;
 }
-.editbtn {
+.editBtn {
   position: relative;
 }
-.hoveredit {
+.hoverEdit {
   opacity: 0;
   position: absolute;
   top: 0;
@@ -227,10 +227,10 @@ input:checked + .slider:before {
   width: 20px;
   height: 20px;
 }
-.editbtn:hover .hoveredit {
+.editBtn:hover .hoverEdit {
   opacity: 1;
 }
-.editbtn:hover .edits {
+.editBtn:hover .edits {
   opacity: 0;
 }
 .actions {
@@ -242,11 +242,11 @@ input:checked + .slider:before {
   margin-left: -35px;
   margin-top: -10px;
 }
-.trianglecover {
+.triangleContainer {
   margin-left: -7px;
 }
 
-.sharehover {
+.shareHover {
   opacity: 0;
   position: absolute;
   top: 0;
@@ -255,13 +255,13 @@ input:checked + .slider:before {
   right: 0;
   margin: 5.5px 6px 6px 6px;
 }
-.display:hover .sharehover {
+.display:hover .shareHover {
   opacity: 1;
 }
 .display:hover .share {
   opacity: 0;
 }
-.deletehover {
+.deleteHover {
   opacity: 0;
   position: absolute;
   top: 0;
@@ -272,13 +272,13 @@ input:checked + .slider:before {
   width: 20px;
   height: 20px;
 }
-.deletebtn {
+.deleteBtn {
   position: relative;
 }
-.deletebtn:hover .deletehover {
+.deleteBtn:hover .deleteHover {
   opacity: 1;
 }
-.deletebtn:hover .delete {
+.deleteBtn:hover .delete {
   opacity: 0;
 }
 

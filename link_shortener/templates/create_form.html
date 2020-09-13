@@ -1,33 +1,43 @@
 {% extends 'base.html' %} {% block content %}
 <div class="editAndCreate">
-  <a id="back" href="/links/all"> <img src="/links/arrow.svg" alt="" /> Back</a>
+  <a id="backBtn" href="/links/all">
+    <img src="/links/arrow.svg" alt="" /> Back</a
+  >
 
   <form id="form" action="" method="POST">
     <h1 id="form-header">Create a new link</h1>
     {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
     }}
     <br />
-    <ul>
-      <label>Original URL *</label>
+    <ul class="formContent">
+      <label class="formLabel">Original URL *</label>
       <li>
         {{ form.url(size=30, placeholder="original.url/original", id="orgUrl",
-        class='inputs' ) }}
+        class='formRequiredField formInput' ) }}
       </li>
-      <label>Shortlink *</label>
+      <label class="formLabel">Shortlink *</label>
       <li>
         {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink",
-        class='inputs') }}
+        class='formRequiredField formInput') }}
       </li>
-      <label id="settings">
-        <span id="wrapicon"> <i id="icon" class="fa fa-angle-right"></i> </span
-        >Advanced Settings</label
+      <label class="formLabel" id="advSettings">
+        <span> <i id="icon" class="fa fa-angle-right"></i> </span>Advanced
+        Settings</label
       >
-      <div id="extra">
-        <li>{{ form.password(size=30, placeholder="Password") }}</li>
+      <div id="advRequirements">
+        <li>
+          {{ form.password(size=30, placeholder="Password", class='formInput')
+          }}
+        </li>
         <li>
           {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD",
-          type='date') }}
-          <input type="text" name="birthday" placeholder="Deactivate on" />
+          type='date', class='formInput') }}
+          <input
+            type="text"
+            name="birthday"
+            placeholder="Deactivate on"
+            class="formInput"
+          />
         </li>
       </div>
       <span id="fueled"
@@ -37,18 +47,18 @@
           <img
             src="/links/hovercopy.svg"
             alt="hovercopy"
-            class="copyiconcreate"
+            class="copyIconCreate"
           />
-          <div class="hovercopy">
-            <div class="trianglecover"><span id="triangle-up"></span></div>
+          <div class="hoverCopy">
+            <div class="triangleContainer"><span id="triangle-up"></span></div>
             <div class="hovercover">
-              <span class="square">copy</span>
+              <span class="copyHoverSquare">copy</span>
             </div>
           </div>
         </a>
       </span>
 
-      <li>{{ form.submit(id='submit')}}</li>
+      <li>{{ form.submit(class='formInput', id='submit')}}</li>
     </ul>
   </form>
 </div>

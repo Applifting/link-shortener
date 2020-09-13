@@ -1,7 +1,7 @@
 $(document).ready(function () {
   addOwnersToSelection();
   delayTextSearch();
-  persistCheck();
+  getParamValues();
   toggleAdvSettings();
   disableBtn();
   txtUpdateOnChange();

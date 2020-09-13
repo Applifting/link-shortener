@@ -1,6 +1,3 @@
-#advanced {
-  cursor: pointer;
-}
 #submit {
   margin-bottom: 20px !important;
   background-color: #322faf;
@@ -11,10 +8,4 @@
 #submit:disabled {
   background-color: #e9e9e9;
   color: #aaa9bc;
-}
-#extrareq {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-  margin: 0 !important;
 }

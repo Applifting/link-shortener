@@ -2,7 +2,7 @@ version: '3'
 
 services:
   db:
-    container_name: 'MySQL'
+    container_name: 'Postgres'
     image: postgres:latest
     restart: always
     environment:

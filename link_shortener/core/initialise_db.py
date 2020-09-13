@@ -10,9 +10,7 @@ from decouple import config
 
 from sanic import Blueprint
 
-#from aiomysql.sa import create_engine
 from aiopg.sa import create_engine
-
 
 from sqlalchemy.schema import CreateTable
 
@@ -26,7 +24,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        'a',
+        None,
         'pomuzemesi',
         'https://staging.pomuzeme.si',
         None,
@@ -44,7 +42,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        None,
+        'bigfish',
         'manatee',
         'https://cdn.mos.cms.futurecdn.net/sBVkBoQfStZJWtLwgFRtPi-320-80.jpg',
         None,
@@ -62,7 +60,7 @@ data = [
     [
         'radek.holy@applifting.cz',
         'unknown',
-        'dsadsa',
+        None,
         'kodex',
         'https://github.com/Applifting/culture',
         None,
@@ -71,7 +69,7 @@ data = [
     [
         'radek.holy@applifting.cz',
         'unknown',
-        None,
+        'metapass',
         'meta',
         'https://github.com/Applifting/link-shortener',
         None,
@@ -80,7 +78,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        'dasdsa',
+        None,
         'tunak',
         'https://www.britannica.com/animal/tuna-fish',
         datetime.date(2020, 6, 1),
@@ -98,7 +96,7 @@ data = [
     [
         'vojtech.janousek@applifting.cz',
         '100793120005790639839',
-        'ovca',
+        None,
         'vlk',
         'https://google.com',
         None,
@@ -128,14 +126,13 @@ async def initialise_db(app, loop):
             loop=loop
         )
     else:
-        #app.engine = create_engine("postgresql+psycopg2://postgres:postgres@localhost:5432/db")
         app.engine = await create_engine(
-            host='localhost',
+            host='db',
             port=5432,
             user='postgres',
             password='postgres',
             database='db',
-            loop=loop,
+            loop=loop
         )
     async with app.engine.acquire() as conn:
         try:

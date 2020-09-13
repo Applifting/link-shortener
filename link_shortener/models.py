@@ -3,13 +3,8 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from sqlalchemy import (MetaData, Table, Column, ForeignKey, String, Integer,
-                        BLOB, Date, Boolean)
-from sqlalchemy.dialects.postgresql import \
-    ARRAY, BIGINT, BIT, BOOLEAN, BYTEA, CHAR, CIDR, DATE, \
-    DOUBLE_PRECISION, ENUM, FLOAT, HSTORE, INET, INTEGER, \
-    INTERVAL, JSON, JSONB, MACADDR, MONEY, NUMERIC, OID, REAL, SMALLINT, TEXT, \
-    TIME, TIMESTAMP, UUID, VARCHAR, INT4RANGE, INT8RANGE, NUMRANGE, \
-    DATERANGE, TSRANGE, TSTZRANGE, TSVECTOR
+                        Date, Boolean)
+from sqlalchemy.dialects.postgresql import BYTEA
 
 
 

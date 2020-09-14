@@ -35,7 +35,7 @@ async def update_link(request, link_id, data):
             raise NotFoundException
 
         if data['password'] != 20 * '\u25CF':
-                if len(data['password']) > 0:
+                if data['password']:
                     salt = os.urandom(32)
                     password = hashlib.pbkdf2_hmac(
                         'sha256',

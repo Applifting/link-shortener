@@ -96,15 +96,6 @@ async def confirm_delete_link_view(request, user, link_id):
                     link_id=link_id), status=200)
 
 
-@view_blueprint.route('/delete/<link_id>/confirm', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def confirm_delete_link_view(request, user, link_id):
-    return html(template_loader(
-                    template_file='delete_link.html',
-                    link_id=link_id), status=200)
-
-
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check

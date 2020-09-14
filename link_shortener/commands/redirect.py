@@ -11,8 +11,7 @@ from link_shortener.models import links
 async def redirect_link(request, link_endpoint):
     async with request.app.engine.acquire() as conn:
         try:
-            query = await conn.execute(links.select().where(
-                and_(
+            query = await conn.execute(links.select().where(and_(
                     links.columns['endpoint'] == link_endpoint,
                     links.columns['is_active'] == True
                 )))

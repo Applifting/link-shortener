@@ -72,8 +72,7 @@ async def update_link(request, link_id, data):
 async def reset_password(request, link_id):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
-        query = await conn.execute(links.select().where(
-            and_(
+        query = await conn.execute(links.select().where(and_(
             links.columns['id'] == link_id,
             links.columns['password'] != None
         )))

@@ -18,8 +18,7 @@ async def activate_link(request, link_id):
             ))
             link_data = await query.fetchone()
 
-            endpoint_query = await conn.execute(links.select().where(
-                and_(
+            endpoint_query = await conn.execute(links.select().where(and_(
                 links.columns['endpoint'] == link_data.endpoint,
                 links.columns['id'] != link_id
             )))

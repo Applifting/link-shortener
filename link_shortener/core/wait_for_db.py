@@ -38,5 +38,6 @@ def test_db():
 
     print("DB loaded. Starting up the server")
 
-
-test_db()
+    
+if __name__ == '__main__'
+    test_db()

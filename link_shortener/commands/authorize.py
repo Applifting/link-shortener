@@ -5,11 +5,9 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import hashlib
 
 from sqlalchemy import and_
-
 from decouple import config
 
 from link_shortener.models import links, salts
-
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             FormInvalidException,
                                             NotFoundException)

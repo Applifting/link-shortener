@@ -5,7 +5,6 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from sqlalchemy import and_
 
 from link_shortener.models import links
-
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
 

@@ -8,7 +8,6 @@ import hashlib
 from sqlalchemy import and_
 
 from link_shortener.models import links, salts
-
 from link_shortener.core.exceptions import NotFoundException
 
 

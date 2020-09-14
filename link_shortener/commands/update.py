@@ -34,29 +34,32 @@ async def update_link(request, link_id, data):
             await trans.close()
             raise NotFoundException
 
-        if data['password']:
-            salt = os.urandom(32)
-            password = hashlib.pbkdf2_hmac(
-                'sha256',
-                data['password'].encode('utf-8'),
-                salt,
-                100000
-            )
-            if link_data.password:
-                await conn.execute(salts.update().where(
-                    salts.columns['link_id'] == link_id
-                ).values(salt=salt))
-            else:
-                await conn.execute(salts.insert().values(
-                    link_id=link_id,
-                    salt=salt
-                ))
+        if data['password'] != 20 * '\u25CF':
+                if len(data['password']) > 0:
+                    salt = os.urandom(32)
+                    password = hashlib.pbkdf2_hmac(
+                        'sha256',
+                        data['password'].encode('utf-8'),
+                        salt,
+                        100000
+                    )
+                    if link_data.password:
+                        await conn.execute(salts.update().where(
+                            salts.columns['link_id'] == link_id
+                        ).values(salt=salt))
+                    else:
+                        await conn.execute(salts.insert().values(
+                            link_id=link_id,
+                            salt=salt
+                        ))
+                else:
+                    password = None
 
-            await conn.execute(link_update.values(
-                url=data['url'],
-                switch_date=data['switch_date'],
-                password=password
-            ))
+                await conn.execute(link_update.values(
+                    url=data['url'],
+                    switch_date=data['switch_date'],
+                    password=password
+                ))
 
         else:
             await conn.execute(link_update.values(

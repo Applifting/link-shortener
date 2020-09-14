@@ -9,6 +9,9 @@
       </a>
     </div>
     <br><br>
+  {% if status %}
+    {{ status }}
+  {% endif %}
     <table class="all-links-table">
       <tr>
         <th>Endpoint</th>
@@ -30,7 +33,7 @@
             </a>
           </td>
           <td>
-            <a href="/delete/{{ row.id }}">
+            <a href="/delete/{{ row.id }}/confirm">
               <img src="delete.png" height="20" width="20" alt="Not found">
             </a>
           </td>

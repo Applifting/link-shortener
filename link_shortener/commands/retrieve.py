@@ -2,8 +2,8 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from link_shortener.models import links
 
+from link_shortener.models import links
 from link_shortener.core.exceptions import NotFoundException
 
 

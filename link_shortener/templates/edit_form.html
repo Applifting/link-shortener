@@ -12,16 +12,10 @@
           <div id="edit-anchor">
             {% if payload.is_active %}
               <a class="deactivate" href="/deactivate/{{ payload.id }}">Deactivate link</a>
-              {% if payload.password %}
-                <a class="reset-delete" href="/reset/{{ payload.id }}">Reset password</a>
-              {% endif %}
             {% else %}
               <a class="activate" href="/activate/{{ payload.id }}">Activate link</a>
-              {% if payload.password %}
-                <a class="reset-delete" href="/reset/{{ payload.id }}">Reset password</a>
-              {% endif %}
             {% endif %}
-            <a class="reset-delete" href="/delete/{{ payload.id }}/confirm/">Delete link</a>
+            <a class="reset-delete" href="/delete/{{ payload.id }}/confirm">Delete link</a>
           </div>
         </li>
         <br>
@@ -33,7 +27,7 @@
         {% else %}
           <li><h4>Set a password:</h4></li>
         {% endif %}
-        <li>{{ form.password(size=40) }}</li>
+        <li>{{ form.password(size=40, value=20*'\u25CF' if payload.password, type="password") }}</li>
         <br>
         {% if payload.switch_date %}
           {% if payload.is_active %}

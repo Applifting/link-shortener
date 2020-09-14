@@ -18,11 +18,6 @@
       src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
     ></script>
 
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
-    />
     <meta charset="utf-8" />
     <title>Link Shortener</title>
     <link
@@ -40,7 +35,6 @@
       rel="stylesheet"
     />
 
-    <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 
     <link
       rel="stylesheet"
@@ -54,10 +48,12 @@
 
     <style>
       :root {
-        --primary-color: #0c2233;
-        --secondary-color1: #065471;
-        --secondary-color2: #0a91ab;
-        --accessory-color: #ffc045;
+        --primary-black:#11103c;
+        --primary-purple:#322faf;
+        --primary-grey:#aaa9bc;
+        --primary-green:#1f7a78;
+        --form-grey:#e6e6ef;
+        --white:#fff;
       }
       body {
         font-family: "Poppins", sans-serif;
@@ -70,203 +66,8 @@
   <body>
     {% block content %} {% endblock %}
   </body>
-  <script>
-    // getting unique owners
-    function addOwnersToSelection() {
-      let ownerarr = [];
-      let owners = document.getElementsByClassName("rowowner");
-      let ownerfilter = document.getElementById("ownerfilter");
-      for (i = 0; i < owners.length; i++) {
-        ownerarr.push(owners[i].innerHTML);
-      }
-      let ownernew = [...new Set(ownerarr)];
-      for (i = 0; i < ownernew.length; i++) {
-        let opt = document.createElement("option");
-        opt.appendChild(document.createTextNode(ownernew[i]));
-        ownerfilter.appendChild(opt);
-      }
-    }
-    //clear filter
-    function clearFilters() {
-      window.history.replaceState({}, document.title, "/" + "links/all");
-      location.reload();
-      return false;
-    }
-    //delay search
-    function makeDelay(ms) {
-      var timer = 0;
-      return function (callback) {
-        clearTimeout(timer);
-        timer = setTimeout(callback, ms);
-      };
-    }
+  <script src=/links/all_links_form.js></script>
+  <script src=/links/create_edit.js></script>
+  <script src="/links/on_ready.js"></script>
 
-    function delayTextSearch() {
-      var delay = makeDelay(800);
-      $("#search").keyup(function () {
-        delay(function () {
-          document.getElementById("forms").submit();
-        });
-      });
-    }
-
-    // persist checkbox value
-    function persistCheck() {
-      const filterParam = window.location.search;
-      const filter = {
-        disable: false,
-        owner: "",
-        search: "",
-      };
-
-      for (const [key, value] of new URLSearchParams(filterParam).entries()) {
-        filter[key] = value;
-      }
-      $("#ownerfilter").val(filter.owner);
-      $("#search").val(filter.search);
-
-      function colorSwitch() {
-        $("#checkbox").prop("checked", filter.disable);
-        if (filter.disable) {
-          $("#statusdisabled").css("color", "#CF7317");
-          $("#statusactive").css("color", "#AAA9BC");
-        } else {
-          $("#statusdisabled").css("color", "#AAA9BC");
-          $("#statusactive").css("color", "#1F7A78");
-        }
-      }
-      colorSwitch();
-    }
-    //
-    let openmode = document.getElementById("advanced");
-    let orgUrl = document.getElementById("orgUrl");
-    let shortLink = document.getElementById("shortlink");
-    let tr = document.querySelectorAll(".tr");
-    let shortLinked = document.getElementById("shortlinked");
-    let shareBox = null;
-
-    let setopen = document.getElementById("settings");
-    var icon = document.getElementById("icon");
-    var open = false;
-    function toggleAdvSettings() {
-      setopen &&
-        setopen.addEventListener("click", function () {
-          let modal = document.getElementById("extra");
-          this.classList.toggle("active");
-          if (modal.style.maxHeight) {
-            modal.style.maxHeight = null;
-          } else {
-            modal.style.maxHeight = modal.scrollHeight + "px";
-          }
-          if (open) {
-            icon.className = "fa fa-angle-right";
-          } else {
-            icon.className = "fa fa-angle-right open";
-          }
-
-          open = !open;
-        });
-    }
-    // button disable
-    function disableBtn() {
-      let inputs = document.getElementsByClassName("inputs");
-      for (i = 0; i < inputs.length; i++) {
-        submit.disabled = true;
-        inputs &&
-          inputs[i].addEventListener("keyup", function () {
-            if (shortLink.value === "" || orgUrl.value === "") {
-              submit.disabled = true;
-            } else {
-              submit.disabled = false;
-            }
-          });
-      }
-    }
-    // dynamic text update
-
-    function txtUpdateOnChange() {
-      shortLink &&
-        shortLink.addEventListener("keyup", function () {
-          let printout = document.getElementById("shortlinked");
-          var x = shortLink.value;
-          printout.innerHTML = "www.fueled.by/" + x;
-        });
-
-      if ($(".editAndCreate").length) {
-        document.getElementById("shortlinked").style.color = "#AAA9BC";
-        document.getElementById("shortlinked").style.fontWeight = "bold";
-      }
-    }
-    // copy
-
-    function copyLink(rowid) {
-      let hovercopy = document.getElementsByClassName("square-" + rowid);
-      var range = document.createRange();
-      range.selectNode(document.getElementById("shortlinked-" + rowid));
-      window.getSelection().removeAllRanges(); // clear current selection
-      window.getSelection().addRange(range); // to select text
-      document.execCommand("copy");
-      window.getSelection().removeAllRanges();
-      hovercopy[i].innerHTML = "copied!";
-      setTimeout(function () {
-        hovercopy[i].innerHTML = "copy";
-      }, 800);
-    }
-
-    //copy inline
-    function copySingle() {
-      let hovercopy = document.getElementsByClassName("square");
-      var range = document.createRange();
-      range.selectNode(document.getElementById("shortlinked"));
-      window.getSelection().removeAllRanges(); // clear current selection
-      window.getSelection().addRange(range); // to select text
-      document.execCommand("copy");
-      window.getSelection().removeAllRanges();
-      hovercopy[0].innerHTML = "copied!";
-      setTimeout(function () {
-        hovercopy[0].innerHTML = "copy";
-      }, 800);
-    }
-    //notification
-    function showNotification() {
-      let linkcreate = document.getElementById("linkcreate");
-      linkcreate.classList.remove("hide");
-      linkcreate.classList.add("show");
-    }
-
-    // date picker
-    if ($(".editAndCreate").length) {
-      function datePicker() {
-        $(function () {
-          $('input[name="birthday"]').daterangepicker({
-            singleDatePicker: true,
-            showDropdowns: true,
-            minYear: 1901,
-            maxYear: parseInt(moment().format("YYYY"), 10),
-          });
-        });
-      }
-    }
-    //show social media links
-    function toggleShareBox(rowid) {
-      let clickedBox = document.getElementById("box-" + rowid);
-      if (shareBox && clickedBox !== shareBox) {
-        shareBox.style.display = "none";
-      }
-      shareBox = clickedBox;
-      if (shareBox.style.display === "block") {
-        shareBox.style.display = "none";
-      } else {
-        shareBox.style.display = "block";
-      }
-    }
-    $(document).ready(function () {
-      addOwnersToSelection();
-      delayTextSearch();
-      persistCheck();
-      toggleAdvSettings();
-      disableBtn();
-      txtUpdateOnChange();
-    });
-  </script>
 </html>

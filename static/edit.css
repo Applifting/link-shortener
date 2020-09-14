@@ -1,32 +1,32 @@
 .activate {
-  color: #1f7a78;
-  border: 2.5px solid #1f7a78;
+  color: var(--primary-green);
+  border: 2.5px solid var(--primary-green);
   width: 83.33%;
-  margin: 0.5em 40px;
+  margin: 0.5em 2.5rem;
   font-size: 14px;
   font-weight: bold;
-  height: 50px;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .deactivate {
-  color: #322faf;
-  border: 3px solid #322faf;
+  color: var(--primary-purple);
+  border: 3px solid var(--primary-purple);
   width: 83.33%;
-  margin: 0.5em 40px;
+  margin: 0.5em 2.5rem;
   font-size: 14px;
   font-weight: bold;
-  height: 50px;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .activate:hover {
-  color: #1f7a78;
+  color: var(--primary-green);
 }
 .deactivate:hover {
-  color: #322faf;
+  color: var(--primary-purple);
 }
 #advRequirements {
   max-height: 0;
@@ -35,10 +35,10 @@
   margin: 0 !important;
 }
 #edit {
-  background-color: #322faf;
-  color: white;
+  background-color: var(--primary-purple);
+  color: var(--white);
   border: none !important;
-  height: 50px;
+  height: 3rem;
 }
 #edit-anchor a {
   text-decoration: none;
@@ -47,11 +47,11 @@
 
 .resetDelete {
   width: 83.33%;
-  margin: 0.5rem 40px;
+  margin: 0.5rem 2.5rem;
   padding: 0.6rem;
-  border: 1px solid #11103c;
+  border: 1px solid var(--primary-black);
 }
 .resetDelete:hover {
-  color: #fff;
+  color: var(--white);
   background-color: #484d4d;
 }

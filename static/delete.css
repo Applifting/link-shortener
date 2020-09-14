@@ -1,17 +1,17 @@
 #deleteBtn {
   background-color: #c93636;
-  color: white;
+  color: var(--white);
   border: none;
 }
 #cancelBtn {
-  border: 2px solid #322faf;
-  color: #322faf;
-  background-color: white;
-  margin-bottom: 40px;
+  border: 2px solid var(--primary-purple);
+  color: var(--primary-purple);
+  background-color: var(--white);
+  margin-bottom: 2.5rem;
 }
 #deleteQ {
   line-height: 160%;
-  font-size: 20px;
+  font-size: 1.5rem;
   text-align: center;
-  margin: 40px;
+  margin: 2.5rem;
 }

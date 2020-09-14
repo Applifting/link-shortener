@@ -55,3 +55,9 @@
   color: var(--white);
   background-color: #484d4d;
 }
+.ownerOfLinkContainer {
+  text-align: center;
+}
+.ownerOfLink {
+  color: #aaa9bc;
+}

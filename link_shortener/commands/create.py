@@ -2,20 +2,19 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import os
 import hashlib
+import os
 
 from sqlalchemy import and_
 
-from link_shortener.models import links, salts
 from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
+from link_shortener.models import links, salts
 
 
 async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
-        query = await conn.execute(links.select().where(
-            and_(
+        query = await conn.execute(links.select().where(and_(
             links.columns['endpoint'] == data['endpoint'],
             links.columns['is_active'] == True
         )))

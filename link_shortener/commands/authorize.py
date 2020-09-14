@@ -15,8 +15,7 @@ from link_shortener.core.exceptions import (AccessDeniedException,
 
 async def check_auth_form(request, link_id):
     async with request.app.engine.acquire() as conn:
-        query = await conn.execute(links.select().where(
-            and_(
+        query = await conn.execute(links.select().where(and_(
             links.columns['id'] == link_id,
             links.columns['password'] != None
         )))
@@ -33,8 +32,7 @@ async def check_password(request, link_id, form):
 
     async with request.app.engine.acquire() as conn:
         try:
-            link_query = await conn.execute(links.select().where(
-                and_(
+            link_query = await conn.execute(links.select().where(and_(
                 links.columns['id'] == link_id,
                 links.columns['password'] != None
             )))

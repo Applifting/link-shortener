@@ -16,7 +16,7 @@ async def create_link(request, data):
         trans = await conn.begin()
         query = await conn.execute(links.select().where(and_(
             links.columns['endpoint'] == data['endpoint'],
-            links.columns['is_active'] == True
+            links.columns['is_active'].is_(True)
         )))
         link_data = await query.fetchone()
         if link_data:

@@ -4,9 +4,9 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from sqlalchemy import and_
 
-from link_shortener.models import links
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
+from link_shortener.models import links
 
 
 async def activate_link(request, link_id):

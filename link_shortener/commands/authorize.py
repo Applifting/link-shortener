@@ -4,20 +4,20 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 import hashlib
 
-from sqlalchemy import and_
 from decouple import config
+from sqlalchemy import and_
 
-from link_shortener.models import links, salts
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             FormInvalidException,
                                             NotFoundException)
+from link_shortener.models import links, salts
 
 
 async def check_auth_form(request, link_id):
     async with request.app.engine.acquire() as conn:
         query = await conn.execute(links.select().where(and_(
             links.columns['id'] == link_id,
-            links.columns['password'] != None
+            links.columns['password'].isnot(None)
         )))
         link_data = await query.fetchone()
         if not link_data:
@@ -34,7 +34,7 @@ async def check_password(request, link_id, form):
         try:
             link_query = await conn.execute(links.select().where(and_(
                 links.columns['id'] == link_id,
-                links.columns['password'] != None
+                links.columns['password'].isnot(None)
             )))
             link_data = await link_query.fetchone()
             salt_query = await conn.execute(salts.select().where(

@@ -12,9 +12,9 @@ async def redirect_link(request, link_endpoint):
     async with request.app.engine.acquire() as conn:
         try:
             query = await conn.execute(links.select().where(and_(
-                    links.columns['endpoint'] == link_endpoint,
-                    links.columns['is_active'] == True
-                )))
+                links.columns['endpoint'] == link_endpoint,
+                links.columns['is_active'].is_(True)
+            )))
             link_data = await query.fetchone()
             if link_data.password is not None:
                 return '/authorize/{}'.format(link_data.id)

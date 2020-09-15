@@ -2,13 +2,13 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import os
 import hashlib
+import os
 
 from sqlalchemy import and_
 
-from link_shortener.models import links, salts
 from link_shortener.core.exceptions import NotFoundException
+from link_shortener.models import links, salts
 
 
 async def check_update_form(request, link_id):
@@ -74,7 +74,7 @@ async def reset_password(request, link_id):
         trans = await conn.begin()
         query = await conn.execute(links.select().where(and_(
             links.columns['id'] == link_id,
-            links.columns['password'] != None
+            links.columns['password'].isnot(None)
         )))
         link_data = await query.fetchone()
         if not link_data:

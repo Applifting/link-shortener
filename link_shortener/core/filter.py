@@ -4,7 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 
 
-async def filter_links(link_data, filters):
+def filter_links(link_data, filters):
     owners = set(row['owner'] for row in link_data)
     data = link_data
 

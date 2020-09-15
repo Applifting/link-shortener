@@ -18,11 +18,11 @@ from link_shortener.commands.update import reset_password
 from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 from link_shortener.commands.redirect import redirect_link
-from link_shortener.commands.filter import filter_links
 
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
 from link_shortener.core.decorators import credential_whitelist_check
+from link_shortener.core.filter import filter_links
 
 
 view_blueprint = Blueprint('views')
@@ -76,7 +76,7 @@ async def all_active_links(request, user):
         filters['is_active'] = True
 
     data_db = await retrieve_links(request, {'is_active': filters['is_active']})
-    link_data = await filter_links(data_db, filters)
+    link_data = filter_links(data_db, filters)
 
     return html(template_loader(
                     template_file='all_links.html',

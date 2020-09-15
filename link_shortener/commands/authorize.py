@@ -53,8 +53,7 @@ async def check_password(request, link_id, form):
 
             return link_data.url
 
-        except AttributeError as error:
-            print(error)
+        except AttributeError:
             raise NotFoundException
 
 

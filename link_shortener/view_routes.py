@@ -75,13 +75,13 @@ async def all_active_links(request, user):
     if filters['is_active'] is None:
         filters['is_active'] = True
 
-    data_db = await retrieve_links(request, {'is_active': filters['is_active']})
-    link_data = filter_links(data_db, filters)
+    link_data = await retrieve_links(request, {'is_active': filters['is_active']})
+    filtered_data = filter_links(link_data, filters)
 
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),
-                    data=link_data
+                    data=filtered_data
                 ), status=200)
 
 

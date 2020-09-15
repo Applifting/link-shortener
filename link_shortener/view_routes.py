@@ -22,7 +22,7 @@ from link_shortener.commands.redirect import redirect_link
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
 from link_shortener.core.decorators import credential_whitelist_check
-from link_shortener.core.filter import filter_links
+from link_shortener.core.filter import filter_links, define_active
 
 
 view_blueprint = Blueprint('views')
@@ -72,10 +72,7 @@ async def all_active_links(request, user):
     filter_set = {'is_active', 'owner', 'search'}
     filters = {element: request.args.get(element) for element in filter_set}
 
-    if filters['is_active'] is None:
-        filters['is_active'] = True
-
-    link_data = await retrieve_links(request, {'is_active': filters['is_active']})
+    link_data = await retrieve_links(request, {'is_active': define_active(filters)})
     filtered_data = filter_links(link_data, filters)
 
     return html(template_loader(

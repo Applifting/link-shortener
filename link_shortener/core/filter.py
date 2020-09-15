@@ -14,3 +14,10 @@ def filter_links(data, filters):
         data = [row for row in data if filters['search'] in row['endpoint']]
 
     return {"owners": owners, "data": data}
+
+
+def define_active(filters):
+    if filters['is_active'] == 'false':
+        return False
+    else:
+        return True

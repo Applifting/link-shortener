@@ -12,6 +12,7 @@
   background-color: var(--white);
   padding: 20px;
   width: inherit;
+  overflow: scroll;
 }
 .tbHead {
   display: flex;
@@ -306,4 +307,8 @@ input:checked + .slider:before {
   font-weight: bold;
   font-size: 1rem;
   line-height: 160%;
+}
+#tableContainer {
+  width: 100%;
+  overflow: scroll;
 }

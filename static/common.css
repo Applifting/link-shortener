@@ -123,3 +123,10 @@
   align-items: center;
   justify-content: space-around;
 }
+.fueledEndPoint {
+  color: var(--primary-purple);
+}
+#shortlinked {
+  color: var(--primary-grey);
+  font-weight: bold;
+}

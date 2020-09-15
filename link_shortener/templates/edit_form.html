@@ -57,7 +57,12 @@
         {% endif %}
       </div>
       <span id="fueled">
-        <span id="shortlinked"> www.fueled.by/{{payload.endpoint}}</span>
+        <span id="shortlinked">
+          www.fueled.by/<!-- aa --><span class="fueledEndPoint"
+            >{{payload.endpoint}}</span
+          ></span
+        >
+
         <a class="copy" onclick="copySingle()">
           <img src="/links/copyicon.svg" alt="copyicon" />
           <img

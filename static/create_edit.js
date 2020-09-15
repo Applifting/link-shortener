@@ -6,7 +6,6 @@ function toggleAdvSettings() {
   openAdvSettings &&
     openAdvSettings.addEventListener("click", function () {
       let modal = document.getElementById("advRequirements");
-      this.classList.toggle("active");
       if (modal.style.maxHeight) {
         modal.style.maxHeight = null;
       } else {
@@ -48,11 +47,6 @@ function txtUpdateOnChange() {
       var x = shortLink.value;
       printout.innerHTML = "www.fueled.by/" + x;
     });
-
-  if ($(".editAndCreate").length) {
-    document.getElementById("shortlinked").style.color = "#AAA9BC";
-    document.getElementById("shortlinked").style.fontWeight = "bold";
-  }
 }
 
 //copy inline

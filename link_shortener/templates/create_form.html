@@ -40,22 +40,29 @@
           />
         </li>
       </div>
-      <span id="fueled"
-        ><span id="shortlinked">www.fueled.by/</span>
-        <a class="copy" onclick="copySingle()">
-          <img src="/links/copyicon.svg" alt="copyicon" />
-          <img
-            src="/links/hovercopy.svg"
-            alt="hovercopy"
-            class="copyIconCreate"
-          />
-          <div class="hoverCopy">
-            <div class="triangleContainer"><span id="triangle-up"></span></div>
-            <div class="hoverCopyContainer">
-              <span class="copyHoverSquare">copy</span>
+      <span id="fueled">
+        <div>
+          <span id="shortlinked">www.fueled.by/</span
+          ><!-- qqw --><span id="fueledEndPoint"></span>
+        </div>
+        <div>
+          <a class="copy" onclick="copySingle()">
+            <img src="/links/copyicon.svg" alt="copyicon" />
+            <img
+              src="/links/hovercopy.svg"
+              alt="hovercopy"
+              class="copyIconCreate"
+            />
+            <div class="hoverCopy">
+              <div class="triangleContainer">
+                <span id="triangle-up"></span>
+              </div>
+              <div class="hoverCopyContainer">
+                <span class="copyHoverSquare">copy</span>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
       </span>
 
       <li>{{ form.submit(class='formInput', id='submit')}}</li>

@@ -43,9 +43,9 @@ function txtUpdateOnChange() {
   let shortLink = document.getElementById("shortlink");
   shortLink &&
     shortLink.addEventListener("keyup", function () {
-      let printout = document.getElementById("shortlinked");
+      let printout = document.getElementById("fueledEndPoint");
       var x = shortLink.value;
-      printout.innerHTML = "www.fueled.by/" + x;
+      printout.innerHTML = x;
     });
 }
 

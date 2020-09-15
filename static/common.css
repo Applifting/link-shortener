@@ -115,7 +115,6 @@
 #fueled {
   color: var(--primary-grey);
   background-color: #e9eff6;
-  display: block;
   width: 100%;
   margin: 1.5rem 0;
   height: 4.5rem;
@@ -123,8 +122,9 @@
   align-items: center;
   justify-content: space-around;
 }
-.fueledEndPoint {
+#fueledEndPoint {
   color: var(--primary-purple);
+  font-weight: bold;
 }
 #shortlinked {
   color: var(--primary-grey);

@@ -57,26 +57,28 @@
         {% endif %}
       </div>
       <span id="fueled">
-        <span id="shortlinked">
-          www.fueled.by/<!-- aa --><span class="fueledEndPoint"
-            >{{payload.endpoint}}</span
-          ></span
-        >
-
-        <a class="copy" onclick="copySingle()">
-          <img src="/links/copyicon.svg" alt="copyicon" />
-          <img
-            src="/links/hovercopy.svg"
-            alt="hovercopy"
-            class="copyIconCreate"
-          />
-          <div class="hoverCopy">
-            <div class="triangleContainer"><span id="triangle-up"></span></div>
-            <div class="hoverCopyContainer">
-              <span class="copyHoverSquare">copy</span>
+        <div>
+          <span id="shortlinked">www.fueled.by/</span
+          ><!-- / --><span id="fueledEndPoint">{{payload.endpoint}}</span>
+        </div>
+        <div>
+          <a class="copy" onclick="copySingle()">
+            <img src="/links/copyicon.svg" alt="copyicon" />
+            <img
+              src="/links/hovercopy.svg"
+              alt="hovercopy"
+              class="copyIconCreate"
+            />
+            <div class="hoverCopy">
+              <div class="triangleContainer">
+                <span id="triangle-up"></span>
+              </div>
+              <div class="hoverCopyContainer">
+                <span class="copyHoverSquare">copy</span>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
       </span>
       <li>{{ form.submit(id='edit', class='formInput') }}</li>
       <li>

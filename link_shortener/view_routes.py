@@ -3,22 +3,17 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from decouple import config
-
 from sanic import Blueprint
 from sanic.response import html, redirect, text, json
-
 from sanic_oauth.blueprint import login_required
-
 from prometheus_client import Counter, generate_latest
 
 from link_shortener.templates import template_loader
-
 from link_shortener.commands.retrieve import retrieve_links
 from link_shortener.commands.update import reset_password
 from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 from link_shortener.commands.redirect import redirect_link
-
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
 from link_shortener.core.decorators import credential_whitelist_check
@@ -70,10 +65,11 @@ async def about_page(request):
 @credential_whitelist_check
 async def all_active_links(request, user):
     filters = get_filter_dict(request)
-
-    link_data = await retrieve_links(request, {'is_active': filters["is_active"]})
+    link_data = await retrieve_links(
+        request,
+        {'is_active': filters['is_active']}
+    )
     filtered_data = filter_links(link_data, filters)
-
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),

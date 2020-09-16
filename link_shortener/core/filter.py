@@ -16,8 +16,13 @@ def filter_links(data, filters):
     return {"owners": owners, "data": data}
 
 
-def define_active(filters):
-    if filters['is_active'] == 'false':
-        return False
+def get_filter_dict(data):
+    filter_set = {'is_active', 'owner', 'search'}
+    filters = {element: data.args.get(element, None) for element in filter_set}
 
-    return True
+    if filters['is_active'] == 'false':
+        filters['is_active'] = False
+    else:
+        filters['is_active'] = True
+
+    return filters

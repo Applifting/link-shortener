@@ -70,7 +70,7 @@ async def about_page(request):
 @credential_whitelist_check
 async def all_active_links(request, user):
     filter_set = {'is_active', 'owner', 'search'}
-    filters = {element: request.args.get(element) for element in filter_set}
+    filters = {element: request.args.get(element, None) for element in filter_set}
 
     link_data = await retrieve_links(request, {'is_active': define_active(filters)})
     filtered_data = filter_links(link_data, filters)

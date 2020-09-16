@@ -27,7 +27,7 @@
     </div>
     <div>
       <a href="/create" id="createShort">
-        <img src="plus.svg" alt="" /> Create Shortlink</a
+        <img src="icons/plus.svg" alt="" /> Create Shortlink</a
       >
     </div>
   </form>
@@ -62,8 +62,8 @@
   
         <td class="actions">
           <a class="copy" onclick="copyShortLink('{{row.id}}')">
-            <img src="copyicon.svg" alt="copyicon" class="copyIcon" />
-            <img src="hovercopy.svg" alt="hovercopy" class="copyIconHover" />
+            <img src="icons/copyicon.svg" alt="copyicon" class="copyIcon" />
+            <img src="icons/hovercopy.svg" alt="hovercopy" class="copyIconHover" />
             <div class="hoverCopy">
               <div class="triangleContainer"><span id="triangle-up"></span></div>
               <div class="hoverCopyContainer">
@@ -73,37 +73,37 @@
           </a>
           <a class="editBtn" href="/edit/{{ row.id }}">
             <img
-              src="edit.svg"
+              src="icons/edit.svg"
               height="20"
               width="20"
               alt="Not found"
               class="edits"
             />
-            <img src="edithover.svg" alt="edit" class="hoverEdit" />
+            <img src="icons/edithover.svg" alt="edit" class="hoverEdit" />
   
           </a>
           <div class="display">
             <a class="display displatBtn" onclick="toggleShareBox('{{row.id}}')">
               <img
-                src="share.svg"
+                src="icons/share.svg"
                 height="20"
                 width="20"
                 alt="Not found"
                 class="share"
               />
-              <img src="shareHover.svg" alt="share" class="shareHover" />
+              <img src="icons/shareHover.svg" alt="share" class="shareHover" />
             </a>
             <div id="box-{{row.id}}" class="box">ahoj</div>
           </div>
           <a href="/delete/active/{{ row.id }}" class="deleteBtn">
             <img
-              src="delete.svg"
+              src="icons/delete.svg"
               height="20"
               width="20"
               alt="Not found"
               class="delete"
             />
-            <img src="deletehover.svg" alt="deletehover" class="deleteHover" />
+            <img src="icons/deletehover.svg" alt="deletehover" class="deleteHover" />
           </a>
         </td>
       </tr>

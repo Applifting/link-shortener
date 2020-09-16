@@ -130,3 +130,9 @@
   color: var(--primary-grey);
   font-weight: bold;
 }
+
+@media (max-width: 870px) {
+  #form {
+    width: 50%;
+  }
+}

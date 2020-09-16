@@ -19,5 +19,5 @@ def filter_links(data, filters):
 def define_active(filters):
     if filters['is_active'] == 'false':
         return False
-    else:
-        return True
+
+    return True

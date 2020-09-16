@@ -69,10 +69,9 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    filters = get_filter_dict(request.args if request.args else dict())
+    filters = get_filter_dict(request)
 
-    link_data = await retrieve_links(request,
-                                     {'is_active': filters["is_active"]})
+    link_data = await retrieve_links(request, {'is_active': filters["is_active"]})
     filtered_data = filter_links(link_data, filters)
 
     return html(template_loader(

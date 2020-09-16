@@ -65,7 +65,7 @@
   opacity: 1;
 }
 /* edit and create */
-#form {
+.form {
   margin: auto;
   box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
   background-color: var(--white);
@@ -89,7 +89,7 @@
   padding: 0.5rem;
   border: 1px solid var(--primary-black);
 }
-#form-header {
+.form-header {
   text-align: center;
   padding-top: 2rem;
   color: var(--primary-black);
@@ -104,14 +104,16 @@
   transform: rotate(90deg);
   transition: transform 0.3s linear;
 }
-#backBtn {
+.backBtn {
   display: block;
   margin: 2.5rem 0;
   margin-left: 34%;
   color: var(--primary-black);
   text-decoration: none;
 }
-
+.backBtn:hover {
+  color: black;
+}
 #fueled {
   color: var(--primary-grey);
   background-color: #e9eff6;

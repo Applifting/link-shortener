@@ -8,6 +8,7 @@ import os
 from sqlalchemy import and_
 
 from link_shortener.core.exceptions import NotFoundException
+from link_shortener.core.validation import endpoint_duplicity_check
 from link_shortener.models import links, salts
 
 
@@ -35,6 +36,8 @@ async def update_link(request, link_id, data):
             await trans.close()
             raise NotFoundException
 
+        await endpoint_duplicity_check(conn, trans, data)
+
         if data['password']:
             salt = os.urandom(32)
             password = hashlib.pbkdf2_hmac(
@@ -54,6 +57,7 @@ async def update_link(request, link_id, data):
                 ))
 
             await conn.execute(link_update.values(
+                endpoint=data['endpoint'],
                 url=data['url'],
                 switch_date=data['switch_date'],
                 password=password
@@ -61,6 +65,7 @@ async def update_link(request, link_id, data):
 
         else:
             await conn.execute(link_update.values(
+                endpoint=data['endpoint'],
                 url=data['url'],
                 switch_date=data['switch_date']
             ))

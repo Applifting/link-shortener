@@ -32,7 +32,7 @@ async def api_update_link(request, link_id):
         if not isinstance(payload['url'], str):
             raise IncorrectDataFormat
 
-        api_data = {'password': None, 'url': payload['url']}
+        api_data = {'password': None, 'url': payload['url'], 'endpoint': None}
         if payload.get('switch_date', None):
             try:
                 api_data['switch_date'] = date(

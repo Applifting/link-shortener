@@ -5,15 +5,12 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 from decouple import config
 
 from sanic import Blueprint
-from sanic.response import html, json, redirect, text
+from sanic.response import html, redirect, text, json
 
 from sanic_oauth.blueprint import login_required
 
-from sqlalchemy.sql.expression import select as sql_select
-
 from prometheus_client import Counter, generate_latest
 
-from link_shortener.models import links, salts
 from link_shortener.templates import template_loader
 
 from link_shortener.commands.retrieve import retrieve_links
@@ -25,6 +22,7 @@ from link_shortener.commands.redirect import redirect_link
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
 from link_shortener.core.decorators import credential_whitelist_check
+from link_shortener.core.filter import filter_links, get_filter_dict
 
 
 view_blueprint = Blueprint('views')
@@ -73,11 +71,15 @@ async def delete_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    link_data = await retrieve_links(request, filters={'is_active': True})
+    filters = get_filter_dict(request)
+
+    link_data = await retrieve_links(request, {'is_active': filters["is_active"]})
+    filtered_data = filter_links(link_data, filters)
+
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),
-                    data=link_data
+                    data=filtered_data
                 ), status=200)
 
 
@@ -108,6 +110,15 @@ async def delete_link_view(request, user, link_id):
                         payload=message,
                         status_code=str(status)
                     ), status=status)
+
+
+@view_blueprint.route('/delete/<link_id>/confirm', methods=['GET'])
+@login_required
+@credential_whitelist_check
+async def confirm_delete_link_view(request, user, link_id):
+    return html(template_loader(
+                    template_file='delete.html',
+                    link_id=link_id), status=200)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

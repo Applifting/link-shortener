@@ -2,44 +2,36 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import os
 import hashlib
+import os
 
-from link_shortener.models import links, salts
+from sqlalchemy import and_
 
 from link_shortener.core.exceptions import NotFoundException
+from link_shortener.models import links, salts
 
 
 async def check_update_form(request, link_id):
     async with request.app.engine.acquire() as conn:
-        try:
-            query = await conn.execute(links.select().where(
-                links.columns['id'] == link_id
-            ))
-            link_data = await query.fetchone()
-            if not link_data:
-                raise NotFoundException
-
-            return link_data
-
-        except AttributeError:
+        query = await conn.execute(links.select().where(
+            links.columns['id'] == link_id
+        ))
+        link_data = await query.fetchone()
+        if not link_data:
             raise NotFoundException
+
+        return link_data
 
 
 async def update_link(request, link_id, data):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
         link_update = links.update().where(links.columns['id'] == link_id)
-        try:
-            query = await conn.execute(links.select().where(
-                links.columns['id'] == link_id
-            ))
-            link_data = await query.fetchone()
-            if not link_data:
-                await trans.close()
-                raise NotFoundException
-
-        except AttributeError:
+        query = await conn.execute(links.select().where(
+            links.columns['id'] == link_id
+        ))
+        link_data = await query.fetchone()
+        if not link_data:
             await trans.close()
             raise NotFoundException
 
@@ -80,22 +72,20 @@ async def update_link(request, link_id, data):
 async def reset_password(request, link_id):
     async with request.app.engine.acquire() as conn:
         trans = await conn.begin()
-        try:
-            query = await conn.execute(links.select().where(
-                links.columns['id'] == link_id
-            ).where(
-                links.columns['password'] != None
-            ))
-            link_data = await query.fetchone()
-            await conn.execute(links.update().where(
-                links.columns['id'] == link_data.id
-            ).values(password=None))
-            await conn.execute(salts.delete().where(
-                salts.columns['link_id'] == link_data.id
-            ))
-            await trans.commit()
-            await trans.close()
-
-        except AttributeError:
+        query = await conn.execute(links.select().where(and_(
+            links.columns['id'] == link_id,
+            links.columns['password'].isnot(None)
+        )))
+        link_data = await query.fetchone()
+        if not link_data:
             await trans.close()
             raise NotFoundException
+
+        await conn.execute(links.update().where(
+            links.columns['id'] == link_data.id
+        ).values(password=None))
+        await conn.execute(salts.delete().where(
+            salts.columns['link_id'] == link_data.id
+        ))
+        await trans.commit()
+        await trans.close()

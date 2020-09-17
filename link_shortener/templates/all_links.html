@@ -5,13 +5,16 @@
       <div class="toggle">
         <div id='statusActive'>Active</div>
         <label class="switch">
-          <input  onChange="this.form.submit()"name='disable'type="checkbox"  id='checkbox' value='true' onclick="toggleActive()"/>
+          <input  onChange="this.form.submit()"name='is_active'type="checkbox"  id='checkbox' value='false' onclick="toggleActive()"/>
           <span class="slider round"></span>
         </label>
         <div id='statusDisabled'>Disabled</div>
       </div>
       <select onChange="this.form.submit()" name="owner" id="ownerFilter">
         <option value=''>Owner</option>
+        {% for owner in data["owners"] %}
+      <option value="{{ owner }}">{{ owner }}</option>
+  {% endfor %}
       </select>
       <div id='searchBorder'>
       <i class="fa fa-search"></i>
@@ -32,6 +35,11 @@
     </div>
   </form>
   <div id='tableContainer'>
+<!-- How to retrieve owners:
+  {% for owner in data["owners"] %}
+      {{ owner }}
+  {% endfor %}
+-->
 
     <table class="all-links-table">
       <tr>
@@ -42,7 +50,7 @@
         <th>Actions</th>
       </tr>
   
-      {% for row in data %}
+      {% for row in data['data'] %}
       <tr class="tr">
         <td id="isactive">
           {% if row.is_active %}
@@ -95,7 +103,7 @@
             </a>
             <div id="box-{{row.id}}" class="box">ahoj</div>
           </div>
-          <a href="/delete/active/{{ row.id }}" class="deleteBtn">
+          <a href="/delete/{{ row.id }}/confirm" class="deleteBtn">
             <img
               src="icons/delete.svg"
               height="20"

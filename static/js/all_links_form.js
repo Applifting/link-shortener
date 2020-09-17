@@ -4,21 +4,6 @@ function clearFilters() {
   location.reload();
   return false;
 }
-// getting unique owners
-function addOwnersToSelection() {
-  let ownerArray = [];
-  let owners = document.getElementsByClassName("rowOwner");
-  let ownerFilter = document.getElementById("ownerFilter");
-  for (i = 0; i < owners.length; i++) {
-    ownerArray.push(owners[i].innerHTML);
-  }
-  let ownerNewArr = [...new Set(ownerArray)];
-  for (i = 0; i < ownerNewArr.length; i++) {
-    let opt = document.createElement("option");
-    opt.appendChild(document.createTextNode(ownerNewArr[i]));
-    ownerFilter.appendChild(opt);
-  }
-}
 //delay search
 function makeDelay(ms) {
   var timer = 0;
@@ -39,11 +24,7 @@ function delayTextSearch() {
 // persist checkbox value
 function getParamValues() {
   const filterParam = window.location.search;
-  const filter = {
-    disable: false,
-    owner: "",
-    search: "",
-  };
+  const filter = {};
 
   for (const [key, value] of new URLSearchParams(filterParam).entries()) {
     filter[key] = value;
@@ -51,11 +32,11 @@ function getParamValues() {
   function persistStateOfFormValues() {
     $("#ownerFilter").val(filter.owner);
     $("#search").val(filter.search);
-    $("#checkbox").prop("checked", filter.disable);
+    $("#checkbox").prop("checked", filter.is_active);
   }
   persistStateOfFormValues();
   function colorSwitch() {
-    if (filter.disable) {
+    if (filter.is_active) {
       $("#statusDisabled").css("color", "#CF7317");
       $("#statusActive").css("color", "#AAA9BC");
     } else {

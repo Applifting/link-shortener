@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+    {% if message['from'] and message['status'] %}
+          {{ message['from'] }} {{ message['status'] }}
+    {% endif %}
+
   <div class="container">
     <form action="" method="POST">
       <h1 id="form-header">/{{ payload.endpoint }}</h1>
       {{ '<br>'.join(form.csrf_token.errors) }}
       {{ form.csrf_token }}
       {{ '<br>'.join(form.url.errors) }}
+
       <ul>
         <li>
           <div id="edit-anchor">

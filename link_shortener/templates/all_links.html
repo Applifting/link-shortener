@@ -15,6 +15,10 @@
       {% endfor %}
     -->
 
+      {% if message['from'] and message['status'] %}
+          {{ message['from'] }} {{ message['status'] }}
+      {% endif %}
+
     <table class="all-links-table">
       <tr>
         <th>Endpoint</th>

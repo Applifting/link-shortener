@@ -9,6 +9,12 @@
       </a>
     </div>
     <br><br>
+<!-- How to retrieve owners:
+  {% for owner in data["owners"] %}
+      {{ owner }}
+  {% endfor %}
+-->
+
     <table class="all-links-table">
       <tr>
         <th>Endpoint</th>
@@ -18,7 +24,7 @@
         <th></th>
         <th></th>
       </tr>
-      {% for row in data %}
+      {% for row in data['data'] %}
         <tr>
           <td>/{{ row.endpoint }}</td>
           <td>{{ row.owner }}</td>

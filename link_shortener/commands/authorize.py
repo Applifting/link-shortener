@@ -5,21 +5,20 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import hashlib
 
 from decouple import config
-
-from link_shortener.models import links, salts
+from sqlalchemy import and_
 
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             FormInvalidException,
                                             NotFoundException)
+from link_shortener.models import links, salts
 
 
 async def check_auth_form(request, link_id):
     async with request.app.engine.acquire() as conn:
-        query = await conn.execute(links.select().where(
-            links.columns['id'] == link_id
-        ).where(
-            links.columns['password'] != None
-        ))
+        query = await conn.execute(links.select().where(and_(
+            links.columns['id'] == link_id,
+            links.columns['password'].isnot(None)
+        )))
         link_data = await query.fetchone()
         if not link_data:
             raise NotFoundException
@@ -33,11 +32,10 @@ async def check_password(request, link_id, form):
 
     async with request.app.engine.acquire() as conn:
         try:
-            link_query = await conn.execute(links.select().where(
-                links.columns['id'] == link_id
-            ).where(
-                links.columns['password'] != None
-            ))
+            link_query = await conn.execute(links.select().where(and_(
+                links.columns['id'] == link_id,
+                links.columns['password'].isnot(None)
+            )))
             link_data = await link_query.fetchone()
             salt_query = await conn.execute(salts.select().where(
                 salts.columns['link_id'] == link_data.id
@@ -55,8 +53,7 @@ async def check_password(request, link_id, form):
 
             return link_data.url
 
-        except AttributeError as error:
-            print(error)
+        except AttributeError:
             raise NotFoundException
 
 

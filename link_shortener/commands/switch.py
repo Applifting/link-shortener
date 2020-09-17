@@ -2,10 +2,11 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from link_shortener.models import links
+from sqlalchemy import and_
 
 from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
                                             NotFoundException)
+from link_shortener.models import links
 
 
 async def activate_link(request, link_id):
@@ -17,11 +18,10 @@ async def activate_link(request, link_id):
             ))
             link_data = await query.fetchone()
 
-            endpoint_query = await conn.execute(links.select().where(
-                links.columns['endpoint'] == link_data.endpoint
-            ).where(
+            endpoint_query = await conn.execute(links.select().where(and_(
+                links.columns['endpoint'] == link_data.endpoint,
                 links.columns['id'] != link_id
-            ))
+            )))
             for link in await endpoint_query.fetchall():
                 if link.is_active:
                     await trans.close()

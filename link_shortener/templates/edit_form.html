@@ -2,9 +2,11 @@
 
 {% block content %}
 
-    {% if message['from'] and message['status'] %}
+    <!-- How to retrieve messages:
+      {% if message['from'] and message['status'] %}
           {{ message['from'] }} {{ message['status'] }}
-    {% endif %}
+      {% endif %}
+    -->
 
   <div class="container">
     <form action="" method="POST">

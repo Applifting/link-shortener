@@ -62,8 +62,11 @@ async def link_password_form(request, link_id):
                         message=message,
                     ), status=200)
     except NotFoundException:
-        params = '?from=authorize&status=404'
-        return redirect(f'/links/all{params}')
+        return html(template_loader(
+                        template_file='message.html',
+                        payload='Link has no password or does not exist',
+                        status_code='404'
+                    ), status=404)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])

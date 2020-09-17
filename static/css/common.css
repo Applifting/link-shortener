@@ -134,7 +134,7 @@
 }
 
 @media (max-width: 870px) {
-  #form {
+  .form {
     width: 50%;
   }
 }

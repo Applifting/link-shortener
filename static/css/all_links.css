@@ -129,7 +129,7 @@ input:checked + .slider:before {
   margin: 0 0px 0 1rem;
   color: var(--form-grey);
 }
-#clear {
+#clearFilter {
   color: var(--primary-grey);
   text-decoration: underline;
   background-color: transparent;

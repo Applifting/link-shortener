@@ -94,13 +94,13 @@
   padding-top: 2rem;
   color: var(--primary-black);
 }
-.fa-angle-right {
+.openArrow {
   transform: rotate(0deg);
   transition: transform 0.3s linear;
   color: var(--primary-grey);
 }
 
-.fa-angle-right.open {
+.openArrow.open {
   transform: rotate(90deg);
   transition: transform 0.3s linear;
 }

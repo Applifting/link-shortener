@@ -159,6 +159,9 @@ async def update_link_save(request, user, link_id):
         status, message = 400, 'form-invalid'
     except NotFoundException:
         status, message = 404, 'not-found'
+    except DuplicateActiveLinkForbidden:
+        status, message = 409, 'duplicate'
+
     finally:
         params = f'?origin=edit&status={message}'
         return redirect(f'/links/all{params}')

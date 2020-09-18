@@ -12,9 +12,9 @@ function toggleAdvSettings() {
         modal.style.maxHeight = modal.scrollHeight + "px";
       }
       if (open) {
-        icon.className = "fa fa-angle-right";
+        icon.className = "rotate";
       } else {
-        icon.className = "fa fa-angle-right open";
+        icon.className = "rotate open";
       }
 
       open = !open;

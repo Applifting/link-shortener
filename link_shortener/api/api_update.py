@@ -15,7 +15,8 @@ from link_shortener.commands.authorize import check_token
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             IncorrectDataFormat,
                                             MissingDataException,
-                                            NotFoundException)
+                                            NotFoundException,
+                                            DuplicateActiveLinkForbidden)
 
 
 api_update_blueprint = Blueprint('api_update')
@@ -26,13 +27,15 @@ async def api_update_link(request, link_id):
     try:
         await check_token(request)
         payload = loads(request.body)
-        if not payload.get('url', None):
+        url, endpoint = payload.get('url', None), payload.get('endpoint', None)
+
+        if not (url or endpoint):
             raise MissingDataException
 
-        if not isinstance(payload['url'], str):
+        if not (isinstance(url, (str, type(None))) or isinstance(endpoint, (str, type(None)))):
             raise IncorrectDataFormat
 
-        api_data = {'password': None, 'url': payload['url'], 'endpoint': None}
+        api_data = {'password': None, 'url': url, 'endpoint': endpoint}
         if payload.get('switch_date', None):
             try:
                 api_data['switch_date'] = date(
@@ -52,10 +55,12 @@ async def api_update_link(request, link_id):
     except JSONDecodeError:
         status, message = 400, 'Please provide data in JSON format'
     except MissingDataException:
-        status, message = 400, 'Please provide all data. Missing: url'
+        status, message = 400, 'Please provide all data. Missing: url and/or endpoint'
     except IncorrectDataFormat:
         status, message = 400, 'Please provide correctly formatted data'
     except NotFoundException:
         status, message = 404, 'Link does not exist'
+    except DuplicateActiveLinkForbidden:
+        status, message = 409, 'An active link with that name already exists'
     finally:
         return json({'message': message}, status=status)

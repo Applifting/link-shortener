@@ -32,7 +32,7 @@ async def api_update_link(request, link_id):
         if not (url or endpoint):
             raise MissingDataException
 
-        if not (isinstance(url, (str, type(None))) or isinstance(endpoint, (str, type(None)))):
+        if not (isinstance(url, (str, type(None))) and isinstance(endpoint, (str, type(None)))):
             raise IncorrectDataFormat
 
         api_data = {'password': None, 'url': url, 'endpoint': endpoint}

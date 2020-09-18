@@ -8,12 +8,11 @@ from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
 from link_shortener.models import links
 
 
-async def endpoint_duplicity_check(conn, trans, data):
+async def endpoint_duplicity_check(conn, data):
     query = await conn.execute(links.select().where(and_(
         links.columns['endpoint'] == data['endpoint'],
         links.columns['is_active'].is_(True)
     )))
     link_data = await query.fetchone()
     if link_data:
-        await trans.close()
         raise DuplicateActiveLinkForbidden

@@ -5,15 +5,15 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import hashlib
 import os
 
-from link_shortener.core.validation import endpoint_duplicity_check
+from link_shortener.commands.validation import endpoint_duplicity_check
 from link_shortener.models import links, salts
 
 
 async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
-        trans = await conn.begin()
+        await endpoint_duplicity_check(conn, data)
 
-        await endpoint_duplicity_check(conn, trans, data)
+        trans = await conn.begin()
 
         if data['password']:
             salt = os.urandom(32)

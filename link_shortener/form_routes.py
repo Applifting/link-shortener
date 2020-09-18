@@ -51,15 +51,12 @@ class PasswordForm(SanicForm):
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])
 async def link_password_form(request, link_id):
     try:
-        message = {message: request.args.get(message, None) for message in {'from', 'status'}}
-
         form = PasswordForm(request)
         data = await check_auth_form(request, link_id)
         return html(template_loader(
                         template_file='password_form.html',
                         form=form,
-                        payload=data,
-                        message=message,
+                        payload=data
                     ), status=200)
     except NotFoundException:
         return html(template_loader(
@@ -76,13 +73,13 @@ async def link_password_save(request, link_id):
         link = await check_password(request, link_id, form)
         return redirect(link, status=307)
     except FormInvalidException:
-        status = 400
+        status, message = 400, 'invalid-form'
     except NotFoundException:
-        status = 404
+        status, message = 404, 'not-found'
     except AccessDeniedException:
-        status = 401
+        status, message = 401, 'incorrect-password'
 
-    params = f'?from=authorize&status={status}'
+    params = f'?origin=authorize&status={message}'
     return redirect(f'/authorize/{link_id}/{params}')
 
 
@@ -115,13 +112,13 @@ async def create_link_save(request, user):
             'switch_date': form.switch_date.data
         }
         await create_link(request, data=form_data)
-        status = 201
+        status, message = 201, 'created'
     except FormInvalidException:
-        status = 400
+        status, message = 400, 'invalid-form'
     except DuplicateActiveLinkForbidden:
-        status = 409
+        status, message = 409, 'duplicate'
     finally:
-        params = f'?from=create&status={status}'
+        params = f'?origin=create&status={message}'
         return redirect(f'/links/all/{params}')
 
 
@@ -130,18 +127,15 @@ async def create_link_save(request, user):
 @credential_whitelist_check
 async def update_link_form(request, user, link_id):
     try:
-        message = {message: request.args.get(message) for message in {'from', 'status'}}
-
         form = UpdateForm(request)
         data = await check_update_form(request, link_id)
         return html(template_loader(
                         template_file='edit_form.html',
                         form=form,
-                        payload=data,
-                        message=message
+                        payload=data
                     ), status=200)
     except NotFoundException:
-        params = '?from=edit&status=404'
+        params = '?origin=edit&status=not-found'
         return redirect(f'/links/all{params}')
 
 
@@ -160,11 +154,11 @@ async def update_link_save(request, user, link_id):
             'switch_date': form.switch_date.data
         }
         await update_link(request, link_id=link_id, data=form_data)
-        status = 200
+        status, message = 200, 'updated'
     except FormInvalidException:
-        status = 400
+        status, message = 400, 'form-invalid'
     except NotFoundException:
-        status = 404
+        status, message = 404, 'not-found'
     finally:
-        params = f'?from=edit&status={status}'
+        params = f'?origin=edit&status={message}'
         return redirect(f'/links/all{params}')

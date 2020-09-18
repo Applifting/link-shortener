@@ -64,8 +64,6 @@ async def about_page(request):
 @login_required
 @credential_whitelist_check
 async def all_active_links(request, user):
-    message = {message: request.args.get(message, None) for message in {'from', 'status'}}
-
     filters = get_filter_dict(request)
     link_data = await retrieve_links(
         request,
@@ -75,8 +73,7 @@ async def all_active_links(request, user):
     return html(template_loader(
                     template_file='all_links.html',
                     domain_name=config('DOMAIN_NAME'),
-                    data=filtered_data,
-                    message=message
+                    data=filtered_data
                 ), status=200)
 
 
@@ -98,11 +95,11 @@ async def owner_specific_links(request, user):
 async def delete_link_view(request, user, link_id):
     try:
         await delete_link(request, link_id)
-        status = 200
+        status, message = 200, 'deleted'
     except NotFoundException:
-        status = 404
+        status, message = 404, 'not-found'
     finally:
-        params = f'?from=delete&status={status}'
+        params = f'?origin=delete&status={message}'
         return redirect(f'/links/all{params}')
 
 
@@ -122,13 +119,13 @@ async def confirm_delete_link_view(request, user, link_id):
 async def activate_link_view(request, user, link_id):
     try:
         await activate_link(request, link_id)
-        status = 200
+        status, message = 200, 'activated'
     except NotFoundException:
-        status = 404
+        status, message = 404, 'not-found'
     except DuplicateActiveLinkForbidden:
-        status = 400
+        status, message = 400, 'duplicate'
     finally:
-        params = f'?from=activate&status={status}'
+        params = f'?origin=activate&status={message}'
         return redirect(f'/edit/{link_id}{params}')
 
 
@@ -138,11 +135,11 @@ async def activate_link_view(request, user, link_id):
 async def deactivate_link_view(request, user, link_id):
     try:
         await deactivate_link(request, link_id)
-        status = 200
+        status, message = 200, 'deactivated'
     except NotFoundException:
-        status = 404
+        status, message = 404, 'not-found'
     finally:
-        params = f'?from=deactivate&status={status}'
+        params = f'?origin=deactivate&status={message}'
         return redirect(f'/edit/{link_id}{params}')
 
 
@@ -152,9 +149,9 @@ async def deactivate_link_view(request, user, link_id):
 async def reset_password_view(request, user, link_id):
     try:
         await reset_password(request, link_id)
-        status = 200
+        status, message = 200, 'reset'
     except NotFoundException:
-        status = 404
+        status, message = 404, 'not-found'
     finally:
-        params = f'?from=reset&status={status}'
+        params = f'?origin=reset&status={message}'
         return redirect(f'/edit/{link_id}{params}')

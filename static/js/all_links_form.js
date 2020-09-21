@@ -15,7 +15,7 @@ function makeDelay(ms) {
 
 function delayTextSearch() {
   var delay = makeDelay(800);
-  $("#search").keyup(function () {
+  document.getElementById("search").addEventListener("keyup", function () {
     delay(function () {
       document.getElementById("forms").submit();
     });
@@ -30,18 +30,18 @@ function getParamValues() {
     filter[key] = value;
   }
   function persistStateOfFormValues() {
-    $("#ownerFilter").val(filter.owner);
-    $("#search").val(filter.search);
-    $("#checkbox").prop("checked", filter.is_active);
+    document.getElementById("checkbox").checked = filter.is_active;
+    document.getElementById("search").value = filter.search;
+    document.getElementById("ownerFilter").value = filter.owner;
   }
   persistStateOfFormValues();
   function colorSwitch() {
     if (filter.is_active) {
-      $("#statusDisabled").css("color", "#CF7317");
-      $("#statusActive").css("color", "#AAA9BC");
+      document.getElementById("statusDisabled").style.color = "#CF7317";
+      document.getElementById("statusActive").style.color = "#AAA9BC";
     } else {
-      $("#statusDisabled").css("color", "#AAA9BC");
-      $("#statusActive").css("color", "#1F7A78");
+      document.getElementById("statusDisabled").style.color = "#AAA9BC";
+      document.getElementById("statusActive").style.color = "#1F7A78";
     }
   }
   colorSwitch();

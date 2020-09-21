@@ -26,18 +26,20 @@ async def check_update_form(request, link_id):
 
 async def update_link(request, link_id, data):
     async with request.app.engine.acquire() as conn:
-        trans = await conn.begin()
-        link_update = links.update().where(links.columns['id'] == link_id)
         query = await conn.execute(links.select().where(
             links.columns['id'] == link_id
         ))
         link_data = await query.fetchone()
+
         if not link_data:
-            await trans.close()
             raise NotFoundException
 
         if data.get('endpoint', None) and link_data['endpoint'] != data['endpoint']:
-            await endpoint_duplicity_check(conn, data, trans)
+            await endpoint_duplicity_check(conn, data)
+
+        trans = await conn.begin()
+
+        link_update = links.update().where(links.columns['id'] == link_id)
 
         if data['password']:
             salt = os.urandom(32)

@@ -31,8 +31,16 @@ function getParamValues() {
   }
   function persistStateOfFormValues() {
     document.getElementById("checkbox").checked = filter.is_active;
-    document.getElementById("search").value = filter.search;
-    document.getElementById("ownerFilter").value = filter.owner;
+    if (filter.search == undefined) {
+      document.getElementById("search").value = "";
+    } else {
+      document.getElementById("search").value = filter.search;
+    }
+    if (filter.owner == undefined) {
+      document.getElementById("ownerFilter").value = "";
+    } else {
+      document.getElementById("ownerFilter").value = filter.owner;
+    }
   }
   persistStateOfFormValues();
   function colorSwitch() {

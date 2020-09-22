@@ -4,20 +4,6 @@ function clearFilters() {
   location.reload();
   return false;
 }
-function addOwnersToSelection() {
-  let ownerArray = [];
-  let owners = document.getElementsByClassName("rowOwner");
-  let ownerFilter = document.getElementById("ownerFilter");
-  for (i = 0; i < owners.length; i++) {
-    ownerArray.push(owners[i].innerHTML);
-  }
-  let ownerNewArr = [...new Set(ownerArray)];
-  for (i = 0; i < ownerNewArr.length; i++) {
-    let opt = document.createElement("option");
-    opt.appendChild(document.createTextNode(ownerNewArr[i]));
-    ownerFilter.appendChild(opt);
-  }
-}
 //delay search
 function makeDelay(ms) {
   var timer = 0;

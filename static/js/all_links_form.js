@@ -50,11 +50,13 @@ function getParamValues() {
   function colorSwitch() {
     if (window.location.pathname == "/links/all") {
       if (filter.is_active) {
-        document.getElementById("statusDisabled").style.color = "#CF7317";
-        document.getElementById("statusActive").style.color = "#AAA9BC";
+        document
+          .getElementById("statusDisabled")
+          .classList.add("orangeDisable");
+        document.getElementById("statusActive").classList.add("grey");
       } else {
-        document.getElementById("statusDisabled").style.color = "#AAA9BC";
-        document.getElementById("statusActive").style.color = "#1F7A78";
+        document.getElementById("statusDisabled").classList.add("grey");
+        document.getElementById("statusActive").classList.add("greenActive");
       }
     }
   }

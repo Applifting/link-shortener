@@ -10,7 +10,7 @@ from sanic_oauth.blueprint import login_required
 from sanic_wtf import SanicForm
 
 from wtforms import StringField, SubmitField, PasswordField, DateField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NoneOf
 
 from link_shortener.templates import template_loader
 
@@ -29,7 +29,7 @@ form_blueprint = Blueprint('forms')
 
 
 class CreateForm(SanicForm):
-    endpoint = StringField('Endpoint', validators=[DataRequired()])
+    endpoint = StringField('Endpoint', validators=[DataRequired(), NoneOf('/')])
     url = StringField('URL', validators=[DataRequired()])
     password = PasswordField('Password')
     switch_date = DateField('Status switch date')
@@ -37,7 +37,8 @@ class CreateForm(SanicForm):
 
 
 class UpdateForm(SanicForm):
-    url = StringField('URL', validators=[])
+    endpoint = StringField('Endpoint', validators=[DataRequired(), NoneOf('/')])
+    url = StringField('URL', validators=[DataRequired()])
     password = PasswordField('Password', validators=[])
     switch_date = DateField('Status switch date')
     submit = SubmitField('Update')
@@ -150,6 +151,7 @@ async def update_link_save(request, user, link_id):
 
         form_data = {
             'password': form.password.data,
+            'endpoint': form.endpoint.data,
             'url': form.url.data,
             'switch_date': form.switch_date.data
         }
@@ -161,7 +163,6 @@ async def update_link_save(request, user, link_id):
         status, message = 404, 'not-found'
     except DuplicateActiveLinkForbidden:
         status, message = 409, 'duplicate'
-
     finally:
         params = f'?origin=edit&status={message}'
         return redirect(f'/links/all{params}')

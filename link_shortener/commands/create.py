@@ -5,23 +5,15 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import hashlib
 import os
 
-from sqlalchemy import and_
-
-from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
+from link_shortener.commands.validation import endpoint_duplicity_check
 from link_shortener.models import links, salts
 
 
 async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
+        await endpoint_duplicity_check(conn, data)
+
         trans = await conn.begin()
-        query = await conn.execute(links.select().where(and_(
-            links.columns['endpoint'] == data['endpoint'],
-            links.columns['is_active'].is_(True)
-        )))
-        link_data = await query.fetchone()
-        if link_data:
-            await trans.close()
-            raise DuplicateActiveLinkForbidden
 
         if data['password']:
             salt = os.urandom(32)

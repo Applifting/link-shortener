@@ -57,6 +57,7 @@ class TestUpdateLinkAPI(TestCase):
 
         link_data = loads(response.text)
         self.assertEqual(link_data['url'], self.data['url'])
+        self.assertEqual(link_data['endpoint'], self.data['endpoint'])
 
     def test_put_data_incomplete_payload_fails(self):
         '''

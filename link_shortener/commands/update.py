@@ -34,7 +34,9 @@ async def update_link(request, link_id, data):
         if not link_data:
             raise NotFoundException
 
-        if data.get('endpoint', None) and link_data['endpoint'] != data['endpoint']:
+        # Only check for duplicity if the endpoint has changed
+        new_endpoint, old_endpoint = data['endpoint'], link_data['endpoint']
+        if new_endpoint and (new_endpoint != old_endpoint):
             await endpoint_duplicity_check(conn, data)
 
         trans = await conn.begin()

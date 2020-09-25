@@ -3,7 +3,7 @@ Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from sanic import Blueprint
-from sanic.response import redirect, html
+from sanic.response import html
 
 from sanic_oauth.blueprint import login_required
 
@@ -72,7 +72,11 @@ async def link_password_save(request, link_id):
     try:
         form = PasswordForm(request)
         link = await check_password(request, link_id, form)
-        return redirect(link, status=307)
+        return html(template_loader(
+                        template_file='redirect.html',
+                        link=link,
+                    ), status=307)
+
     except FormInvalidException:
         status, message = 400, 'Form invalid'
     except NotFoundException:

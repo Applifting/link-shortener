@@ -41,7 +41,10 @@ async def requests_count(request):
 async def redirect_link_view(request, link_endpoint):
     try:
         target = await redirect_link(request, link_endpoint)
-        return redirect(target, status=307)
+        return html(template_loader(
+                        template_file='redirect.html',
+                        link=target,
+                    ), status=307)
     except NotFoundException:
         return html(template_loader(
                         template_file='message.html',

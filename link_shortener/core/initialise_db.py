@@ -10,11 +10,11 @@ from decouple import config
 
 from sanic import Blueprint
 
-from aiomysql.sa import create_engine
+from aiopg.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
 
-from link_shortener.models import links, salts
+from link_shortener.models import links, salts, users
 
 
 initdb_blueprint = Blueprint('intitialise_db')
@@ -118,20 +118,20 @@ data = [
 async def initialise_db(app, loop):
     if config('PRODUCTION', default=False, cast=bool):
         app.engine = await create_engine(
-            host=config('MYSQL_HOST'),
-            port=config('MYSQL_PORT', cast=int),
-            user=config('MYSQL_USER'),
-            password=config('MYSQL_PASSWORD'),
-            db=config('MYSQL_DB'),
+            host=config('POSTGRES_HOST'),
+            port=config('POSTGRES_PORT', cast=int),
+            user=config('POSTGRES_USER'),
+            password=config('POSTGRES_PASSWORD'),
+            db=config('POSTGRES_DB'),
             loop=loop
         )
     else:
         app.engine = await create_engine(
             host='db',
-            port=3306,
-            user='user',
-            password='password',
-            db='db',
+            port=5432,
+            user='postgres',
+            password='postgres',
+            database='db',
             loop=loop
         )
     async with app.engine.acquire() as conn:
@@ -139,39 +139,40 @@ async def initialise_db(app, loop):
             trans = await conn.begin()
             await conn.execute(CreateTable(links))
             await conn.execute(CreateTable(salts))
-            for values in data:
-                if values[2]:
-                    salt = os.urandom(32)
-                    values[2] = hashlib.pbkdf2_hmac(
-                        'sha256',
-                        values[2].encode('utf-8'),
-                        salt,
-                        100000
-                    )
-                    link_object = await conn.execute(links.insert().values(
-                        owner=values[0],
-                        owner_id=values[1],
-                        password=values[2],
-                        endpoint=values[3],
-                        url=values[4],
-                        switch_date=values[5],
-                        is_active=values[6]
-                    ))
-                    await conn.execute(salts.insert().values(
-                        link_id=link_object.lastrowid,
-                        salt=salt
-                    ))
-                else:
-                    await conn.execute(links.insert().values(
-                        owner=values[0],
-                        owner_id=values[1],
-                        password=values[2],
-                        endpoint=values[3],
-                        url=values[4],
-                        switch_date=values[5],
-                        is_active=values[6]
-                    ))
-
+            if not config('PRODUCTION', default=False, cast=bool):
+                for values in data:
+                    if values[2]:
+                        salt = os.urandom(32)
+                        values[2] = hashlib.pbkdf2_hmac(
+                            'sha256',
+                            values[2].encode('utf-8'),
+                            salt,
+                            100000
+                        )
+                        link_object = await conn.execute(links.insert().values(
+                            owner=values[0],
+                            owner_id=values[1],
+                            password=values[2],
+                            endpoint=values[3],
+                            url=values[4],
+                            switch_date=values[5],
+                            is_active=values[6]
+                        ))
+                        link = await link_object.fetchone()
+                        await conn.execute(salts.insert().values(
+                            link_id=link.id,
+                            salt=salt
+                        ))
+                    else:
+                        await conn.execute(links.insert().values(
+                            owner=values[0],
+                            owner_id=values[1],
+                            password=values[2],
+                            endpoint=values[3],
+                            url=values[4],
+                            switch_date=values[5],
+                            is_active=values[6]
+                        ))
             await trans.commit()
             await trans.close()
 

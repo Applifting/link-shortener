@@ -5,4 +5,4 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import time
 
 
-time.sleep(12)
+time.sleep(3)

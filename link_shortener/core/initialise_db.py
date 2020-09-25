@@ -14,7 +14,7 @@ from aiopg.sa import create_engine
 
 from sqlalchemy.schema import CreateTable
 
-from link_shortener.models import links, salts, users
+from link_shortener.models import links, salts
 
 
 initdb_blueprint = Blueprint('intitialise_db')

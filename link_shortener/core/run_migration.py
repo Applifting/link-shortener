@@ -10,7 +10,6 @@ from sqlalchemy import create_engine
 from link_shortener.core.initialise_db import engine_data
 
 alembic_cfg = Config("./alembic.ini")
-command.upgrade(alembic_cfg, "head")
 
 engine = create_engine(engine_data)
 

@@ -27,7 +27,8 @@ services:
     volumes:
       - '.:/app'
     command: >
-      sh -c "python link_shortener/core/wait_for_db_and_migrate.py &&
+      sh -c "python link_shortener/core/wait_for_db.py &&
+             python link_shortener/core/run_migration.py &&
              python link_shortener/server.py"
     depends_on:
       - 'db'

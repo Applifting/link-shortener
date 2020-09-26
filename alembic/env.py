@@ -7,6 +7,13 @@ from sqlalchemy import pool
 
 from alembic import context
 
+# Allow Alembic to search for modules within the whole project folder
+import sys
+sys.path = ['', '..'] + sys.path[1:]
+
+from link_shortener import models
+from link_shortener.core.initialise_db import engine_data
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -17,9 +24,7 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-import sys
-sys.path = ['', '..'] + sys.path[1:]
-from link_shortener import models
+
 target_metadata = models.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -27,17 +32,8 @@ target_metadata = models.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-if decouple.config('PRODUCTION', default=False, cast=bool):
-    config.set_main_option('sqlalchemy.url',
-                           f"postgresql://"
-                           f"{decouple.config('POSTGRES_USER')}:"
-                           f"{decouple.config('POSTGRES_PASSWORD')}@"
-                           f"{decouple.config('POSTGRES_HOST')}:"
-                           f"{decouple.config('POSTGRES_PORT')}/"
-                           f"{decouple.config('POSTGRES_DB')}"
-                           )
-else:
-    config.set_main_option('sqlalchemy.url', f'postgresql://postgres:postgres@db:5432/db')
+# Set up DB URL
+config.set_main_option('sqlalchemy.url', engine_data)
 
 
 def run_migrations_offline():

@@ -95,9 +95,9 @@ async def owner_specific_links(request, user):
 async def delete_link_view(request, user, link_id):
     try:
         await delete_link(request, link_id)
-        status, message = 200, 'deleted'
+        message = 'deleted'  # status = 200
     except NotFoundException:
-        status, message = 404, 'not-found'
+        message = 'not-found'  # status = 404
     finally:
         params = f'?origin=delete&status={message}'
         return redirect(f'/links/all{params}')
@@ -119,11 +119,11 @@ async def confirm_delete_link_view(request, user, link_id):
 async def activate_link_view(request, user, link_id):
     try:
         await activate_link(request, link_id)
-        status, message = 200, 'activated'
+        message = 'activated'  # status = 200
     except NotFoundException:
-        status, message = 404, 'not-found'
+        message = 'not-found'  # status = 404
     except DuplicateActiveLinkForbidden:
-        status, message = 400, 'duplicate'
+        message = 'duplicate'  # status = 400
     finally:
         params = f'?origin=activate&status={message}'
         return redirect(f'/edit/{link_id}{params}')
@@ -135,9 +135,9 @@ async def activate_link_view(request, user, link_id):
 async def deactivate_link_view(request, user, link_id):
     try:
         await deactivate_link(request, link_id)
-        status, message = 200, 'deactivated'
+        message = 'deactivated'  # status = 200
     except NotFoundException:
-        status, message = 404, 'not-found'
+        message = 'not-found'  # status = 404
     finally:
         params = f'?origin=deactivate&status={message}'
         return redirect(f'/edit/{link_id}{params}')
@@ -149,9 +149,9 @@ async def deactivate_link_view(request, user, link_id):
 async def reset_password_view(request, user, link_id):
     try:
         await reset_password(request, link_id)
-        status, message = 200, 'reset'
+        message = 200, 'reset'  # status = 200
     except NotFoundException:
-        status, message = 404, 'not-found'
+        message = 404, 'not-found'  # status = 404
     finally:
         params = f'?origin=reset&status={message}'
         return redirect(f'/edit/{link_id}{params}')

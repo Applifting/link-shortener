@@ -74,11 +74,11 @@ async def link_password_save(request, link_id):
         link = await check_password(request, link_id, form)
         return redirect(link, status=307)
     except FormInvalidException:
-        status, message = 400, 'invalid-form'
+        message = 'invalid-form'  # status = 400
     except NotFoundException:
-        status, message = 404, 'not-found'
+        message = 'not-found'  # status = 404
     except AccessDeniedException:
-        status, message = 401, 'incorrect-password'
+        message = 'incorrect-password'  # status = 401
 
     params = f'?origin=authorize&status={message}'
     return redirect(f'/authorize/{link_id}{params}')
@@ -113,11 +113,11 @@ async def create_link_save(request, user):
             'switch_date': form.switch_date.data
         }
         await create_link(request, data=form_data)
-        status, message = 201, 'created'
+        message = 'created'  # status = 201
     except FormInvalidException:
-        status, message = 400, 'invalid-form'
+        message = 'invalid-form'  # status = 400
     except DuplicateActiveLinkForbidden:
-        status, message = 409, 'duplicate'
+        message = 'duplicate'  # status = 401
     finally:
         params = f'?origin=create&status={message}'
         return redirect(f'/links/all{params}')
@@ -156,13 +156,13 @@ async def update_link_save(request, user, link_id):
             'switch_date': form.switch_date.data
         }
         await update_link(request, link_id=link_id, data=form_data)
-        status, message = 200, 'updated'
+        message = 'updated'   # status = 200
     except FormInvalidException:
-        status, message = 400, 'form-invalid'
+        message = 'form-invalid'  # status = 400
     except NotFoundException:
-        status, message = 404, 'not-found'
+        message = 'not-found'  # status = 404
     except DuplicateActiveLinkForbidden:
-        status, message = 409, 'duplicate'
+        message = 'duplicate'  # status = 409
     finally:
         params = f'?origin=edit&status={message}'
         return redirect(f'/links/all{params}')

@@ -4,7 +4,6 @@ function clearFilters() {
   location.reload();
   return false;
 }
-// getting unique owners
 function addOwnersToSelection() {
   let ownerArray = [];
   let owners = document.getElementsByClassName("rowOwner");
@@ -30,37 +29,49 @@ function makeDelay(ms) {
 
 function delayTextSearch() {
   var delay = makeDelay(800);
-  $("#search").keyup(function () {
-    delay(function () {
-      document.getElementById("forms").submit();
+  if (window.location.pathname == "/links/all") {
+    document.getElementById("search").addEventListener("keyup", function () {
+      delay(function () {
+        document.getElementById("forms").submit();
+      });
     });
-  });
+  }
 }
 // persist checkbox value
 function getParamValues() {
   const filterParam = window.location.search;
-  const filter = {
-    disable: false,
-    owner: "",
-    search: "",
-  };
+  const filter = {};
 
   for (const [key, value] of new URLSearchParams(filterParam).entries()) {
     filter[key] = value;
   }
   function persistStateOfFormValues() {
-    $("#ownerFilter").val(filter.owner);
-    $("#search").val(filter.search);
-    $("#checkbox").prop("checked", filter.disable);
+    if (window.location.pathname == "/links/all") {
+      document.getElementById("checkbox").checked = filter.is_active;
+      if (filter.search == undefined) {
+        document.getElementById("search").value = "";
+      } else {
+        document.getElementById("search").value = filter.search;
+      }
+      if (filter.owner == undefined) {
+        document.getElementById("ownerFilter").value = "";
+      } else {
+        document.getElementById("ownerFilter").value = filter.owner;
+      }
+    }
   }
   persistStateOfFormValues();
   function colorSwitch() {
-    if (filter.disable) {
-      $("#statusDisabled").css("color", "#CF7317");
-      $("#statusActive").css("color", "#AAA9BC");
-    } else {
-      $("#statusDisabled").css("color", "#AAA9BC");
-      $("#statusActive").css("color", "#1F7A78");
+    if (window.location.pathname == "/links/all") {
+      if (filter.is_active) {
+        document
+          .getElementById("statusDisabled")
+          .classList.add("orangeDisable");
+        document.getElementById("statusActive").classList.add("grey");
+      } else {
+        document.getElementById("statusDisabled").classList.add("grey");
+        document.getElementById("statusActive").classList.add("greenActive");
+      }
     }
   }
   colorSwitch();

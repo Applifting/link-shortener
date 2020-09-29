@@ -5,13 +5,14 @@
   max-width: 1280px;
   margin-left: auto;
 }
-.form {
+.tableForm {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   background-color: var(--white);
   padding: 20px;
   width: inherit;
+  overflow: scroll;
 }
 .tbHead {
   display: flex;
@@ -128,7 +129,7 @@ input:checked + .slider:before {
   margin: 0 0px 0 1rem;
   color: var(--form-grey);
 }
-#clear {
+#clearFilter {
   color: var(--primary-grey);
   text-decoration: underline;
   background-color: transparent;
@@ -306,4 +307,17 @@ input:checked + .slider:before {
   font-weight: bold;
   font-size: 1rem;
   line-height: 160%;
+}
+#tableContainer {
+  width: 100%;
+  overflow: scroll;
+}
+.orangeDisable {
+  color: #cf7317 !important;
+}
+.grey {
+  color: #aaa9bc !important;
+}
+.greenActive {
+  color: #1f7a78 !important;
 }

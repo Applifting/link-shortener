@@ -1,11 +1,11 @@
 {% extends 'base.html' %} {% block content %}
 <div class="container" >
-  <form name='form'class="form" id="forms" method="GET"action="http://localhost:8000/links/all">
+  <form name='form' class='tableForm' id="forms" method="GET"action="#">
     <div class="tbHead">
       <div class="toggle">
         <div id='statusActive'>Active</div>
         <label class="switch">
-          <input  onChange="this.form.submit()"name='disable'type="checkbox"  id='checkbox' value='true' onclick="toggleActive()"/>
+          <input  onChange="this.form.submit()"name='is_active'type="checkbox"  id='checkbox' value='false' onclick="toggleActive()"/>
           <span class="slider round"></span>
         </label>
         <div id='statusDisabled'>Disabled</div>
@@ -23,90 +23,93 @@
           value=""
         />
       </div>
-      <input onclick="clearFilters()" id="clear" value="Clear Filters"></input>
+      <input onclick="clearFilters()" id="clearFilter" value="Clear Filters"></input>
     </div>
     <div>
       <a href="/create" id="createShort">
-        <img src="plus.svg" alt="" /> Create Shortlink</a
+        <img src="icons/plus.svg" alt="" /> Create Shortlink</a
       >
     </div>
   </form>
-  <table class="all-links-table">
-    <tr>
-      <th>Status</th>
-      <th>Owner</th>
-      <th>Link</th>
-      <th>Shortlink</th>
-      <th>Actions</th>
-    </tr>
+  <div id='tableContainer'>
 
-    {% for row in data %}
-    <tr class="tr">
-      <td id="isactive">
-        {% if row.is_active %}
-        <span class="actives">Active</span>
-        {% else %}
-        <span class="disabled">Disabled</span>
-        {% endif %}
-      </td>
-      <td class="rowOwner">{{ row.owner }}</td>
-      <td id="linkFade">
-        <span><a class="rowurl" href="{{ row.url }}">{{ row.url }}</a></span>
-      </td>
-      <td id="shortlinked-{{row.id}}">
-        <span id="domain">www.{{domain_name}}</span
-        ><!-- / --><span id="endpoint1">/{{ row.endpoint}}</span>
-      </td>
-
-      <td class="actions">
-        <a class="copy" onclick="copyShortLink('{{row.id}}')">
-          <img src="copyicon.svg" alt="copyicon" class="copyIcon" />
-          <img src="hovercopy.svg" alt="hovercopy" class="copyIconHover" />
-          <div class="hoverCopy">
-            <div class="triangleContainer"><span id="triangle-up"></span></div>
-            <div class="hoverCopyContainer">
-              <span class="copyHoverSquare square-{{row.id}}">copy</span>
+    <table class="all-links-table">
+      <tr>
+        <th>Status</th>
+        <th>Owner</th>
+        <th>Link</th>
+        <th>Shortlink</th>
+        <th>Actions</th>
+      </tr>
+  
+      {% for row in data %}
+      <tr>
+        <td id="isActive">
+          {% if row.is_active %}
+          <span class="actives">Active</span>
+          {% else %}
+          <span class="disabled">Disabled</span>
+          {% endif %}
+        </td>
+        <td class="rowOwner">{{ row.owner }}</td>
+        <td id="linkFade">
+          <span><a class="rowurl" href="{{ row.url }}">{{ row.url }}</a></span>
+        </td>
+        <td id="shortlinked-{{row.id}}">
+          <span id="domain">www.{{domain_name}}</span
+          ><!-- / --><span id="endpoint1">/{{ row.endpoint}}</span>
+        </td>
+  
+        <td class="actions">
+          <a class="copy" onclick="copyShortLink('{{row.id}}')">
+            <img src="icons/copyicon.svg" alt="copyicon" class="copyIcon" />
+            <img src="icons/hovercopy.svg" alt="hovercopy" class="copyIconHover" />
+            <div class="hoverCopy">
+              <div class="triangleContainer"><span id="triangle-up"></span></div>
+              <div class="hoverCopyContainer">
+                <span class="copyHoverSquare square-{{row.id}}">copy</span>
+              </div>
             </div>
-          </div>
-        </a>
-        <a class="editBtn" href="/edit/{{ row.id }}">
-          <img
-            src="edit.svg"
-            height="20"
-            width="20"
-            alt="Not found"
-            class="edits"
-          />
-          <img src="edithover.svg" alt="edit" class="hoverEdit" />
-
-        </a>
-        <div class="display">
-          <a class="display displatBtn" onclick="toggleShareBox('{{row.id}}')">
+          </a>
+          <a class="editBtn" href="/edit/{{ row.id }}">
             <img
-              src="share.svg"
+              src="icons/edit.svg"
               height="20"
               width="20"
               alt="Not found"
-              class="share"
+              class="edits"
             />
-            <img src="shareHover.svg" alt="share" class="shareHover" />
+            <img src="icons/edithover.svg" alt="edit" class="hoverEdit" />
+  
           </a>
-          <div id="box-{{row.id}}" class="box">ahoj</div>
-        </div>
-        <a href="/delete/active/{{ row.id }}" class="deleteBtn">
-          <img
-            src="delete.svg"
-            height="20"
-            width="20"
-            alt="Not found"
-            class="delete"
-          />
-          <img src="deletehover.svg" alt="deletehover" class="deleteHover" />
-        </a>
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
+          <div class="display">
+            <a class="display displatBtn" onclick="toggleShareBox('{{row.id}}')">
+              <img
+                src="icons/share.svg"
+                height="20"
+                width="20"
+                alt="Not found"
+                class="share"
+              />
+              <img src="icons/shareHover.svg" alt="share" class="shareHover" />
+            </a>
+            <div id="box-{{row.id}}" class="box">ahoj</div>
+          </div>
+          <a href="/delete/active/{{ row.id }}" class="deleteBtn">
+            <img
+              src="icons/delete.svg"
+              height="20"
+              width="20"
+              alt="Not found"
+              class="delete"
+            />
+            <img src="icons/deletehover.svg" alt="deletehover" class="deleteHover" />
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 </div>
 
 {% endblock %}

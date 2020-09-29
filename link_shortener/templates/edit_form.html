@@ -1,10 +1,10 @@
 {% extends 'base.html' %} {% block content %}
-<a id="backBtn" href="/links/all">
-  <img src="/links/arrow.svg" alt="" /> Back</a
+<a class="backBtn" href="/links/all">
+  <img src="/links/icons/arrow.svg" alt="" /> Back</a
 >
 <div class="editAndCreate">
-  <form id="form" action="" method="POST">
-    <h1 id="form-header">Edit Shortlink</h1>
+  <form class="form" action="#" method="POST">
+    <h1 class="form-header">Edit Shortlink</h1>
     <div class="ownerOfLinkContainer">
       <span class="ownerOfLink">owned by</span> {{payload.owner}}
     </div>
@@ -26,8 +26,14 @@
 
       <!--<dd></dd> -->
       <label class="formLabel" id="advSettings">
-        <span> <i id="icon" class="fa fa-angle-right"></i> </span>Advanced
-        Settings</label
+        <span>
+          <img
+            id="icon"
+            class="rotate"
+            src="/links/icons/openArrow.svg"
+            alt=""
+          /> </span
+        >Advanced Settings</label
       >
       <div id="advRequirements">
         {% if payload.password %}
@@ -52,26 +58,33 @@
         {% endif %}
         <li>
           {{ form.switch_date(size=40, placeholder="YYYY-MM-DD",
-          class='formInput' ) }}
+          class='formInput',type='date' ) }}
         </li>
         {% endif %}
       </div>
       <span id="fueled">
-        <span id="shortlinked"> www.fueled.by/{{payload.endpoint}}</span>
-        <a class="copy" onclick="copySingle()">
-          <img src="/links/copyicon.svg" alt="copyicon" />
-          <img
-            src="/links/hovercopy.svg"
-            alt="hovercopy"
-            class="copyIconCreate"
-          />
-          <div class="hoverCopy">
-            <div class="triangleContainer"><span id="triangle-up"></span></div>
-            <div class="hoverCopyContainer">
-              <span class="copyHoverSquare">copy</span>
+        <div id="shortlinked">
+          <span>www.fueled.by</span
+          ><!-- / --><span id="fueledEndPoint">/{{payload.endpoint}}</span>
+        </div>
+        <div>
+          <a class="copy" onclick="copySingle()">
+            <img src="/links/icons/copyicon.svg" alt="copyicon" />
+            <img
+              src="/links/icons/hovercopy.svg"
+              alt="hovercopy"
+              class="copyIconCreate"
+            />
+            <div class="hoverCopy">
+              <div class="triangleContainer">
+                <span id="triangle-up"></span>
+              </div>
+              <div class="hoverCopyContainer">
+                <span class="copyHoverSquare">copy</span>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
+        </div>
       </span>
       <li>{{ form.submit(id='edit', class='formInput') }}</li>
       <li>

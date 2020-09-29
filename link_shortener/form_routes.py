@@ -57,8 +57,7 @@ async def link_password_form(request, link_id):
         return html(template_loader(
                         template_file='password_form.html',
                         form=form,
-                        payload=data,
-                        status_code='200'
+                        payload=data
                     ), status=200)
     except NotFoundException:
         return html(template_loader(
@@ -75,17 +74,14 @@ async def link_password_save(request, link_id):
         link = await check_password(request, link_id, form)
         return redirect(link, status=307)
     except FormInvalidException:
-        status, message = 400, 'Form invalid'
+        message = 'invalid-form'  # status = 400
     except NotFoundException:
-        status, message = 404, 'Link has no password or does not exist'
+        message = 'not-found'  # status = 404
     except AccessDeniedException:
-        status, message = 401, 'Password incorrect'
+        message = 'incorrect-password'  # status = 401
 
-    return html(template_loader(
-                    template_file='message.html',
-                    payload=message,
-                    status_code=str(status)
-                ), status=status)
+    params = f'?origin=authorize&status={message}'
+    return redirect(f'/authorize/{link_id}{params}')
 
 
 @form_blueprint.route('/create', methods=['GET'])
@@ -117,17 +113,14 @@ async def create_link_save(request, user):
             'switch_date': form.switch_date.data
         }
         await create_link(request, data=form_data)
-        status, message = 201, 'Link created successfully'
+        message = 'created'  # status = 201
     except FormInvalidException:
-        status, message = 400, 'Form invalid'
+        message = 'invalid-form'  # status = 400
     except DuplicateActiveLinkForbidden:
-        status, message = 409, 'An active link with that name already exists'
+        message = 'duplicate'  # status = 409
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?origin=create&status={message}'
+        return redirect(f'/links/all{params}')
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])
@@ -140,15 +133,11 @@ async def update_link_form(request, user, link_id):
         return html(template_loader(
                         template_file='edit_form.html',
                         form=form,
-                        payload=data,
-                        status_code='200'
+                        payload=data
                     ), status=200)
     except NotFoundException:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Link does not exist',
-                        status_code='404'
-                    ), status=404)
+        params = '?origin=edit&status=not-found'
+        return redirect(f'/links/all{params}')
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['POST'])
@@ -167,16 +156,13 @@ async def update_link_save(request, user, link_id):
             'switch_date': form.switch_date.data
         }
         await update_link(request, link_id=link_id, data=form_data)
-        status, message = 200, 'Link updated successfully'
+        message = 'updated'   # status = 200
     except FormInvalidException:
-        status, message = 400, 'Form invalid'
+        message = 'form-invalid'  # status = 400
     except NotFoundException:
-        status, message = 404, 'Link does not exist'
+        message = 'not-found'  # status = 404
     except DuplicateActiveLinkForbidden:
-        status, message = 409, 'An active link with that name already exists'
+        message = 'duplicate'  # status = 409
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?origin=edit&status={message}'
+        return redirect(f'/links/all{params}')

@@ -123,7 +123,7 @@ async def activate_link_view(request, user, link_id):
     except NotFoundException:
         message = 'not-found'  # status = 404
     except DuplicateActiveLinkForbidden:
-        message = 'duplicate'  # status = 400
+        message = 'duplicate'  # status = 409
     finally:
         params = f'?origin=activate&status={message}'
         return redirect(f'/edit/{link_id}{params}')

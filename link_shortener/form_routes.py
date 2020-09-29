@@ -117,7 +117,7 @@ async def create_link_save(request, user):
     except FormInvalidException:
         message = 'invalid-form'  # status = 400
     except DuplicateActiveLinkForbidden:
-        message = 'duplicate'  # status = 401
+        message = 'duplicate'  # status = 409
     finally:
         params = f'?origin=create&status={message}'
         return redirect(f'/links/all{params}')

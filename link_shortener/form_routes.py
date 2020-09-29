@@ -39,7 +39,7 @@ class CreateForm(SanicForm):
 class UpdateForm(SanicForm):
     endpoint = StringField('Endpoint', validators=[DataRequired(), NoneOf('/')])
     url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[])
+    password = StringField('Password', validators=[])
     switch_date = DateField('Status switch date')
     submit = SubmitField('Update')
 

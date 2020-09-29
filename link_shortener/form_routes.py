@@ -81,7 +81,7 @@ async def link_password_save(request, link_id):
         status, message = 401, 'incorrect-password'
 
     params = f'?origin=authorize&status={message}'
-    return redirect(f'/authorize/{link_id}/{params}')
+    return redirect(f'/authorize/{link_id}{params}')
 
 
 @form_blueprint.route('/create', methods=['GET'])
@@ -120,7 +120,7 @@ async def create_link_save(request, user):
         status, message = 409, 'duplicate'
     finally:
         params = f'?origin=create&status={message}'
-        return redirect(f'/links/all/{params}')
+        return redirect(f'/links/all{params}')
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])

@@ -28,6 +28,9 @@
         <li><h4>Change URL:</h4></li>
         <li>{{ form.url(size=40, value=payload.url) }}</li>
         <br>
+        <li><h4>Change Endpoint:</h4></li>
+        <li>{{ form.endpoint(size=40, value=payload.endpoint) }}</li>
+        <br>
         {% if payload.password %}
           <li><h4>Change password:</h4></li>
         {% else %}

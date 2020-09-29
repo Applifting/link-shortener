@@ -52,7 +52,7 @@ async def redirect_link_view(request, link_endpoint):
 
 @view_blueprint.route('/', methods=['GET'])
 async def landing_page(request):
-    return redirect('/links/about', status=301)
+    return redirect('/links/all', status=301)
 
 
 @view_blueprint.route('/links/about', methods=['GET'])
@@ -95,15 +95,12 @@ async def owner_specific_links(request, user):
 async def delete_link_view(request, user, link_id):
     try:
         await delete_link(request, link_id)
-        status, message = 200, 'Link deleted successfully'
+        message = 'deleted'  # status = 200
     except NotFoundException:
-        status, message = 404, 'Link does not exist'
+        message = 'not-found'  # status = 404
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?origin=delete&status={message}'
+        return redirect(f'/links/all{params}')
 
 
 @view_blueprint.route('/delete/<link_id>/confirm', methods=['GET'])
@@ -112,7 +109,8 @@ async def delete_link_view(request, user, link_id):
 async def confirm_delete_link_view(request, user, link_id):
     return html(template_loader(
                     template_file='delete_link.html',
-                    link_id=link_id), status=200)
+                    link_id=link_id
+                ), status=200)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])
@@ -121,17 +119,14 @@ async def confirm_delete_link_view(request, user, link_id):
 async def activate_link_view(request, user, link_id):
     try:
         await activate_link(request, link_id)
-        status, message = 200, 'Link activated successfully'
+        message = 'activated'  # status = 200
     except NotFoundException:
-        status, message = 404, 'Link does not exist'
+        message = 'not-found'  # status = 404
     except DuplicateActiveLinkForbidden:
-        status, message = 400, 'An active link with that name already exists'
+        message = 'duplicate'  # status = 409
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?origin=activate&status={message}'
+        return redirect(f'/edit/{link_id}{params}')
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -140,15 +135,12 @@ async def activate_link_view(request, user, link_id):
 async def deactivate_link_view(request, user, link_id):
     try:
         await deactivate_link(request, link_id)
-        status, message = 200, 'Link deactivated successfully'
+        message = 'deactivated'  # status = 200
     except NotFoundException:
-        status, message = 404, 'Link does not exist'
+        message = 'not-found'  # status = 404
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?origin=deactivate&status={message}'
+        return redirect(f'/edit/{link_id}{params}')
 
 
 @view_blueprint.route('/reset/<link_id>', methods=['GET'])
@@ -157,12 +149,9 @@ async def deactivate_link_view(request, user, link_id):
 async def reset_password_view(request, user, link_id):
     try:
         await reset_password(request, link_id)
-        status, message = 200, 'Password reset successfully'
+        message = 200, 'reset'  # status = 200
     except NotFoundException:
-        status, message = 404, 'Link has no password or does not exist'
+        message = 404, 'not-found'  # status = 404
     finally:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload=message,
-                        status_code=str(status)
-                    ), status=status)
+        params = f'?origin=reset&status={message}'
+        return redirect(f'/edit/{link_id}{params}')

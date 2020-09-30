@@ -35,11 +35,6 @@
     </div>
   </form>
   <div id='tableContainer'>
-<!-- How to retrieve owners:
-  {% for owner in data["owners"] %}
-      {{ owner }}
-  {% endfor %}
--->
 
     <table class="all-links-table">
       <tr>
@@ -50,9 +45,9 @@
         <th>Actions</th>
       </tr>
   
-      {% for row in data['data'] %}
-      <tr class="tr">
-        <td id="isactive">
+      {% for row in data %}
+      <tr>
+        <td id="isActive">
           {% if row.is_active %}
           <span class="actives">Active</span>
           {% else %}

@@ -44,8 +44,7 @@ function txtUpdateOnChange() {
   shortLink &&
     shortLink.addEventListener("keyup", function () {
       let printout = document.getElementById("fueledEndPoint");
-      var x = shortLink.value;
-      printout.innerHTML = "/" + x;
+      printout.innerHTML = "/" + shortLink.value;
     });
 }
 

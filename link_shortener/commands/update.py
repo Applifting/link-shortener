@@ -58,7 +58,6 @@ async def update_link(request, link_id, data):
 
             if not data['password']:
                 password = None
-
             else:
                 salt = os.urandom(32)
                 password = hashlib.pbkdf2_hmac(

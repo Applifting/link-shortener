@@ -7,7 +7,6 @@ from sanic.response import json
 
 from link_shortener.commands.retrieve import retrieve_links, retrieve_link
 from link_shortener.commands.authorize import check_token
-
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             NotFoundException)
 

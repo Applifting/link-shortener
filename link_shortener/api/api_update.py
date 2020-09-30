@@ -27,12 +27,14 @@ async def api_update_link(request, link_id):
     try:
         await check_token(request)
         payload = loads(request.body)
-        url, endpoint = payload.get('url', None), payload.get('endpoint', None)
 
+        url, endpoint = payload.get('url', None), payload.get('endpoint', None)
         if not (url or endpoint):
             raise MissingDataException
 
-        if not (isinstance(url, (str, type(None))) and isinstance(endpoint, (str, type(None)))):
+        is_url_string = isinstance(url, (str, type(None)))
+        is_endpoint_string = isinstance(endpoint, (str, type(None)))
+        if not (is_url_string and is_endpoint_string):
             raise IncorrectDataFormat
 
         api_data = {'password': None, 'url': url, 'endpoint': endpoint}
@@ -55,7 +57,8 @@ async def api_update_link(request, link_id):
     except JSONDecodeError:
         status, message = 400, 'Please provide data in JSON format'
     except MissingDataException:
-        status, message = 400, 'Please provide all data. Missing: url and/or endpoint'
+        status = 400
+        message = 'Please provide all data. Missing: url and/or endpoint'
     except IncorrectDataFormat:
         status, message = 400, 'Please provide correctly formatted data'
     except NotFoundException:

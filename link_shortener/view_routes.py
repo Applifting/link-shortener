@@ -54,11 +54,9 @@ async def redirect_link_view(request, link_endpoint):
 async def landing_page(request):
     return redirect('/links/all', status=301)
 
-
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     return html(template_loader(template_file='about.html'), status=200)
-
 
 @view_blueprint.route('/links/all', methods=['GET'])
 @login_required
@@ -108,9 +106,8 @@ async def delete_link_view(request, user, link_id):
 @credential_whitelist_check
 async def confirm_delete_link_view(request, user, link_id):
     return html(template_loader(
-                    template_file='delete_link.html',
-                    link_id=link_id
-                ), status=200)
+                    template_file='delete.html',
+                    link_id=link_id), status=200)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

@@ -1,163 +1,65 @@
 <!DOCTYPE html>
+
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
+    {% block html_head %}{% endblock %}
+
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+    ></script>
+
+    <meta charset="utf-8" />
     <title>Link Shortener</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/links/css/all_links.css" />
+    <link rel="stylesheet" href="/links/css/create.css" />
+    <link rel="stylesheet" href="/links/css/edit.css" />
+    <link rel="stylesheet" href="/links/css/delete.css" />
+    <link rel="stylesheet" href="/links/css/common.css" />
+
     <style>
       :root {
-        --primary-color: #0c2233;
-        --secondary-color1: #065471;
-        --secondary-color2: #0a91ab;
-        --accessory-color: #ffc045;
+        --primary-black:#11103c;
+        --primary-purple:#322faf;
+        --primary-grey:#aaa9bc;
+        --primary-green:#1f7a78;
+        --form-grey:#e6e6ef;
+        --white:#fff;
       }
       body {
-        font-family: 'Lato', sans-serif;
-        text-align: center;
-        background-color: var(--primary-color);
-        color: var(--accessory-color);
+        font-family: "Poppins", sans-serif;
+        background-color: #e9eff6;
+        margin: 0;
+        padding: 0;
       }
-      #navbar ul {
-      	margin: 1em;
-      	padding: 1em;
-      	list-style-type: none;
-      	text-align: center;
-        width: 100%;
-      }
-      #navbar ul li {
-        display: inline;
-      }
-      #navbar ul li a {
-      	text-decoration: none;
-      	padding: .2em 1em;
-        margin: 0.8em;
-      	color: var(--accessory-color);
-      	background-color: var(--primary-color);
-        font-size: 2em;
-        border: 0.1em solid var(--accessory-color);
-        border-radius: 0.5em;
-      }
-      #navbar ul li a:hover {
-      	color: var(--accessory-color);
-      	background-color: var(--secondary-color1);
-      }
-      table td {
-        border-left: 100px solid white;
-        border-right: 100px solid white;
-        border-radius: 50px;
-      }
-      .all-links-table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      .all-links-table th {
-        background-color: var(--accessory-color);
-        color: var(--secondary-color1);
-      }
-      .all-links-table td, .all-links-table th {
-        border: 1px solid var(--primary-color);
-        padding: 8px;
-      }
-      .all-links-table tr:nth-child(even) {
-        background-color: var(--secondary-color1);
-        color: var(--accessory-color);
-      }
-      .all-links-table tr:nth-child(odd) {
-        background-color: var(--secondary-color2);
-        color: var(--accessory-color);
-      }
-      .all-links-table tr:hover {
-        background-color: var(--accessory-color);
-        color: var(--primary-color);
-      }
-      .all-links-table tr:hover a {
-        background-color: var(--accessory-color);
-        color: var(--primary-color);
-      }
-      .all-links-table tr a {
-        color: var(--accessory-color);
-      }
-      form {
-        text-align: center;
-        margin-left: 16em;
-        margin-right: 16em;
-        margin-top: 4em;
-        border: 0.2em solid var(--accessory-color);
-        background-color: var(--primary-color);
-        border-radius: 0.6em;
-      }
-      form ul {
-        display: block;
-        list-style-type: none;
-        padding: 0px;
-      }
-      form ul li {
-        display: block;
-        text-align: center;
-        margin-bottom: 10px;
-        min-height: 35px;
-      }
-      form ul li button {
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-      }
-      #form-header {
-        color: var(--primary-color);
-        background-color: var(--accessory-color);
-      }
-      form input[type="submit"] {
-        margin: 1em;
-      }
-
-      #edit-anchor a {
-      	text-decoration: none;
-        padding: .2em 1em;
-        width: 50%;
-
-        margin: 0.3em;
-        font-size: 1.2em;
-        border-radius: 0.3em;
-        display: inline-block;
-      }
-      .deactivate {
-        color: red;
-        border: 0.2em solid red;
-      }
-      .deactivate:hover {
-        color: #fff;
-        background-color: red;
-      }
-      .activate {
-        color: green;
-        border: 0.2em solid green;
-      }
-      .activate:hover {
-        color: #fff;
-        background-color: green;
-      }
-      .reset-delete {
-        color: #484d4d;
-        border: 0.2em solid #484d4d;
-      }
-      .reset-delete:hover {
-        color: #fff;
-        background-color: #484d4d;
-      }
-
     </style>
   </head>
   <body>
-    <div class="container">
-      <div id="navbar">
-        <ul>
-      	<li><a href="/links/about">About</a></li>
-      	<li><a href="/links/all">Active links</a></li>
-      	<li><a href="/links/me">My links</a></li>
-        </ul>
-      </div>
-    </div>
-    {% block content %}
-    {% endblock %}
+    {% block content %} {% endblock %}
   </body>
+  <script src=/links/js/all_links_form.js></script>
+  <script src=/links/js/create_edit.js></script>
+  <script src="/links/js/on_ready.js"></script>
+
 </html>

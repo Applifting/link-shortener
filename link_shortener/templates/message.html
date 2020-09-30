@@ -1,7 +1,16 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <br>
-  <h1>{{ status_code }}</h1>
-  <h3>{{ payload }}</h3>
+
+<div class="notFoundContainer">
+  <img id="notFound" class="a" src="/links/icons/notFound.svg" alt="" />
+  <div class="a" id="message">Sorry, we didn't find your page.</div>
+  <a id="goToDash" href="/links/all">
+  <div class="a">
+    GO TO DASHBOARD
+      <img src="/links/icons/notFoundArrow.svg" alt=""
+    /></a>
+  </div>
+</div>
+  <!-- <h3>{{ payload }}</h3> -->
 {% endblock %}

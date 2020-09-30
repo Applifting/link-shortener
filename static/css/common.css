@@ -142,3 +142,32 @@
 a:hover {
   text-decoration: none;
 }
+
+#pop,
+#popEdit {
+  width: 248px;
+  height: 44px;
+  top: 29px;
+  margin: auto;
+  color: white;
+  background: #2181e8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+  animation: flickerAnimation 5s ease-out;
+  opacity: 0;
+  margin-bottom: -64px;
+  margin-top: 20px;
+}
+@keyframes flickerAnimation {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

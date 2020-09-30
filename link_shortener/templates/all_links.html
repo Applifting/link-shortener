@@ -1,4 +1,5 @@
 {% extends 'base.html' %} {% block content %}
+<div id='pop'></div>
 <div class="container" >
   <form name='form' class='tableForm' id="forms" method="GET"action="#">
     <div class="tbHead">
@@ -65,8 +66,8 @@
   
         <td class="actions">
           <a class="copy" onclick="copyShortLink('{{row.id}}')">
-            <img src="/links/icons/copyicon.svg" alt="copyicon" class="copyIcon" />
-            <img src="/links/icons/hovercopy.svg" alt="hovercopy" class="copyIconHover" />
+            <img src="/links/icons/copyIcon.svg" alt="copyicon" class="copyIcon" />
+            <img src="/links/icons/hoverCopy.svg" alt="hovercopy" class="copyIconHover" />
             <div class="hoverCopy">
               <div class="triangleContainer"><span id="triangle-up"></span></div>
               <div class="hoverCopyContainer">
@@ -82,7 +83,7 @@
               alt="Not found"
               class="edits"
             />
-            <img src="/links/icons/edithover.svg" alt="edit" class="hoverEdit" />
+            <img src="/links/icons/editHover.svg" alt="edit" class="hoverEdit" />
   
           </a>
           <div class="display">
@@ -106,7 +107,7 @@
               alt="Not found"
               class="delete"
             />
-            <img src="/links/icons/deletehover.svg" alt="deletehover" class="deleteHover" />
+            <img src="/links/icons/deleteHover.svg" alt="deletehover" class="deleteHover" />
           </a>
         </td>
       </tr>

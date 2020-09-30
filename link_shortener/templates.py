@@ -14,6 +14,6 @@ def template_loader(template_file, *args, **kwargs):
     file_loader = PackageLoader(__name__, 'templates')
     env = Environment(loader=file_loader)
     template = env.get_template(template_file)
-    ga_id = config('GA_ID')
+    ga_id = config('GOOGLE_ANALYTICS_ID')
     output = template.render(*args, **kwargs, ga_id=ga_id)
     return output

@@ -57,10 +57,6 @@ async def landing_page(request):
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     return html(template_loader(template_file='about.html'), status=200)
-# fake delete page
-@view_blueprint.route('/links/delete', methods=['GET'])
-async def delete_page(request):
-    return html(template_loader(template_file='delete.html'), status=200)
 
 @view_blueprint.route('/links/all', methods=['GET'])
 @login_required

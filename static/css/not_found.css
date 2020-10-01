@@ -4,7 +4,7 @@
   flex-direction: column;
   align-items: center;
 }
-.a {
+.notFoundElement {
   margin-top: 30px;
 }
 #message {

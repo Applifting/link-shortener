@@ -38,7 +38,7 @@
         {% else %}
         <li><h4 class="formLabel">Set a password:</h4></li>
         {% endif %}
-        <li>{{ form.password(size=40, placeholder="Enter a password", value= defalut_password if payload.password, type="password", class='formInput') }}</li>
+        <li>{{ form.password(size=40, placeholder="Enter a password", value= default_password if payload.password, type="password", class='formInput') }}</li>
         {% if payload.switch_date %} {% if payload.is_active %}
         <h4 class="formLabel">Link will deactivate on:</h4>
         {% else %}

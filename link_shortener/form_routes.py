@@ -142,7 +142,7 @@ async def update_link_form(request, user, link_id):
                         template_file='edit_form.html',
                         form=form,
                         payload=data,
-                        defalut_password=config('DEFAULT_PASSWORD')
+                        default_password=config('DEFAULT_PASSWORD')
                     ), status=200)
     except NotFoundException:
         params = '?origin=edit&status=not-found'

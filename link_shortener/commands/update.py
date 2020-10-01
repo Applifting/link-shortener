@@ -56,9 +56,7 @@ async def update_link(request, link_id, data):
                     salts.columns['link_id'] == link_data.id
                 ))
 
-            if not data['password']:
-                password = None
-            else:
+            if data['password']:
                 salt = os.urandom(32)
                 password = hashlib.pbkdf2_hmac(
                     'sha256',
@@ -70,6 +68,8 @@ async def update_link(request, link_id, data):
                     link_id=link_id,
                     salt=salt
                 ))
+            else:
+                password = None
 
             await conn.execute(link_update.values(
                 endpoint=data['endpoint'] if data['endpoint'] else link_data['endpoint'],

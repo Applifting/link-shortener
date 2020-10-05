@@ -57,9 +57,11 @@ async def redirect_link_view(request, link_endpoint):
 async def landing_page(request):
     return redirect('/links/all', status=301)
 
+
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     return html(template_loader(template_file='about.html'), status=200)
+
 
 @view_blueprint.route('/links/all', methods=['GET'])
 @login_required

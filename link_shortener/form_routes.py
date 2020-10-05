@@ -4,7 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from decouple import config
 from sanic import Blueprint
-from sanic.response import html
+from sanic.response import html, redirect
 
 from sanic_oauth.blueprint import login_required
 

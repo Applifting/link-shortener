@@ -2,9 +2,10 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from decouple import config
 from unittest import TestCase
 from json import dumps, loads
+
+from decouple import config
 
 from link_shortener.server import create_app
 
@@ -17,6 +18,7 @@ class TestUpdateLinkAPI(TestCase):
         self.headers = {'Bearer': config('ACCESS_TOKEN')}
         self.data = {
             'url': 'http://www.vlk.cz',
+            'endpoint': 'vlk_update',
             'switch_date': {
                 'Year': 2022,
                 'Month': 2,
@@ -56,6 +58,7 @@ class TestUpdateLinkAPI(TestCase):
 
         link_data = loads(response.text)
         self.assertEqual(link_data['url'], self.data['url'])
+        self.assertEqual(link_data['endpoint'], self.data['endpoint'])
 
     def test_put_data_incomplete_payload_fails(self):
         '''
@@ -72,7 +75,7 @@ class TestUpdateLinkAPI(TestCase):
         self.assertEqual(response.status, 400)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
-        message = 'Please provide all data. Missing: url'
+        message = 'Please provide all data. Missing: url and/or endpoint'
         self.assertEqual(loads(response.text)['message'], message)
 
     def test_put_data_incorrect_payload_fails(self):
@@ -166,3 +169,22 @@ class TestUpdateLinkAPI(TestCase):
         )
         self.assertEqual(response.status, 405)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+    def test_put_data_duplicated_endpoint_fails(self):
+        '''
+        Test that a put request to update an existing link with duplicate
+        endpoint data yields an HTTP_409_CONFLICT response.
+        '''
+        data = self.data
+        data['endpoint'] = 'vlk'
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(data)
+        )
+        self.assertEqual(response.status, 409)
+        self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+        message = 'An active link with that name already exists'
+        self.assertEqual(loads(response.text)['message'], message)

@@ -1,20 +1,73 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
+<div class="editAndCreate">
+  <a class="backBtn" href="/links/all">
+    <img src="/links/icons/arrow.svg" alt="" /> Back</a
+  >
 
-{% block content %}
-  <div class="container">
-    <form action="" method="POST">
-      <h1 id="form-header">Create a new link</h1>
-      {{ '<br>'.join(form.csrf_token.errors) }}
-      {{ form.csrf_token }}
-      {{ '<br>'.join(form.endpoint.errors) }}
-      <br>
-      <ul>
-        <li>{{ form.endpoint(size=30, placeholder="Endpoint") }}</li>
-        <li>{{ form.url(size=30, placeholder="URL") }}</li>
-        <li>{{ form.password(size=30, placeholder="Password") }}</li>
-        <li>{{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD") }}</li>
-        <li>{{ form.submit }}</li>
-      </ul>
-    </form>
-  </div>
+  <form class="form" action="" method="POST">
+    <h1 class="form-header">Create a new link</h1>
+    {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
+    }}
+    <br />
+    <ul class="formContent">
+      <label class="formLabel">URL to shorten *</label>
+      <li>
+        {{ form.url(size=30, placeholder="original.url/original", id="orgUrl",
+        class='formRequiredField formInput' ) }}
+      </li>
+      <label class="formLabel">Suffix *</label>
+      <li>
+        {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink",
+        class='formRequiredField formInput') }}
+      </li>
+      <label class="formLabel" id="advSettings">
+        <span>
+          <img
+            id="icon"
+            class="rotate"
+            src="/links/icons/openArrow.svg"
+            alt="" /></span
+        >Advanced Settings</label
+      >
+      <div id="advRequirements">
+        <label class="formLabel">Password to visit shortlink</label>
+        <li>
+          {{ form.password(size=30, placeholder="Password", class='formInput')
+          }}
+        </li>
+        <label class="formLabel">Shortlink valid until</label>
+        <li>
+          {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD",
+          type='date', class='formInput') }}
+        </li>
+      </div>
+      <span id="fueled">
+        <div id="shortlinked">
+          <span>www.fueled.by</span
+          ><!-- qqw --><span id="fueledEndPoint">/</span>
+        </div>
+        <div>
+          <div class="copy" onclick="copySingle()">
+            <img src="/links/icons/copyicon.svg" alt="copyicon" />
+            <img
+              src="/links/icons/hovercopy.svg"
+              alt="hovercopy"
+              class="copyIconCreate"
+            />
+            <div class="hoverCopy">
+              <div class="triangleContainer">
+                <span id="triangle-up"></span>
+              </div>
+              <div class="hoverCopyContainer">
+                <span class="copyHoverSquare">copy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </span>
+
+      <li>{{ form.submit(class='formInput', id='submit')}}</li>
+    </ul>
+  </form>
+</div>
 {% endblock %}

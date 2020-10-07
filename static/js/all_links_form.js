@@ -4,20 +4,6 @@ function clearFilters() {
   location.reload();
   return false;
 }
-function addOwnersToSelection() {
-  let ownerArray = [];
-  let owners = document.getElementsByClassName("rowOwner");
-  let ownerFilter = document.getElementById("ownerFilter");
-  for (i = 0; i < owners.length; i++) {
-    ownerArray.push(owners[i].innerHTML);
-  }
-  let ownerNewArr = [...new Set(ownerArray)];
-  for (i = 0; i < ownerNewArr.length; i++) {
-    let opt = document.createElement("option");
-    opt.appendChild(document.createTextNode(ownerNewArr[i]));
-    ownerFilter.appendChild(opt);
-  }
-}
 //delay search
 function makeDelay(ms) {
   var timer = 0;
@@ -108,4 +94,40 @@ function toggleShareBox(rowid) {
   } else {
     shareBox.style.display = "block";
   }
+}
+
+const param = window.location.search;
+const filter = {};
+
+for (const [key, value] of new URLSearchParams(param).entries()) {
+  filter[key] = value;
+}
+//use case switch
+let popUp = document.getElementById("pop");
+let values = filter.status;
+switch (values) {
+  case "updated":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Link updated";
+    break;
+  case "created":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Link created";
+    break;
+  case "deleted":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Link deleted";
+    break;
+}
+
+let pop = document.getElementById("popEdit");
+let value = filter.status;
+switch (value) {
+  case "activated":
+    pop.style.display = "flex";
+    pop.innerHTML = "Link activated";
+    break;
+  case "deactivated":
+    pop.style.display = "flex";
+    pop.innerHTML = "Link disabled";
 }

@@ -2,12 +2,16 @@
 <a class="backBtn" href="/links/all"
   ><img src="/links/icons/arrow.svg" alt="" />Back</a
 >
-<form id="form" action="">
-  <h1 id="form-header">Delete Link</h1>
+<form class="form" action="">
+  <h1 class="form-header">Delete Link</h1>
   <div class="ownerOfLinkContainer">Owner</div>
   <div id="fueled">www.fueled.by/example <span id="copycat"></span></div>
   <div id="deleteQ">Are you sure you want to <br />delete this link?</div>
-  <button class="formInput" id="deleteBtn">Delete</button>
-  <button class="formInput" id="cancelBtn">Cancel</button>
+  <a class="aTag" href="/delete/{{ link_id }}"
+    ><div class="formInput" id="deleteBtn">Delete</div></a
+  >
+  <a class="aTag" href="/links/all">
+    <div class="formInput" id="cancelBtn">Cancel</div></a
+  >
 </form>
 {% endblock %}

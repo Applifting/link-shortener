@@ -10,12 +10,12 @@
     }}
     <br />
     <ul class="formContent">
-      <label class="formLabel">Original URL *</label>
+      <label class="formLabel">URL to shorten *</label>
       <li>
         {{ form.url(size=30, placeholder="original.url/original", id="orgUrl",
         class='formRequiredField formInput' ) }}
       </li>
-      <label class="formLabel">Shortlink *</label>
+      <label class="formLabel">Suffix *</label>
       <li>
         {{ form.endpoint(size=30, placeholder="example/suffix", id="shortlink",
         class='formRequiredField formInput') }}
@@ -26,8 +26,7 @@
             id="icon"
             class="rotate"
             src="/links/icons/openArrow.svg"
-            alt=""
-          /> </span
+            alt="" /></span
         >Advanced Settings</label
       >
       <div id="advRequirements">
@@ -49,9 +48,9 @@
         </div>
         <div>
           <div class="copy" onclick="copySingle()">
-            <img src="/links/icons/copyicon.svg" alt="copyicon" />
+            <img src="/links/icons/copyIcon.svg" alt="copyicon" />
             <img
-              src="/links/icons/hovercopy.svg"
+              src="/links/icons/hoverCopy.svg"
               alt="hovercopy"
               class="copyIconCreate"
             />

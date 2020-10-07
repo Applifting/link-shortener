@@ -2,31 +2,18 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-import os
 import hashlib
+import os
 
+from link_shortener.commands.validation import endpoint_duplicity_check
 from link_shortener.models import links, salts
-
-from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
 
 
 async def create_link(request, data):
     async with request.app.engine.acquire() as conn:
-        trans = await conn.begin()
-        try:
-            query = await conn.execute(links.select().where(
-                links.columns['endpoint'] == data['endpoint']
-            ).where(
-                links.columns['is_active'] == True
-            ))
-            link_data = await query.fetchone()
-            if link_data:
-                await trans.close()
-                raise DuplicateActiveLinkForbidden
+        await endpoint_duplicity_check(conn, data)
 
-        except AttributeError:
-            await trans.close()
-            raise DuplicateActiveLinkForbidden
+        trans = await conn.begin()
 
         if data['password']:
             salt = os.urandom(32)

@@ -2,12 +2,16 @@
   background-color: #c93636;
   color: var(--white);
   border: none;
+  display: flex;
+  justify-content: center;
 }
 #cancelBtn {
   border: 2px solid var(--primary-purple);
   color: var(--primary-purple);
   background-color: var(--white);
   margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: center;
 }
 #deleteQ {
   line-height: 160%;

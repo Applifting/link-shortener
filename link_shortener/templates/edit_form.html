@@ -1,4 +1,5 @@
 {% extends 'base.html' %} {% block content %}
+<div id="popEdit"></div>
 <a class="backBtn" href="/links/all">
   <img src="/links/icons/arrow.svg" alt="" /> Back</a
 >
@@ -12,16 +13,13 @@
     }}
     <ul class="formContent">
       <br />
-      <li><h4 class="formLabel">URL to shorten *</h4></li>
-      <li>{{ form.url(size=40, value=payload.url, class='formInput') }}</li>
-      <li><h4 class="formLabel">Suffix *</h4></li>
+      <li><h4 class="formLabel">Change URL:</h4></li>
+      <li>{{ form.url(size=40, value=payload.url, class="formInput") }}</li>
+      <br />
+      <li><h4 class="formLabel">Change Endpoint:</h4></li>
       <li>
-        <input
-          class="formInput"
-          type="text"
-          value="{{ payload.endpoint }}"
-          id="shortlink"
-        />
+        {{ form.endpoint(size=40, value=payload.endpoint, class="formInput",
+        id='shortlink') }}
       </li>
 
       <!--<dd></dd> -->
@@ -49,7 +47,7 @@
         {% endif %}
         <li>
           {{ form.switch_date(size=40, value=payload.switch_date,
-          class='formInput' ) }}
+          class='formInput', type='date' ) }}
         </li>
         {% else %} {% if payload.is_active %}
         <h4 class="formLabel">Set a date to deactivate link</h4>
@@ -58,7 +56,7 @@
         {% endif %}
         <li>
           {{ form.switch_date(size=40, placeholder="YYYY-MM-DD",
-          class='formInput',type='date' ) }}
+          class='formInput', type='date' ) }}
         </li>
         {% endif %}
       </div>
@@ -69,9 +67,9 @@
         </div>
         <div>
           <a class="copy" onclick="copySingle()">
-            <img src="/links/icons/copyicon.svg" alt="copyicon" />
+            <img src="/links/icons/copyIcon.svg" alt="copyicon" />
             <img
-              src="/links/icons/hovercopy.svg"
+              src="/links/icons/hoverCopy.svg"
               alt="hovercopy"
               class="copyIconCreate"
             />

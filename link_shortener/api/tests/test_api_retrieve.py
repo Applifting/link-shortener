@@ -2,10 +2,10 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
-from decouple import config
 from unittest import TestCase
-
 from json import loads
+
+from decouple import config
 
 from link_shortener.server import create_app
 

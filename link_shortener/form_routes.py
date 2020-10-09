@@ -2,6 +2,7 @@
 Copyright (C) 2020 Link Shortener Authors (see AUTHORS in Documentation).
 Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
+from decouple import config
 from sanic import Blueprint
 from sanic.response import redirect, html
 
@@ -29,17 +30,23 @@ form_blueprint = Blueprint('forms')
 
 
 class CreateForm(SanicForm):
-    endpoint = StringField('Endpoint', validators=[DataRequired(), NoneOf('/')])
+    endpoint = StringField(
+        'Endpoint',
+        validators=[DataRequired(), NoneOf('/')]
+    )
     url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password')
+    password = PasswordField('Password', validators=[])
     switch_date = DateField('Status switch date')
     submit = SubmitField('Create')
 
 
 class UpdateForm(SanicForm):
-    endpoint = StringField('Endpoint', validators=[DataRequired(), NoneOf('/')])
+    endpoint = StringField(
+        'Endpoint',
+        validators=[DataRequired(), NoneOf('/')]
+    )
     url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[])
+    password = StringField('Password', validators=[])
     switch_date = DateField('Status switch date')
     submit = SubmitField('Update')
 
@@ -133,7 +140,8 @@ async def update_link_form(request, user, link_id):
         return html(template_loader(
                         template_file='edit_form.html',
                         form=form,
-                        payload=data
+                        payload=data,
+                        default_password=config('DEFAULT_PASSWORD')
                     ), status=200)
     except NotFoundException:
         params = '?origin=edit&status=not-found'

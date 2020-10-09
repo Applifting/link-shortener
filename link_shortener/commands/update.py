@@ -5,6 +5,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import hashlib
 import os
 
+from decouple import config
 from sqlalchemy import and_
 
 from link_shortener.core.exceptions import NotFoundException
@@ -43,36 +44,38 @@ async def update_link(request, link_id, data):
 
         link_update = links.update().where(links.columns['id'] == link_id)
 
-        if data['password']:
-            salt = os.urandom(32)
-            password = hashlib.pbkdf2_hmac(
-                'sha256',
-                data['password'].encode('utf-8'),
-                salt,
-                100000
-            )
+        if data['password'] == config('DEFAULT_PASSWORD'):
+            await conn.execute(link_update.values(
+                endpoint=data['endpoint'] if data['endpoint'] else link_data['endpoint'],
+                url=data['url'] if data['url'] else link_data['url'],
+                switch_date=data['switch_date']
+            ))
+        else:
             if link_data.password:
-                await conn.execute(salts.update().where(
-                    salts.columns['link_id'] == link_id
-                ).values(salt=salt))
-            else:
+                await conn.execute(salts.delete().where(
+                    salts.columns['link_id'] == link_data.id
+                ))
+
+            if data['password']:
+                salt = os.urandom(32)
+                password = hashlib.pbkdf2_hmac(
+                    'sha256',
+                    data['password'].encode('utf-8'),
+                    salt,
+                    100000
+                )
                 await conn.execute(salts.insert().values(
                     link_id=link_id,
                     salt=salt
                 ))
+            else:
+                password = None
 
             await conn.execute(link_update.values(
                 endpoint=data['endpoint'] if data['endpoint'] else link_data['endpoint'],
                 url=data['url'] if data['url'] else link_data['url'],
                 switch_date=data['switch_date'],
                 password=password
-            ))
-
-        else:
-            await conn.execute(link_update.values(
-                endpoint=data['endpoint'] if data['endpoint'] else link_data['endpoint'],
-                url=data['url'] if data['url'] else link_data['url'],
-                switch_date=data['switch_date']
             ))
 
         await trans.commit()

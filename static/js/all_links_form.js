@@ -95,3 +95,58 @@ function toggleShareBox(rowid) {
     shareBox.style.display = "block";
   }
 }
+
+const param = window.location.search;
+const filter = {};
+
+for (const [key, value] of new URLSearchParams(param).entries()) {
+  filter[key] = value;
+}
+//use case switch
+let popUp = document.getElementById("pop");
+let values = filter.status;
+switch (values) {
+  case "updated":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Link updated";
+    break;
+  case "created":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Link created";
+    break;
+  case "deleted":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Link deleted";
+    break;
+  case "duplicate":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "This shortlink already exists";
+    break;
+  case "form-invalid":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Form invalid";
+    break;
+
+}
+
+let pop = document.getElementById("popEdit");
+let value = filter.status;
+switch (value) {
+  case "activated":
+    pop.style.display = "flex";
+    pop.innerHTML = "Link activated";
+    break;
+  case "deactivated":
+    pop.style.display = "flex";
+    pop.innerHTML = "Link disabled";
+    break;
+  case "form-invalid":
+    pop.style.display = "flex";
+    pop.innerHTML = "Form Invalid";
+    break;
+  case "reset":
+    pop.style.display = "flex";
+    pop.innerHTML = "Password reset";
+    break;
+
+}

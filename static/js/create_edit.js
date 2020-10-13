@@ -62,3 +62,14 @@ function copySingle() {
     hoverCopy[0].innerHTML = "copy";
   }, 800);
 }
+
+function toggleShow() {
+  var x = document.getElementById("password");
+  if (x.type === "password") {
+    x.type = "text";
+    document.getElementById("image").src = "/links/icons/eyeCrossed.svg";
+  } else {
+    x.type = "password";
+    document.getElementById("image").src = "/links/icons/eye.svg";
+  }
+}

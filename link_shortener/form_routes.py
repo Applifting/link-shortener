@@ -46,7 +46,7 @@ class UpdateForm(SanicForm):
 
 class PasswordForm(SanicForm):
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Visit shortlink')
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['GET'])

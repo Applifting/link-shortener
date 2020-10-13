@@ -121,13 +121,10 @@ input:checked + .slider:before {
   border: none;
   border-radius: 4px;
   color: var(--primary-purple);
+  outline: none;
 }
 #search::placeholder {
   color: var(--primary-grey);
-}
-.fa-search {
-  margin: 0 0px 0 1rem;
-  color: var(--form-grey);
 }
 #clearFilter {
   color: var(--primary-grey);

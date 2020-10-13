@@ -131,3 +131,12 @@ switch (value) {
     pop.style.display = "flex";
     pop.innerHTML = "Link disabled";
 }
+
+let passwordBorder = document.getElementById("passwordBorder");
+let valuess = filter.status;
+switch (valuess) {
+  case "incorrect-password":
+    passwordBorder.classList.add("redBorder");
+    document.getElementById("incorrectPass").style.display = "block";
+    break;
+}

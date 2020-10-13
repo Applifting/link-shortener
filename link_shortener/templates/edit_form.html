@@ -40,7 +40,8 @@
         <li><h4 class="formLabel">Set a password:</h4></li>
         {% endif %}
         <li id="passwordBorder">
-          {{ form.password(size=40, class='password')}}
+          {{ form.password(size=40, class='password', type='password',value=
+          default_password if payload.password)}}
           <span onclick="toggleShow()">
             <img id="image" src="/links/icons/eye.svg" alt="" />
           </span>
@@ -94,17 +95,9 @@
         <div id="edit-anchor">
           {% if payload.is_active %}
           <a class="deactivate" href="/deactivate/{{ payload.id }}">Disable</a>
-          {% if payload.password %}
-          <a class="resetDelete" href="/reset/{{ payload.id }}"
-            >Reset password</a
-          >
-          {% endif %} {% else %}
+          {% if payload.password %} {% endif %} {% else %}
           <a class="activate" href="/activate/{{ payload.id }}">Activate</a>
-          {% if payload.password %}
-          <a class="resetDelete" href="/reset/{{ payload.id }}"
-            >Reset password</a
-          >
-          {% endif %} {% endif %}
+          {% if payload.password %} {% endif %} {% endif %}
         </div>
       </li>
     </ul>

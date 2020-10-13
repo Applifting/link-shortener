@@ -31,7 +31,12 @@
       >
       <div id="advRequirements">
         <label class="formLabel">Password to visit shortlink</label>
-        <li>{{ form.password(size=30, class='formInput') }}</li>
+        <li id="passwordBorder">
+          {{ form.password(size=30, class='password', type='password') }}
+          <span onclick="toggleShow()">
+            <img id="image" src="/links/icons/eye.svg" alt="" />
+          </span>
+        </li>
         <label class="formLabel">Shortlink valid until</label>
         <li>
           {{ form.switch_date(size=30, placeholder="Deactivate on: YYYY-MM-DD",

@@ -64,12 +64,12 @@ function copySingle() {
 }
 
 function toggleShow() {
-  var x = document.getElementById("password");
-  if (x.type === "password") {
-    x.type = "text";
+  var password = document.getElementById("password");
+  if (password.type === "password") {
+    password.type = "text";
     document.getElementById("image").src = "/links/icons/eyeCrossed.svg";
   } else {
-    x.type = "password";
+    password.type = "password";
     document.getElementById("image").src = "/links/icons/eye.svg";
   }
 }

@@ -41,7 +41,13 @@ async def requests_count(request):
 async def redirect_link_view(request, link_endpoint):
     try:
         target = await redirect_link(request, link_endpoint)
-        return redirect(target, status=307)
+        if (target[:10] == '/authorize/'):
+            return redirect(target)
+
+        return html(template_loader(
+                        template_file='redirect.html',
+                        link=target,
+                    ), status=307)
     except NotFoundException:
         return html(template_loader(
                         template_file='message.html',
@@ -54,9 +60,11 @@ async def redirect_link_view(request, link_endpoint):
 async def landing_page(request):
     return redirect('/links/all', status=301)
 
+
 @view_blueprint.route('/links/about', methods=['GET'])
 async def about_page(request):
     return html(template_loader(template_file='about.html'), status=200)
+
 
 @view_blueprint.route('/links/all', methods=['GET'])
 @login_required

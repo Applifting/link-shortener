@@ -4,7 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from decouple import config
 from sanic import Blueprint
-from sanic.response import redirect, html
+from sanic.response import html, redirect
 
 from sanic_oauth.blueprint import login_required
 
@@ -79,7 +79,11 @@ async def link_password_save(request, link_id):
     try:
         form = PasswordForm(request)
         link = await check_password(request, link_id, form)
-        return redirect(link, status=307)
+        return html(template_loader(
+                        template_file='redirect.html',
+                        link=link,
+                    ), status=307)
+
     except FormInvalidException:
         message = 'invalid-form'  # status = 400
     except NotFoundException:

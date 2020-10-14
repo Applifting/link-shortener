@@ -49,11 +49,7 @@ async def redirect_link_view(request, link_endpoint):
                         link=target,
                     ), status=307)
     except NotFoundException:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Link inactive or does not exist',
-                        status_code='404'
-                    ), status=404)
+        return html(template_loader('message.html'), status=404)
 
 
 @view_blueprint.route('/', methods=['GET'])
@@ -101,12 +97,12 @@ async def owner_specific_links(request, user):
 async def delete_link_view(request, user, link_id):
     try:
         await delete_link(request, link_id)
-        message = 'deleted'  # status = 200
+        return redirect(
+            '/links/all?origin=delete&status=deleted',
+            status=200
+        )
     except NotFoundException:
-        message = 'not-found'  # status = 404
-    finally:
-        params = f'?origin=delete&status={message}'
-        return redirect(f'/links/all{params}')
+        return html(template_loader('message.html'), status=404)
 
 
 @view_blueprint.route('/delete/<link_id>/confirm', methods=['GET'])
@@ -126,12 +122,12 @@ async def activate_link_view(request, user, link_id):
         await activate_link(request, link_id)
         message = 'activated'  # status = 200
     except NotFoundException:
-        message = 'not-found'  # status = 404
+        return html(template_loader('message.html'), status=404)
     except DuplicateActiveLinkForbidden:
         message = 'duplicate'  # status = 409
-    finally:
-        params = f'?origin=activate&status={message}'
-        return redirect(f'/edit/{link_id}{params}')
+
+    params = f'?origin=activate&status={message}'
+    return redirect(f'/edit/{link_id}{params}')
 
 
 @view_blueprint.route('/deactivate/<link_id>', methods=['GET'])
@@ -140,12 +136,10 @@ async def activate_link_view(request, user, link_id):
 async def deactivate_link_view(request, user, link_id):
     try:
         await deactivate_link(request, link_id)
-        message = 'deactivated'  # status = 200
+        params = '?origin=deactivate&status=deactivated'
+        return redirect(f'/edit/{link_id}{params}', status=200)
     except NotFoundException:
-        message = 'not-found'  # status = 404
-    finally:
-        params = f'?origin=deactivate&status={message}'
-        return redirect(f'/edit/{link_id}{params}')
+        return html(template_loader('message.html'), status=404)
 
 
 @view_blueprint.route('/reset/<link_id>', methods=['GET'])
@@ -154,9 +148,7 @@ async def deactivate_link_view(request, user, link_id):
 async def reset_password_view(request, user, link_id):
     try:
         await reset_password(request, link_id)
-        message = 200, 'reset'  # status = 200
+        params = '?origin=reset&status=reset'
+        return redirect(f'/edit/{link_id}{params}', status=200)
     except NotFoundException:
-        message = 404, 'not-found'  # status = 404
-    finally:
-        params = f'?origin=reset&status={message}'
-        return redirect(f'/edit/{link_id}{params}')
+        return html(template_loader('message.html'), status=404)

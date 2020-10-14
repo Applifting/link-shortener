@@ -41,6 +41,9 @@ async def requests_count(request):
 async def redirect_link_view(request, link_endpoint):
     try:
         target = await redirect_link(request, link_endpoint)
+        if (target[:10] == '/authorize/'):
+            return redirect(target)
+
         return html(template_loader(
                         template_file='redirect.html',
                         link=target,

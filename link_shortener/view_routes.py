@@ -100,11 +100,11 @@ async def confirm_delete_link_view(request, user, link_id):
 async def activate_link_view(request, user, link_id):
     try:
         await activate_link(request, link_id)
-        message = 'activated' # status = 200
+        message = 'activated'  # status = 200
     except NotFoundException:
         return html(template_loader('message.html'), status=404)
     except DuplicateActiveLinkForbidden:
-        message = 'duplicate' # status = 409
+        message = 'duplicate'  # status = 409
 
     params = f'?origin=activate&status={message}'
     return redirect(f'/edit/{link_id}{params}')

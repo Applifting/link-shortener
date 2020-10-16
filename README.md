@@ -2,14 +2,15 @@
 
 How to use:
 
-- Configure settings.ini with your Client ID and Secret key
+- Configure settings.ini with your credentials, template can be found
+in the Documentation section
 - Run 'docker-compose build', then 'docker-compose up'
 
 How to test:
 
 - Run 'docker-compose down' and 'docker-compose up', the DB has to be fresh
 for the tests to work
-- Run 'docker-compose run web sh -c "pytest --disable-pytest-warnings"'
+- Run './test.sh' (and 'chmod a+rx test.sh' before if not allowed)
 - All or most of the warnings should be about async syntax deprecation,
 as sanic_oauth has old/deprecated versions of dependencies (httpx et al.)
 
@@ -57,8 +58,3 @@ Attempts at accessing password secured links will be automatically redirected
 to this endpoint.
 Submitting the correct password results in redirection to the link's
 specific URL.
-
-
-To do before production:
-
-- Change wait_for_db from sleep to pinging the db

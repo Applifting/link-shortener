@@ -39,7 +39,7 @@ async def requests_count(request):
 
 @view_blueprint.route('/status/liveness')
 def liveness_check(request):
-    return response.text('OK')
+    return text('OK')
 
 
 @view_blueprint.route('/<link_endpoint>', methods=['GET'])

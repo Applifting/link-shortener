@@ -19,7 +19,8 @@ engine_data = f"postgresql://" \
               f"{config('POSTGRES_PASSWORD')}@" \
               f"{config('POSTGRES_HOST')}:" \
               f"{config('POSTGRES_PORT')}/" \
-              f"{config('POSTGRES_DB')}?sslmode=preferred" \
+              f"{config('POSTGRES_DB')}" \
+              f"?sslmode={config('POSTGRES_SSL_MODE', default='prefer')}" \
     if config('PRODUCTION', default=False, cast=bool) \
     else 'postgresql://postgres:postgres@db:5432/db'
 

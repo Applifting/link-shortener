@@ -37,6 +37,11 @@ async def requests_count(request):
         return json({'message': error}, status=500)
 
 
+@view_blueprint.route('/status/liveness')
+def liveness_check(request):
+    return response.text('OK')
+
+
 @view_blueprint.route('/<link_endpoint>', methods=['GET'])
 async def redirect_link_view(request, link_endpoint):
     try:

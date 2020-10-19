@@ -31,7 +31,7 @@ POSTGRES_DB=<postgresql_db_name>
 POSTGRES_USER=<postgresql_user_name>
 POSTGRES_PASSWORD=<postgresql_password>
 POSTGRES_PORT=<postgresql_db_port> (Most likely 5432)
-SSL_MODE=<prefer/require/other>
+POSTGRES_SSL_MODE=<prefer/require/other>
 
 Notes:
 

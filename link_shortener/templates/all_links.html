@@ -45,7 +45,7 @@
         <th>Shortlink</th>
         <th>Actions</th>
       </tr>
-  
+
       {% for row in data['data'] %}
       <tr>
         <td id="isActive">
@@ -60,10 +60,10 @@
           <span><a class="rowurl" href="{{ row.url }}">{{ row.url }}</a></span>
         </td>
         <td id="shortlinked-{{row.id}}">
-          <span id="domain">www.{{domain_name}}</span
+          <span id="domain">{{domain_name}}</span
           ><!-- / --><span id="endpoint1">/{{ row.endpoint}}</span>
         </td>
-  
+
         <td class="actions">
           <a class="copy" onclick="copyShortLink('{{row.id}}')">
             <img src="/links/icons/copyIcon.svg" alt="copyicon" class="copyIcon" />
@@ -85,7 +85,7 @@
               class="edits"
             />
             <img src="/links/icons/editHover.svg" alt="edit" class="hoverEdit" />
-  
+
           </a>
           <div class="display">
             <a class="display displatBtn" onclick="toggleShareBox('{{row.id}}')">

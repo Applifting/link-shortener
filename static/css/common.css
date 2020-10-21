@@ -79,20 +79,14 @@
   padding: 0;
 }
 .formLabel {
-  margin: 0.5rem 2.5rem;
+  margin: 20px 0;
   font-size: 1rem;
   color: var(--primary-black);
 }
 .formInput {
-  width: 83.33%;
-  margin: 0.5rem 2.5rem;
+  width: 100%;
   padding: 0.5rem;
   border: 1px solid var(--primary-black);
-}
-.form-header {
-  text-align: center;
-  padding-top: 2rem;
-  color: var(--primary-black);
 }
 .rotate {
   transform: rotate(0deg);
@@ -170,4 +164,14 @@ a:hover {
   100% {
     opacity: 0;
   }
+}
+.create__edit__container {
+  padding: 0 2.5rem;
+}
+.container__submit {
+  padding: 0 2.5rem;
+}
+#advSettings {
+  margin-top: 20px;
+  margin-bottom: 0;
 }

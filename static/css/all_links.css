@@ -114,6 +114,8 @@ input:checked + .slider:before {
 #searchBorder {
   border: 1px solid var(--form-grey);
   border-radius: 4px;
+  display: grid;
+  grid-template-columns: 10% 90%;
 }
 #search {
   width: 220px;
@@ -122,6 +124,10 @@ input:checked + .slider:before {
   border-radius: 4px;
   color: var(--primary-purple);
   outline: none;
+}
+.search_icon {
+  display: flex;
+  align-items: center;
 }
 #search::placeholder {
   color: var(--primary-grey);

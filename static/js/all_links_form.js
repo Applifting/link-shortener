@@ -149,11 +149,13 @@ switch (value) {
     break;
 }
 
-let passwordBorder = document.getElementById("passwordBorder");
+let passwordBorder = document.getElementsByClassName("container1__border")[0];
 let valuess = filter.status;
 switch (valuess) {
   case "incorrect-password":
-    passwordBorder.classList.add("redBorder");
-    document.getElementById("incorrectPass").style.display = "block";
+    passwordBorder.classList.add("container1__red__border");
+    document.getElementsByClassName(
+      "container1__incorrectPass"
+    )[0].style.display = "block";
     break;
 }

@@ -5,7 +5,7 @@
 >
 <div class="editAndCreate">
   <form class="form" action="#" method="POST">
-    <h1 class="form-header">Edit Shortlink</h1>
+    <h1>Edit Shortlink</h1>
     <div class="ownerOfLinkContainer">
       <span class="ownerOfLink">owned by</span> {{payload.owner}}
     </div>
@@ -13,58 +13,65 @@
     }}
     <ul class="formContent">
       <br />
-      <li><h4 class="formLabel">Change URL:</h4></li>
-      <li>{{ form.url(size=40, value=payload.url, class="formInput") }}</li>
-      <br />
-      <li><h4 class="formLabel">Change Endpoint:</h4></li>
-      <li>
-        {{ form.endpoint(size=40, value=payload.endpoint, class="formInput",
-        id='shortlink') }}
-      </li>
+      <div class="create__edit__container">
+        <li><h4 class="formLabel">Change URL:</h4></li>
+        <li>{{ form.url(size=40, value=payload.url, class="formInput") }}</li>
+        <br />
+        <li><h4 class="formLabel">Change Endpoint:</h4></li>
+        <li>
+          {{ form.endpoint(size=40, value=payload.endpoint, class="formInput",
+          id='shortlink') }}
+        </li>
 
-      <!--<dd></dd> -->
-      <label class="formLabel" id="advSettings">
-        <span>
-          <img
-            id="icon"
-            class="rotate"
-            src="/links/icons/openArrow.svg"
-            alt=""
-          /> </span
-        >Advanced Settings</label
-      >
-      <div id="advRequirements">
-        {% if payload.password %}
-        <li><h4 class="formLabel">Change password:</h4></li>
-        {% else %}
-        <li><h4 class="formLabel">Set a password:</h4></li>
-        {% endif %}
-        <li id="passwordBorder">
-          {{ form.password(size=40, class='password', type='password',value=
-          default_password if payload.password)}}
-          <span onclick="toggleShow()">
-            <img id="image" src="/links/icons/eye.svg" alt="" />
-          </span>
-        </li>
-        {% if payload.switch_date %} {% if payload.is_active %}
-        <h4 class="formLabel">Link will deactivate on:</h4>
-        {% else %}
-        <h4 class="formLabel">Link will activate on:</h4>
-        {% endif %}
-        <li>
-          {{ form.switch_date(size=40, value=payload.switch_date,
-          class='formInput', type='date' ) }}
-        </li>
-        {% else %} {% if payload.is_active %}
-        <h4 class="formLabel">Set a date to deactivate link</h4>
-        {% else %}
-        <h4 class="formLabel">Set a date to activate link</h4>
-        {% endif %}
-        <li>
-          {{ form.switch_date(size=40, placeholder="YYYY-MM-DD",
-          class='formInput', type='date' ) }}
-        </li>
-        {% endif %}
+        <!--<dd></dd> -->
+        <label class="formLabel" id="advSettings">
+          <span>
+            <img
+              id="icon"
+              class="rotate"
+              src="/links/icons/openArrow.svg"
+              alt=""
+            /> </span
+          >Advanced Settings</label
+        >
+        <div id="advRequirements">
+          {% if payload.password %}
+          <li><h4 class="formLabel">Change password:</h4></li>
+          {% else %}
+          <li><h4 class="formLabel">Set a password:</h4></li>
+          {% endif %}
+          <div class="container1__border">
+            <div class="container1__password">
+              {{ form.password(size=20, type='password') }}
+            </div>
+            <span onclick="toggleShow()" class="ggg">
+              <img
+                class="container1__image"
+                src="/links/icons/eye.svg"
+                alt=""
+              />
+            </span>
+          </div>
+          {% if payload.switch_date %} {% if payload.is_active %}
+          <h4 class="formLabel">Link will deactivate on:</h4>
+          {% else %}
+          <h4 class="formLabel">Link will activate on:</h4>
+          {% endif %}
+          <li>
+            {{ form.switch_date(size=40, value=payload.switch_date,
+            class='formInput', type='date' ) }}
+          </li>
+          {% else %} {% if payload.is_active %}
+          <h4 class="formLabel">Set a date to deactivate link</h4>
+          {% else %}
+          <h4 class="formLabel">Set a date to activate link</h4>
+          {% endif %}
+          <li>
+            {{ form.switch_date(size=40, placeholder="YYYY-MM-DD",
+            class='formInput', type='date' ) }}
+          </li>
+          {% endif %}
+        </div>
       </div>
       <span id="fueled">
         <div id="shortlinked">
@@ -90,7 +97,9 @@
           </a>
         </div>
       </span>
-      <li>{{ form.submit(id='edit', class='formInput') }}</li>
+      <li class="container__submit">
+        {{ form.submit(id='edit', class='formInput') }}
+      </li>
       <li>
         <div id="edit-anchor">
           {% if payload.is_active %}

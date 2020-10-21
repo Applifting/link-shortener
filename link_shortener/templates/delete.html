@@ -7,11 +7,13 @@
   <div class="ownerOfLinkContainer">Owner</div>
   <div id="fueled">www.fueled.by/example <span id="copycat"></span></div>
   <div id="deleteQ">Are you sure you want to <br />delete this link?</div>
-  <a class="aTag" href="/delete/{{ link_id }}"
-    ><div class="formInput" id="deleteBtn">Delete</div></a
-  >
-  <a class="aTag" href="/links/all">
-    <div class="formInput" id="cancelBtn">Cancel</div></a
-  >
+  <div class="container__submit">
+    <a class="aTag" href="/delete/{{ link_id }}"
+      ><div class="formInput" id="deleteBtn">Delete</div></a
+    >
+    <a class="aTag" href="/links/all">
+      <div class="formInput" id="cancelBtn">Cancel</div></a
+    >
+  </div>
 </form>
 {% endblock %}

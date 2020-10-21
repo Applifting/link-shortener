@@ -18,7 +18,9 @@
   {% endfor %}
       </select>
       <div id='searchBorder'>
-        <img src="/links/icons/search.svg" alt="">
+        <div class='search_icon'>
+        <img src="/links/icons/search.svg" alt="search__icon">
+      </div>
         <input
           name="search"
           id="search"
@@ -68,7 +70,6 @@
           <a class="copy" onclick="copyShortLink('{{row.id}}')">
             <img src="/links/icons/copyIcon.svg" alt="copyicon" class="copyIcon" />
             <img src="/links/icons/hoverCopy.svg" alt="hovercopy" class="copyIconHover" />
-
             <div class="hoverCopy">
               <div class="triangleContainer"><span id="triangle-up"></span></div>
               <div class="hoverCopyContainer">
@@ -108,9 +109,7 @@
               alt="Not found"
               class="delete"
             />
-
             <img src="/links/icons/deleteHover.svg" alt="deletehover" class="deleteHover" />
-
           </a>
         </td>
       </tr>

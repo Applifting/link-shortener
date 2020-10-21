@@ -48,9 +48,6 @@ If an activation date had been set, it will not be carried over.
 **/delete/<link_id>**
 Deletes a link identified by the endpoint's link_id parameter.
 
-**/reset/<link_id>**
-Resets password of a link identified by the endpoint's link_id parameter.
-
 **/authorize/<link_id>**
 A form for submitting a password of a link identified by the endpoint's
 link_id parameter.

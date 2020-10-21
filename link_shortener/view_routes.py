@@ -10,7 +10,6 @@ from prometheus_client import Counter, generate_latest
 
 from link_shortener.templates import template_loader
 from link_shortener.commands.retrieve import retrieve_links
-from link_shortener.commands.update import reset_password
 from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 from link_shortener.commands.redirect import redirect_link
@@ -122,18 +121,6 @@ async def deactivate_link_view(request, user, link_id):
     try:
         await deactivate_link(request, link_id)
         params = '?origin=deactivate&status=deactivated'
-        return redirect(f'/edit/{link_id}{params}')
-    except NotFoundException:
-        return html(template_loader('message.html'), status=404)
-
-
-@view_blueprint.route('/reset/<link_id>', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def reset_password_view(request, user, link_id):
-    try:
-        await reset_password(request, link_id)
-        params = '?origin=reset&status=reset'
         return redirect(f'/edit/{link_id}{params}')
     except NotFoundException:
         return html(template_loader('message.html'), status=404)

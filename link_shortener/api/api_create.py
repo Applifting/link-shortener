@@ -15,6 +15,7 @@ from link_shortener.commands.authorize import check_token
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             DuplicateActiveLinkForbidden,
                                             IncorrectDataFormat,
+                                            LinkNotAllowed,
                                             MissingDataException)
 
 

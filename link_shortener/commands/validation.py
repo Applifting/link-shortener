@@ -4,7 +4,8 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from sqlalchemy import and_
 
-from link_shortener.core.exceptions import DuplicateActiveLinkForbidden
+from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
+                                            LinkNotAllowed)
 from link_shortener.models import links
 
 
@@ -17,3 +18,9 @@ async def endpoint_duplicity_check(conn, data):
 
     if link_data:
         raise DuplicateActiveLinkForbidden
+
+
+def url_validation(url):
+    '''
+    '''
+    pass

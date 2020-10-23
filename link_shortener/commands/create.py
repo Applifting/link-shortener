@@ -35,8 +35,9 @@ async def create_link(request, data):
             is_active=True
         ))
         if password:
+            link = await link_object.fetchone()
             await conn.execute(salts.insert().values(
-                link_id=link_object.lastrowid,
+                link_id=link.id,
                 salt=salt
             ))
 

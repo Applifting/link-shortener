@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    {% include 'analytics.html' %}
+    <script>
+        function redirect() {
+            location.replace('{{ link }}')
+        }
+    </script>
+</head>
+<body onload="redirect()">
+</body>
+</html>

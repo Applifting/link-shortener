@@ -126,7 +126,6 @@ switch (values) {
     popUp.style.display = "flex";
     popUp.innerHTML = "Form invalid";
     break;
-
 }
 
 let pop = document.getElementById("popEdit");
@@ -148,5 +147,15 @@ switch (value) {
     pop.style.display = "flex";
     pop.innerHTML = "Password reset";
     break;
+}
 
+let passwordBorder = document.getElementsByClassName("container1__border")[0];
+let valuess = filter.status;
+switch (valuess) {
+  case "incorrect-password":
+    passwordBorder.classList.add("container1__red__border");
+    document.getElementsByClassName(
+      "container1__incorrectPass"
+    )[0].style.display = "block";
+    break;
 }

@@ -88,6 +88,7 @@
   height: 42px;
   padding: 0.5rem;
   border: 1px solid var(--primary-black);
+  outline: none;
 }
 .rotate {
   transform: rotate(0deg);

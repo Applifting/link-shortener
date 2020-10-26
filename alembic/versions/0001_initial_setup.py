@@ -1,6 +1,7 @@
 """Initial DB setup
 
-Revision ID: initial_setup
+Revision ID: 0001
+Down revision ID: None
 
 """
 import sqlalchemy as sa
@@ -8,7 +9,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 
-revision = 'initial_setup'
+revision = '0001_initial_setup'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -40,4 +41,5 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    op.drop_table('hash_salts')
+    op.drop_table('links')

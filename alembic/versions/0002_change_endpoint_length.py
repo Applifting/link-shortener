@@ -6,7 +6,6 @@ Down revision ID: 0001
 """
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import postgresql
 
 
 revision = '0002_change_endpoint_length'

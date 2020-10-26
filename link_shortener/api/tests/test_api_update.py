@@ -170,7 +170,7 @@ class TestUpdateLinkAPI(TestCase):
         self.assertEqual(response.status, 405)
         self.assertEqual(str(response.url)[-11:], self.endpoint)
 
-    def test_put_data_duplicated_endpoint_fails(self):
+    def test_put_data_duplicate_endpoint_fails(self):
         '''
         Test that a put request to update an existing link with duplicate
         endpoint data yields an HTTP_409_CONFLICT response.
@@ -188,3 +188,59 @@ class TestUpdateLinkAPI(TestCase):
 
         message = 'An active link with that name already exists'
         self.assertEqual(loads(response.text)['message'], message)
+
+    def test_put_forbidden_data_fails(self):
+        '''
+        Test that a put request to update an existing link with a blacklisted
+        URL pattern yields and HTTP_400_BAD_REQUEST response.
+        '''
+        data = self.data
+        data['url'] = 'http://www.prefix-forbidden-test-domain-suffix.cz'
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(data)
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+        message = 'The provided link URL is blacklisted'
+        self.assertEqual(loads(response.text)['message'], message)
+
+    def test_aaa_put_data_without_subdomain(self):
+        '''
+        Test that a put request to update an existing link with the correct
+        data and token, but missing URL subdomain, still yields
+        an HTTP_200_OK response.
+        '''
+        data = self.data
+        data['url'] = 'www.vlk.cz'
+        response = self.app.test_client.put(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(data)
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+        message = 'Link updated successfully'
+        self.assertEqual(loads(response.text)['message'], message)
+
+    def test_aab_get_edited_data_subdomain_addition_check(self):
+        '''
+        Test that a get request for a link updated in the test above
+        yields corrected updated data.
+        '''
+        response = self.app.test_client.get(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-11:], self.endpoint)
+
+        link_data = loads(response.text)
+        self.assertEqual(link_data['url'], 'http://www.vlk.cz')
+        self.assertEqual(link_data['endpoint'], self.data['endpoint'])

@@ -13,10 +13,11 @@ from link_shortener.commands.update import update_link
 from link_shortener.commands.authorize import check_token
 
 from link_shortener.core.exceptions import (AccessDeniedException,
+                                            DuplicateActiveLinkForbidden,
                                             IncorrectDataFormat,
+                                            LinkNotAllowed,
                                             MissingDataException,
-                                            NotFoundException,
-                                            DuplicateActiveLinkForbidden)
+                                            NotFoundException)
 
 
 api_update_blueprint = Blueprint('api_update')
@@ -65,5 +66,7 @@ async def api_update_link(request, link_id):
         status, message = 404, 'Link does not exist'
     except DuplicateActiveLinkForbidden:
         status, message = 409, 'An active link with that name already exists'
+    except LinkNotAllowed:
+        status, message = 400, 'The provided link URL is blacklisted'
     finally:
         return json({'message': message}, status=status)

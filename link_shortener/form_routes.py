@@ -18,11 +18,11 @@ from link_shortener.templates import template_loader
 from link_shortener.commands.authorize import check_auth_form, check_password
 from link_shortener.commands.update import check_update_form, update_link
 from link_shortener.commands.create import create_link
-
 from link_shortener.core.decorators import credential_whitelist_check
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             DuplicateActiveLinkForbidden,
                                             FormInvalidException,
+                                            LinkNotAllowed,
                                             NotFoundException)
 
 
@@ -124,6 +124,8 @@ async def create_link_save(request, user):
         message = 'invalid-form'  # status = 400
     except DuplicateActiveLinkForbidden:
         message = 'duplicate'  # status = 409
+    except LinkNotAllowed:
+        message = 'not-allowed'  # status = 400
     finally:
         params = f'?origin=create&status={message}'
         return redirect(f'/links/all{params}')
@@ -165,6 +167,8 @@ async def update_link_save(request, user, link_id):
         message = 'updated'   # status = 200
     except FormInvalidException:
         message = 'form-invalid'  # status = 400
+    except LinkNotAllowed:
+        message = 'not-allowed'  # status = 400
     except NotFoundException:
         return html(template_loader('message.html'), status=404)
     except DuplicateActiveLinkForbidden:

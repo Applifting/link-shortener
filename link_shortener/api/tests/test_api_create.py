@@ -137,6 +137,34 @@ class TestCreateLinkAPI(TestCase):
         message = 'An active link with that name already exists'
         self.assertEqual(loads(response.text)['message'], message)
 
+    def test_post_forbidden_data_fails(self):
+        '''
+        Test that a post request to create a new active link with
+        a blacklisted URL pattern yields an HTTP_400_BAD_REQUEST response.
+        '''
+        data = {
+            'owner': 'test.user@applifting.cz',
+            'owner_id': '1234567890',
+            'endpoint': 'forbidden',
+            'url': 'http://www.prefix-forbidden-test-domain-suffix.cz',
+            'switch_date': {
+                'Year': 2021,
+                'Month': 1,
+                'Day': 8
+            }
+        }
+        response = self.app.test_client.post(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(data)
+        )
+        self.assertEqual(response.status, 400)
+        self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+        message = 'The provided link URL is blacklisted'
+        self.assertEqual(loads(response.text)['message'], message)
+
     def test_post_data_without_token_fails(self):
         '''
         Test that a post request to create a new active link without a token

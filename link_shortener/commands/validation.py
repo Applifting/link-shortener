@@ -11,7 +11,7 @@ from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
 from link_shortener.models import links
 
 
-blacklisted_words = []
+blacklisted_words = ['forbidden-test-domain']
 
 
 async def endpoint_duplicity_check(conn, data):
@@ -25,7 +25,7 @@ async def endpoint_duplicity_check(conn, data):
         raise DuplicateActiveLinkForbidden
 
 
-def url_validation(url):
+async def url_validation(url, transaction):
     '''
     Checks the URL for blacklisted patterns, then adds a subdomain unless
     it already has one.
@@ -33,6 +33,7 @@ def url_validation(url):
     for word in blacklisted_words:
         pattern = re.compile(word, re.I)
         if pattern.search(url):
+            await transaction.close()
             raise LinkNotAllowed
 
     if url[:4] != 'http':

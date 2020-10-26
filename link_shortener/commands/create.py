@@ -31,7 +31,7 @@ async def create_link(request, data):
             owner_id=data['owner_id'],
             password=password,
             endpoint=data['endpoint'],
-            url=url_validation(data['url']),
+            url=await url_validation(data['url'], trans),
             switch_date=data['switch_date'],
             is_active=True
         ))

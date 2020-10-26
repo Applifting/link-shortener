@@ -48,7 +48,7 @@ async def update_link(request, link_id, data):
             await conn.execute(link_update.values(
                 endpoint=data['endpoint'] if data['endpoint']
                 else link_data['endpoint'],
-                url=url_validation(data['url']) if data['url']
+                url=await url_validation(data['url'], trans) if data['url']
                 else link_data['url'],
                 switch_date=data['switch_date']
             ))
@@ -76,7 +76,7 @@ async def update_link(request, link_id, data):
             await conn.execute(link_update.values(
                 endpoint=data['endpoint'] if data['endpoint']
                 else link_data['endpoint'],
-                url=url_validation(data['url']) if data['url']
+                url=await url_validation(data['url'], trans) if data['url']
                 else link_data['url'],
                 switch_date=data['switch_date'],
                 password=password

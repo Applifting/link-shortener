@@ -66,5 +66,7 @@ async def api_create_link(request):
         status, message = 400, 'Please provide correctly formatted data'
     except DuplicateActiveLinkForbidden:
         status, message = 409, 'An active link with that name already exists'
+    except LinkNotAllowed:
+        status, message = 400, 'The provided link URL is blacklisted'
     finally:
         return json({'message': message}, status=status)

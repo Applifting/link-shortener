@@ -167,6 +167,8 @@ async def update_link_save(request, user, link_id):
         message = 'updated'   # status = 200
     except FormInvalidException:
         message = 'form-invalid'  # status = 400
+    except LinkNotAllowed:
+        message = 'not-allowed'  # status = 400
     except NotFoundException:
         return html(template_loader('message.html'), status=404)
     except DuplicateActiveLinkForbidden:

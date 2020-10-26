@@ -23,4 +23,4 @@ async def endpoint_duplicity_check(conn, data):
 def url_validation(url):
     '''
     '''
-    pass
+    return url

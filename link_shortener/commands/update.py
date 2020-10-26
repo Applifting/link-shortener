@@ -8,7 +8,8 @@ import os
 from decouple import config
 
 from link_shortener.core.exceptions import NotFoundException
-from link_shortener.commands.validation import endpoint_duplicity_check
+from link_shortener.commands.validation import (endpoint_duplicity_check,
+                                                url_validation)
 from link_shortener.models import links, salts
 
 
@@ -47,7 +48,8 @@ async def update_link(request, link_id, data):
             await conn.execute(link_update.values(
                 endpoint=data['endpoint'] if data['endpoint']
                 else link_data['endpoint'],
-                url=data['url'] if data['url'] else link_data['url'],
+                url=url_validation(data['url']) if data['url']
+                else link_data['url'],
                 switch_date=data['switch_date']
             ))
         else:
@@ -74,7 +76,8 @@ async def update_link(request, link_id, data):
             await conn.execute(link_update.values(
                 endpoint=data['endpoint'] if data['endpoint']
                 else link_data['endpoint'],
-                url=data['url'] if data['url'] else link_data['url'],
+                url=url_validation(data['url']) if data['url']
+                else link_data['url'],
                 switch_date=data['switch_date'],
                 password=password
             ))

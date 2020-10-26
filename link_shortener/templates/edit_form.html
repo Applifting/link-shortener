@@ -82,9 +82,9 @@
         </div>
         <div>
           <a class="copy" onclick="copySingle()">
-            <img src="/links/icons/copyIcon.svg" alt="copyicon" />
+            <img src="/links/icons/copy__Icon.svg" alt="copyicon" />
             <img
-              src="/links/icons/hoverCopy.svg"
+              src="/links/icons/hover__Copy.svg"
               alt="hovercopy"
               class="copyIconCreate"
             />
@@ -99,18 +99,20 @@
           </a>
         </div>
       </span>
-      <li class="container__submit">
-        {{ form.submit(id='edit', class='formInput') }}
-      </li>
-      <li>
-        <div id="edit-anchor">
-          {% if payload.is_active %}
-          <a class="deactivate" href="/deactivate/{{ payload.id }}">Disable</a>
-          {% if payload.password %} {% endif %} {% else %}
-          <a class="activate" href="/activate/{{ payload.id }}">Activate</a>
-          {% if payload.password %} {% endif %} {% endif %}
-        </div>
-      </li>
+      <div class="container__submit">
+        <li>{{ form.submit(id='edit', class='formInput') }}</li>
+        <li>
+          <div id="edit-anchor">
+            {% if payload.is_active %}
+            <a class="deactivate" href="/deactivate/{{ payload.id }}"
+              >Disable</a
+            >
+            {% if payload.password %} {% endif %} {% else %}
+            <a class="activate" href="/activate/{{ payload.id }}">Activate</a>
+            {% if payload.password %} {% endif %} {% endif %}
+          </div>
+        </li>
+      </div>
     </ul>
   </form>
 </div>

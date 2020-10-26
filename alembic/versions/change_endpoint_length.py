@@ -1,15 +1,15 @@
 """Change endpoint length
 
-Revision ID: 0002
-Down revision ID: 0001
+Revision ID: change_endpoint_length
+Down revision ID: initial_setup
 
 """
 import sqlalchemy as sa
 from alembic import op
 
 
-revision = '0002_change_endpoint_length'
-down_revision = '0001_initial_setup'
+revision = 'change_endpoint_length'
+down_revision = 'initial_setup'
 branch_labels = None
 depends_on = None
 

@@ -1,6 +1,6 @@
 """Initial DB setup
 
-Revision ID: 0001
+Revision ID: initial_setup
 Down revision ID: None
 
 """
@@ -9,7 +9,7 @@ from alembic import op
 from sqlalchemy.dialects import postgresql
 
 
-revision = '0001_initial_setup'
+revision = 'initial_setup'
 down_revision = None
 branch_labels = None
 depends_on = None

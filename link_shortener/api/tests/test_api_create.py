@@ -213,3 +213,42 @@ class TestCreateLinkAPI(TestCase):
         )
         self.assertEqual(response.status, 405)
         self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+    def test_post_data_without_subdomain(self):
+        '''
+        Test that a post request to create a new active link with the correct
+        data and token, but missing URL subdomain, still yields
+        an HTTP_201_CREATED response.
+        '''
+        data = self.data
+        data['endpoint'] = 'subdomain'
+        data['url'] = 'www.vlk.cz'
+        response = self.app.test_client.post(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers,
+            data=dumps(self.data)
+        )
+        self.assertEqual(response.status, 201)
+        self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+        message = 'Link created successfully'
+        self.assertEqual(loads(response.text)['message'], message)
+
+    def test_get_created_data_subdomain_addition_check(self):
+        '''
+        Test that a get request for a link created in the test above
+        yields corrected URL data.
+        '''
+        response = self.app.test_client.get(
+            self.endpoint,
+            gather_request=False,
+            headers=self.headers
+        )
+        self.assertEqual(response.status, 200)
+        self.assertEqual(str(response.url)[-10:], self.endpoint)
+
+        link_data = loads(response.text)
+        for link in link_data:
+            if link['endpoint'] == 'subdomain':
+                self.assertEqual(link['url'], 'http://www.vlk.cz')

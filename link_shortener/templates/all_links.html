@@ -1,26 +1,33 @@
 {% extends 'base.html' %} {% block content %}
-<div id='pop'></div>
-<div class="container" >
-  <form name='form' class='tableForm' id="forms" method="GET"action="#">
+<div id="pop"></div>
+<div class="container">
+  <form name="form" class="tableForm" id="forms" method="GET" action="#">
     <div class="tbHead">
       <div class="toggle">
-        <div id='statusActive'>Active</div>
+        <div id="statusActive">Active</div>
         <label class="switch">
-          <input  onChange="this.form.submit()"name='is_active'type="checkbox"  id='checkbox' value='false' onclick="toggleActive()"/>
+          <input
+            onChange="this.form.submit()"
+            name="is_active"
+            type="checkbox"
+            id="checkbox"
+            value="false"
+            onclick="toggleActive()"
+          />
           <span class="slider round"></span>
         </label>
-        <div id='statusDisabled'>Disabled</div>
+        <div id="statusDisabled">Disabled</div>
       </div>
       <select onChange="this.form.submit()" name="owner" id="ownerFilter">
-        <option value=''>Owner</option>
+        <option value="">Owner</option>
         {% for owner in data["owners"] %}
-      <option value="{{ owner }}">{{ owner }}</option>
-  {% endfor %}
+        <option value="{{ owner }}">{{ owner }}</option>
+        {% endfor %}
       </select>
-      <div id='searchBorder'>
-        <div class='search_icon'>
-        <img src="/links/icons/search.svg" alt="search__icon">
-      </div>
+      <div id="searchBorder">
+        <div class="search_icon">
+          <img src="/links/icons/search.svg" alt="search__icon" />
+        </div>
         <input
           name="search"
           id="search"
@@ -29,7 +36,9 @@
           value=""
         />
       </div>
-      <input onclick="clearFilters()" id="clearFilter" value="Clear Filters"></input>
+      <div onclick="clearFilters()" id="clearFilter" value="Clear Filters">
+        Clear Filters
+      </div>
     </div>
     <div>
       <a href="/create" id="createShort">
@@ -37,8 +46,7 @@
       >
     </div>
   </form>
-  <div id='tableContainer'>
-
+  <div id="tableContainer">
     <table class="all-links-table">
       <tr>
         <th>Status</th>
@@ -47,7 +55,7 @@
         <th>Shortlink</th>
         <th>Actions</th>
       </tr>
-  
+
       {% for row in data['data'] %}
       <tr>
         <td id="isActive">
@@ -65,13 +73,23 @@
           <span id="domain">www.{{domain_name}}</span
           ><!-- / --><span id="endpoint1">/{{ row.endpoint}}</span>
         </td>
-  
+
         <td class="actions">
           <a class="copy" onclick="copyShortLink('{{row.id}}')">
-            <img src="/links/icons/copy__Icon.svg" alt="copyicon" class="copyIcon" />
-            <img src="/links/icons/hover__Copy.svg" alt="hovercopy" class="copyIconHover" />
+            <img
+              src="/links/icons/copy__Icon.svg"
+              alt="copyicon"
+              class="copyIcon"
+            />
+            <img
+              src="/links/icons/hover__Copy.svg"
+              alt="hovercopy"
+              class="copyIconHover"
+            />
             <div class="hoverCopy">
-              <div class="triangleContainer"><span id="triangle-up"></span></div>
+              <div class="triangleContainer">
+                <span id="triangle-up"></span>
+              </div>
               <div class="hoverCopyContainer">
                 <span class="copyHoverSquare square-{{row.id}}">copy</span>
               </div>
@@ -85,8 +103,11 @@
               alt="Not found"
               class="edits"
             />
-            <img src="/links/icons/edit__Hover.svg" alt="edit" class="hoverEdit" />
-  
+            <img
+              src="/links/icons/edit__Hover.svg"
+              alt="edit"
+              class="hoverEdit"
+            />
           </a>
           <a href="/delete/{{ row.id }}/confirm" class="deleteBtn">
             <img
@@ -96,7 +117,11 @@
               alt="Not found"
               class="delete"
             />
-            <img src="/links/icons/delete__Hover.svg " alt="deletehover" class="deleteHover" />
+            <img
+              src="/links/icons/delete__Hover.svg "
+              alt="deletehover"
+              class="deleteHover"
+            />
           </a>
         </td>
       </tr>

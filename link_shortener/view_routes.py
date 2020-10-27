@@ -9,7 +9,7 @@ from sanic_oauth.blueprint import login_required
 from prometheus_client import Counter, generate_latest
 
 from link_shortener.templates import template_loader
-from link_shortener.commands.retrieve import retrieve_links
+from link_shortener.commands.retrieve import retrieve_links, retrieve_link
 from link_shortener.commands.switch import activate_link, deactivate_link
 from link_shortener.commands.delete import delete_link
 from link_shortener.commands.redirect import redirect_link
@@ -93,9 +93,16 @@ async def delete_link_view(request, user, link_id):
 @login_required
 @credential_whitelist_check
 async def confirm_delete_link_view(request, user, link_id):
-    return html(template_loader(
-                    template_file='delete.html',
-                    link_id=link_id), status=200)
+    try:
+        link_data = await retrieve_link(request, link_id)
+        return html(template_loader(
+                        template_file='delete.html',
+                        link_id=link_id,
+                        owner=link_data['owner'],
+                        endpoint=link_data['endpoint']
+                    ), status=200)
+    except NotFoundException:
+        return html(template_loader('message.html'), status=404)
 
 
 @view_blueprint.route('/activate/<link_id>', methods=['GET'])

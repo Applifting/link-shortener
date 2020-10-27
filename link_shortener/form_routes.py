@@ -4,7 +4,7 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 '''
 from decouple import config
 from sanic import Blueprint
-from sanic.response import redirect, html
+from sanic.response import html, redirect
 
 from sanic_oauth.blueprint import login_required
 
@@ -18,11 +18,11 @@ from link_shortener.templates import template_loader
 from link_shortener.commands.authorize import check_auth_form, check_password
 from link_shortener.commands.update import check_update_form, update_link
 from link_shortener.commands.create import create_link
-
 from link_shortener.core.decorators import credential_whitelist_check
 from link_shortener.core.exceptions import (AccessDeniedException,
                                             DuplicateActiveLinkForbidden,
                                             FormInvalidException,
+                                            LinkNotAllowed,
                                             NotFoundException)
 
 
@@ -67,11 +67,7 @@ async def link_password_form(request, link_id):
                         payload=data
                     ), status=200)
     except NotFoundException:
-        return html(template_loader(
-                        template_file='message.html',
-                        payload='Link has no password or does not exist',
-                        status_code='404'
-                    ), status=404)
+        return html(template_loader('message.html'), status=404)
 
 
 @form_blueprint.route('/authorize/<link_id>', methods=['POST'])
@@ -79,11 +75,14 @@ async def link_password_save(request, link_id):
     try:
         form = PasswordForm(request)
         link = await check_password(request, link_id, form)
-        return redirect(link, status=307)
+        return html(template_loader(
+                        template_file='redirect.html',
+                        link=link,
+                    ), status=307)
     except FormInvalidException:
         message = 'invalid-form'  # status = 400
     except NotFoundException:
-        message = 'not-found'  # status = 404
+        return html(template_loader('message.html'), status=404)
     except AccessDeniedException:
         message = 'incorrect-password'  # status = 401
 
@@ -125,6 +124,8 @@ async def create_link_save(request, user):
         message = 'invalid-form'  # status = 400
     except DuplicateActiveLinkForbidden:
         message = 'duplicate'  # status = 409
+    except LinkNotAllowed:
+        message = 'not-allowed'  # status = 400
     finally:
         params = f'?origin=create&status={message}'
         return redirect(f'/links/all{params}')
@@ -144,8 +145,7 @@ async def update_link_form(request, user, link_id):
                         default_password=config('DEFAULT_PASSWORD')
                     ), status=200)
     except NotFoundException:
-        params = '?origin=edit&status=not-found'
-        return redirect(f'/links/all{params}')
+        return html(template_loader('message.html'), status=404)
 
 
 @form_blueprint.route('/edit/<link_id>', methods=['POST'])
@@ -167,10 +167,11 @@ async def update_link_save(request, user, link_id):
         message = 'updated'   # status = 200
     except FormInvalidException:
         message = 'form-invalid'  # status = 400
+    except LinkNotAllowed:
+        message = 'not-allowed'  # status = 400
     except NotFoundException:
-        message = 'not-found'  # status = 404
+        return html(template_loader('message.html'), status=404)
     except DuplicateActiveLinkForbidden:
         message = 'duplicate'  # status = 409
-    finally:
-        params = f'?origin=edit&status={message}'
-        return redirect(f'/links/all{params}')
+
+    return redirect(f'/links/all?origin=edit&status={message}')

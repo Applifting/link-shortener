@@ -1,0 +1,12 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script src="{{ analytics_dsn }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+    gtag('config', '{{ analytics_id }}');
+</script>

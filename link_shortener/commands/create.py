@@ -5,7 +5,8 @@ Licensed under the MIT (Expat) License (see LICENSE in Documentation).
 import hashlib
 import os
 
-from link_shortener.commands.validation import endpoint_duplicity_check
+from link_shortener.commands.validation import (endpoint_duplicity_check,
+                                                url_validation)
 from link_shortener.models import links, salts
 
 
@@ -30,13 +31,14 @@ async def create_link(request, data):
             owner_id=data['owner_id'],
             password=password,
             endpoint=data['endpoint'],
-            url=data['url'],
+            url=await url_validation(data['url'], trans),
             switch_date=data['switch_date'],
             is_active=True
         ))
         if password:
+            link = await link_object.fetchone()
             await conn.execute(salts.insert().values(
-                link_id=link_object.lastrowid,
+                link_id=link.id,
                 salt=salt
             ))
 

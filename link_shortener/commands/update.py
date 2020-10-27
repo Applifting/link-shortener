@@ -6,10 +6,10 @@ import hashlib
 import os
 
 from decouple import config
-from sqlalchemy import and_
 
 from link_shortener.core.exceptions import NotFoundException
-from link_shortener.commands.validation import endpoint_duplicity_check
+from link_shortener.commands.validation import (endpoint_duplicity_check,
+                                                url_validation)
 from link_shortener.models import links, salts
 
 
@@ -46,8 +46,10 @@ async def update_link(request, link_id, data):
 
         if data['password'] == config('DEFAULT_PASSWORD'):
             await conn.execute(link_update.values(
-                endpoint=data['endpoint'] if data['endpoint'] else link_data['endpoint'],
-                url=data['url'] if data['url'] else link_data['url'],
+                endpoint=data['endpoint'] if data['endpoint']
+                else link_data['endpoint'],
+                url=await url_validation(data['url'], trans) if data['url']
+                else link_data['url'],
                 switch_date=data['switch_date']
             ))
         else:
@@ -72,33 +74,13 @@ async def update_link(request, link_id, data):
                 password = None
 
             await conn.execute(link_update.values(
-                endpoint=data['endpoint'] if data['endpoint'] else link_data['endpoint'],
-                url=data['url'] if data['url'] else link_data['url'],
+                endpoint=data['endpoint'] if data['endpoint']
+                else link_data['endpoint'],
+                url=await url_validation(data['url'], trans) if data['url']
+                else link_data['url'],
                 switch_date=data['switch_date'],
                 password=password
             ))
 
-        await trans.commit()
-        await trans.close()
-
-
-async def reset_password(request, link_id):
-    async with request.app.engine.acquire() as conn:
-        trans = await conn.begin()
-        query = await conn.execute(links.select().where(and_(
-            links.columns['id'] == link_id,
-            links.columns['password'].isnot(None)
-        )))
-        link_data = await query.fetchone()
-        if not link_data:
-            await trans.close()
-            raise NotFoundException
-
-        await conn.execute(links.update().where(
-            links.columns['id'] == link_data.id
-        ).values(password=None))
-        await conn.execute(salts.delete().where(
-            salts.columns['link_id'] == link_data.id
-        ))
         await trans.commit()
         await trans.close()

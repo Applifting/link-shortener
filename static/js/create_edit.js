@@ -45,6 +45,19 @@ function txtUpdateOnChange() {
     shortLink.addEventListener("keyup", function () {
       let printout = document.getElementById("fueledEndPoint");
       printout.innerHTML = "/" + shortLink.value;
+      if (shortLink.value.includes("/")) {
+        document
+          .getElementsByClassName("formInput")[1]
+          .classList.replace("formInput", "border__red");
+        document
+          .getElementsByClassName("invalid_end")[0]
+          .classList.replace("invalid_endpoint_none", "ivalid_endpoint_block");
+      } else {
+        shortLink.classList.replace("border__red", "formInput");
+        document
+          .getElementsByClassName("invalid_end")[0]
+          .classList.replace("ivalid_endpoint_block", "invalid_endpoint_none");
+      }
     });
 }
 

@@ -5,7 +5,7 @@
 >
 <div class="editAndCreate">
   <form class="form" action="#" method="POST">
-    <h1>Edit Shortlink</h1>
+    <h1>Edit shortlink</h1>
     <div class="ownerOfLinkContainer">
       <span class="ownerOfLink">owned by</span> {{payload.owner}}
     </div>
@@ -22,7 +22,9 @@
           {{ form.endpoint(size=40, value=payload.endpoint, class="formInput",
           id='shortlink') }}
         </li>
-
+        <div class="invalid_end invalid_endpoint_none">
+          Suffix cannot include '/'
+        </div>
         <!--<dd></dd> -->
         <label class="formLabel" id="advSettings">
           <span>

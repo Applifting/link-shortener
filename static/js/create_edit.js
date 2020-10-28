@@ -43,7 +43,7 @@ function txtUpdateOnChange() {
   let shortLink = document.getElementById("shortlink");
   shortLink &&
     shortLink.addEventListener("keyup", function () {
-      let printout = document.getElementById("fueledEndPoint");
+      let printout = document.getElementsByClassName("fueledEndPoint")[0];
       printout.innerHTML = "/" + shortLink.value;
       if (shortLink.value.includes("/")) {
         document
@@ -63,7 +63,7 @@ function txtUpdateOnChange() {
 function copySingle() {
   let hoverCopy = document.getElementsByClassName("copyHoverSquare");
   var range = document.createRange();
-  range.selectNode(document.getElementById("shortlinked"));
+  range.selectNode(document.getElementsByClassName("shortlinked")[0]);
   window.getSelection().removeAllRanges(); // clear current selection
   window.getSelection().addRange(range); // to select text
   document.execCommand("copy");

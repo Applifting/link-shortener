@@ -11,7 +11,10 @@ from link_shortener.core.exceptions import (DuplicateActiveLinkForbidden,
 from link_shortener.models import links
 
 
-blacklisted_words = ['forbidden-test-domain']
+blacklisted_words = [
+    'forbidden-test-domain',
+    'fueled.by'
+]
 
 
 async def endpoint_duplicity_check(conn, data):

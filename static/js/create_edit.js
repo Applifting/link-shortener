@@ -51,13 +51,15 @@ function txtUpdateOnChange() {
       if (shortLink.value.includes("/")) {
         document
           .getElementsByClassName("formInput")[1]
-          .classList.add("border__red");
-        document.getElementsByClassName("invalid_endpoint")[0].style.display =
-          "block";
+          .classList.replace("formInput", "border__red");
+        document
+          .getElementsByClassName("invalid_end")[0]
+          .classList.replace("invalid_endpoint_none", "ivalid_endpoint_block");
       } else {
-        shortLink.classList.remove("border__red");
-        document.getElementsByClassName("invalid_endpoint")[0].style.display =
-          "none";
+        shortLink.classList.replace("border__red", "formInput");
+        document
+          .getElementsByClassName("invalid_end")[0]
+          .classList.replace("ivalid_endpoint_block", "invalid_endpoint_none");
       }
     });
 }

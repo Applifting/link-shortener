@@ -15,7 +15,7 @@ links = Table(
     Column('owner', String(50)),
     Column('owner_id', String(255)),
     Column('password', BYTEA, default=None),
-    Column('endpoint', String(20)),
+    Column('endpoint', String(100)),
     Column('url', String(300)),
     Column('switch_date', Date, default=None),
     Column('is_active', Boolean, default=False)

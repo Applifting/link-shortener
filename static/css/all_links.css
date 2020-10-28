@@ -139,6 +139,9 @@ input:checked + .slider:before {
   border: none;
   margin-left: 20px;
   width: 100px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 #createShort {
   width: 232px;

@@ -1,6 +1,8 @@
 """Initial DB setup
 
 Revision ID: initial_setup
+Down revision ID: None
+
 
 """
 import sqlalchemy as sa
@@ -40,4 +42,6 @@ def upgrade():
 
 
 def downgrade():
-    pass
+    op.drop_table('hash_salts')
+    op.drop_table('links')
+

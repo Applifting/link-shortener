@@ -49,3 +49,12 @@ class IncorrectDataFormat(Exception):
     an attribute has an incorrect format.
     '''
     pass
+
+
+class LinkNotAllowed(Exception):
+    '''
+    Used while checking request data from a POST request or a form. Raised when
+    the URL value is either on the blacklist, or contains the website's
+    domain name.
+    '''
+    pass

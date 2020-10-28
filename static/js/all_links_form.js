@@ -126,6 +126,10 @@ switch (values) {
     popUp.style.display = "flex";
     popUp.innerHTML = "Form invalid";
     break;
+  case "not-allowed":
+    popUp.style.display = "flex";
+    popUp.innerHTML = "Name in URL is not allowed";
+    break;
 }
 
 let pop = document.getElementById("popEdit");
@@ -146,6 +150,10 @@ switch (value) {
   case "reset":
     pop.style.display = "flex";
     pop.innerHTML = "Password reset";
+    break;
+  case "not-allowed":
+    pop.style.display = "flex";
+    pop.innerHTML = "Name in URL is not allowed";
     break;
 }
 

@@ -43,3 +43,5 @@ def upgrade():
 def downgrade():
     op.drop_table('hash_salts')
     op.drop_table('links')
+
+    

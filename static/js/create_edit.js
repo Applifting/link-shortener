@@ -25,11 +25,14 @@ function disableBtn() {
   let orgLink = document.getElementById("orgUrl");
   let shortLink = document.getElementById("shortlink");
   let formInput = document.getElementsByClassName("formRequiredField");
+  let shortLinks = document.getElementById("shortlink");
   for (i = 0; i < formInput.length; i++) {
     submit.disabled = true;
     formInput &&
       formInput[i].addEventListener("keyup", function () {
         if (shortLink.value === "" || orgLink.value === "") {
+          submit.disabled = true;
+        } else if (shortLinks.value.includes("/")) {
           submit.disabled = true;
         } else {
           submit.disabled = false;

@@ -88,6 +88,7 @@
   height: 42px;
   padding: 0.5rem;
   border: 1px solid var(--primary-black);
+  outline: none;
 }
 .rotate {
   transform: rotate(0deg);
@@ -109,7 +110,7 @@
 .backBtn:hover {
   color: black;
 }
-#fueled {
+.fueled {
   color: var(--primary-grey);
   background-color: #e9eff6;
   width: 100%;
@@ -119,7 +120,7 @@
   align-items: center;
   justify-content: space-around;
 }
-#fueledEndPoint {
+.fueledEndPoint {
   color: var(--primary-purple);
   font-weight: bold;
 }

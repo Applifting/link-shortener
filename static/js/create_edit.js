@@ -25,11 +25,14 @@ function disableBtn() {
   let orgLink = document.getElementById("orgUrl");
   let shortLink = document.getElementById("shortlink");
   let formInput = document.getElementsByClassName("formRequiredField");
+  let shortLinks = document.getElementById("shortlink");
   for (i = 0; i < formInput.length; i++) {
     submit.disabled = true;
     formInput &&
       formInput[i].addEventListener("keyup", function () {
         if (shortLink.value === "" || orgLink.value === "") {
+          submit.disabled = true;
+        } else if (shortLinks.value.includes("/")) {
           submit.disabled = true;
         } else {
           submit.disabled = false;
@@ -43,8 +46,21 @@ function txtUpdateOnChange() {
   let shortLink = document.getElementById("shortlink");
   shortLink &&
     shortLink.addEventListener("keyup", function () {
-      let printout = document.getElementById("fueledEndPoint");
+      let printout = document.getElementsByClassName("fueledEndPoint")[0];
       printout.innerHTML = "/" + shortLink.value;
+      if (shortLink.value.includes("/")) {
+        document
+          .getElementsByClassName("formInput")[1]
+          .classList.replace("formInput", "border__red");
+        document
+          .getElementsByClassName("invalid_end")[0]
+          .classList.replace("invalid_endpoint_none", "ivalid_endpoint_block");
+      } else {
+        shortLink.classList.replace("border__red", "formInput");
+        document
+          .getElementsByClassName("invalid_end")[0]
+          .classList.replace("ivalid_endpoint_block", "invalid_endpoint_none");
+      }
     });
 }
 
@@ -52,7 +68,7 @@ function txtUpdateOnChange() {
 function copySingle() {
   let hoverCopy = document.getElementsByClassName("copyHoverSquare");
   var range = document.createRange();
-  range.selectNode(document.getElementById("shortlinked"));
+  range.selectNode(document.getElementsByClassName("shortlinked")[0]);
   window.getSelection().removeAllRanges(); // clear current selection
   window.getSelection().addRange(range); // to select text
   document.execCommand("copy");

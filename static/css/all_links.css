@@ -4,6 +4,7 @@
   box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
   max-width: 1280px;
   margin-left: auto;
+  margin-bottom: 100px;
 }
 .tableForm {
   display: flex;
@@ -139,6 +140,9 @@ input:checked + .slider:before {
   border: none;
   margin-left: 20px;
   width: 100px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 #createShort {
   width: 232px;

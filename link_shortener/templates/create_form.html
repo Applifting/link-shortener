@@ -5,7 +5,7 @@
   >
 
   <form class="form" action="" method="POST">
-    <h1>Create a new link</h1>
+    <h1>Create shortlink</h1>
     {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
     }}
     <ul class="formContent">
@@ -17,9 +17,12 @@
 
         <label class="formLabel">Suffix *</label>
         <li>
-          {{ form.endpoint(size=30, placeholder="example/suffix",
-          id="shortlink", class='formRequiredField formInput') }}
+          {{ form.endpoint(size=30, placeholder="suffix", id="shortlink",
+          class='formRequiredField formInput') }}
         </li>
+        <div class="invalid_end invalid_endpoint_none">
+          Suffix cannot include '/'
+        </div>
         <label class="formLabel" id="advSettings">
           <span>
             <img
@@ -51,10 +54,10 @@
           </li>
         </div>
       </div>
-      <span id="fueled">
-        <div id="shortlinked">
+      <span class="fueled">
+        <div class="shortlinked">
           <span>www.fueled.by</span
-          ><!-- qqw --><span id="fueledEndPoint">/</span>
+          ><!-- qqw --><span class="fueledEndPoint">/example</span>
         </div>
         <div>
           <div class="copy" onclick="copySingle()">

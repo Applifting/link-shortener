@@ -1,8 +1,15 @@
 {% extends 'base.html' %} {% block content %}
-<div>
-  <div id="pop">
-    <img src="/links/icons/info.svg" alt="info" class="info_icon" />
+<div class="quick_shortlink">
+  <div>
+    <span class="link_logo">Link</span
+    ><!-- ss --><span class="shortener_logo">Shortener</span>
   </div>
+  <div class="link_shorten_container">
+    <input placeholder="URL to shorten" type="text" class="input_shortlink" />
+  </div>
+</div>
+<div id="pop">
+  <img src="/links/icons/info.svg" alt="info" class="info_icon" />
 </div>
 <div class="container">
   <form name="form" class="tableForm" id="forms" method="GET" action="#">

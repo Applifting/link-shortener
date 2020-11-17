@@ -339,3 +339,40 @@ input:checked + .slider:before {
 .info_icon {
   margin-right: 5px;
 }
+
+.quick_shortlink {
+  background-color: var(--primary-purple);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.input_shortlink {
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #c7c6ec;
+  height: 40px;
+  width: 1108px;
+  outline: none;
+  background: url(/links/icons/link_to_shorten.svg) no-repeat scroll 7px 7px;
+  padding-left: 40px;
+}
+.input_shortlink::placeholder {
+  color: #c7c6ec;
+}
+.link_logo {
+  color: white;
+  border-bottom: 2px white solid;
+  font-size: 20px;
+  font-weight: 600;
+}
+.shortener_logo {
+  color: #c7c6ec;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.link_shorten_container {
+  background: rgba(255, 255, 255, 0.1);
+}

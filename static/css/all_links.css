@@ -1,7 +1,6 @@
 .container {
   padding: 0;
   margin-top: 100px;
-  box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
   max-width: 1280px;
   margin-left: auto;
   margin-bottom: 100px;
@@ -13,7 +12,8 @@
   background-color: var(--white);
   padding: 20px;
   width: inherit;
-  overflow: scroll;
+  overflow-x: scroll;
+  box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
 }
 .tbHead {
   display: flex;
@@ -316,8 +316,10 @@ input:checked + .slider:before {
   line-height: 160%;
 }
 #tableContainer {
-  width: 100%;
-  overflow: scroll;
+  width: 1340px;
+  overflow-x: scroll;
+  padding: 0 30px 30px 30px;
+  margin: 0 -30px;
 }
 .orangeDisable {
   color: #cf7317 !important;
@@ -327,4 +329,9 @@ input:checked + .slider:before {
 }
 .greenActive {
   color: #1f7a78 !important;
+}
+
+.table_box_shadow {
+  width: 100%;
+  box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
 }

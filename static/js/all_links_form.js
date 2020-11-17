@@ -108,27 +108,27 @@ let values = filter.status;
 switch (values) {
   case "updated":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Link updated";
+    popUp.innerHTML += "shortlink updated";
     break;
   case "created":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Link created";
+    popUp.innerHTML += "shortlink created";
     break;
   case "deleted":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Link deleted";
+    popUp.innerHTML += "shortlink deleted";
     break;
   case "duplicate":
     popUp.style.display = "flex";
-    popUp.innerHTML = "This shortlink already exists";
+    popUp.innerHTML += "This shortlink already exists";
     break;
   case "form-invalid":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Form invalid";
+    popUp.innerHTML += "Form invalid";
     break;
   case "not-allowed":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Name in URL is not allowed";
+    popUp.innerHTML += "Name in URL is not allowed";
     break;
 }
 
@@ -137,23 +137,23 @@ let value = filter.status;
 switch (value) {
   case "activated":
     pop.style.display = "flex";
-    pop.innerHTML = "Link activated";
+    pop.innerHTML += "shortlink activated";
     break;
   case "deactivated":
     pop.style.display = "flex";
-    pop.innerHTML = "Link disabled";
+    pop.innerHTML += "shortlink disabled";
     break;
   case "form-invalid":
     pop.style.display = "flex";
-    pop.innerHTML = "Form Invalid";
+    pop.innerHTML += "Form Invalid";
     break;
   case "reset":
     pop.style.display = "flex";
-    pop.innerHTML = "Password reset";
+    pop.innerHTML += "Password reset";
     break;
   case "not-allowed":
     pop.style.display = "flex";
-    pop.innerHTML = "Name in URL is not allowed";
+    pop.innerHTML += "Name in URL is not allowed";
     break;
 }
 

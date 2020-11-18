@@ -1,88 +1,88 @@
 {% extends 'base.html' %} {% block content %}
-<div class="editAndCreate">
-  <a class="backBtn" href="/links/all">
-    <img src="/links/icons/arrow.svg" alt="" /> Back</a
-  >
+  <div class="editAndCreate">
+    <a class="backBtn" href="/links/all">
+      <img src="/links/icons/arrow.svg" alt="" /> Back</a
+    >
+    <form class="form" action="" method="POST">
+      <h1>Create shortlink</h1>
+      {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
+      }}
+      <ul class="formContent">
+        <div class="create__edit__container">
+          <label class="formLabel">URL to shorten *</label>
 
-  <form class="form" action="" method="POST">
-    <h1>Create shortlink</h1>
-    {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.endpoint.errors)
-    }}
-    <ul class="formContent">
-      <div class="create__edit__container">
-        <label class="formLabel">URL to shorten *</label>
+          {{ form.url(size=30, placeholder="original.url/original", id="orgUrl",
+          class='formRequiredField formInput' ) }}
 
-        {{ form.url(size=30, placeholder="original.url/original", id="orgUrl",
-        class='formRequiredField formInput' ) }}
-
-        <label class="formLabel">Suffix *</label>
-        <li>
-          {{ form.endpoint(size=30, placeholder="suffix", id="shortlink",
-          class='formRequiredField formInput') }}
-        </li>
-        <div class="invalid_end invalid_endpoint_none">
-          Suffix cannot include '/'
-        </div>
-        <label class="formLabel" id="advSettings">
-          <span>
-            <img
-              id="icon"
-              class="rotate"
-              src="/links/icons/openArrow.svg"
-              alt="" /></span
-          >Advanced Settings</label
-        >
-        <div id="advRequirements">
-          <label class="formLabel">Password to visit shortlink</label>
-          <div class="container1__border">
-            <div class="container1__password">
-              {{ form.password(size=20, type='password', class='formInput') }}
-            </div>
-
-            <span onclick="toggleShow()" class="image__container">
-              <img
-                class="container1__image"
-                src="/links/icons/eye.svg"
-                alt=""
-              />
-            </span>
-          </div>
-          <label class="formLabel">Shortlink valid until</label>
+          <label class="formLabel">Suffix *</label>
           <li>
-            {{ form.switch_date(size=30, placeholder="Deactivate on:
-            YYYY-MM-DD", type='date', class='formInput') }}
+            {{ form.endpoint(size=30, placeholder="suffix", id="shortlink",
+            class='formRequiredField formInput') }}
           </li>
-        </div>
-      </div>
-      <span class="fueled">
-        <div class="shortlinked">
-          <span>www.fueled.by</span
-          ><!-- qqw --><span class="fueledEndPoint">/example</span>
-        </div>
-        <div>
-          <div class="copy" onclick="copySingle()">
-            <img src="/links/icons/copy__Icon.svg" alt="copyicon" />
-            <img
-              src="/links/icons/hover__Copy.svg"
-              alt="hovercopy"
-              class="copyIconCreate"
-            />
-            <div class="hoverCopy">
-              <div class="triangleContainer">
-                <span id="triangle-up"></span>
+          <div class="invalid_end invalid_endpoint_none">
+            Suffix cannot include '/'
+          </div>
+          <label class="formLabel" id="advSettings">
+            <span>
+              <img
+                id="icon"
+                class="rotate"
+                src="/links/icons/openArrow.svg"
+                alt="" /></span
+            >Advanced Settings</label
+          >
+          <div id="advRequirements">
+            <label class="formLabel">Password to visit shortlink</label>
+            <div class="container1__border">
+              <div class="container1__password">
+                {{ form.password(size=20, type='password', class='formInput') }}
               </div>
-              <div class="hoverCopyContainer">
-                <span class="copyHoverSquare">copy</span>
+
+              <span onclick="toggleShow()" class="image__container">
+                <img
+                  class="container1__image"
+                  src="/links/icons/eye.svg"
+                  alt=""
+                />
+              </span>
+            </div>
+            <label class="formLabel">Shortlink valid until</label>
+            <li>
+              {{ form.switch_date(size=30, placeholder="Deactivate on:
+              YYYY-MM-DD", type='date', class='formInput') }}
+            </li>
+          </div>
+        </div>
+        <span class="fueled">
+          <div class="shortlinked">
+            <span>www.fueled.by</span
+            ><!-- qqw --><span class="fueledEndPoint">/example</span>
+          </div>
+          <div>
+            <div class="copy" onclick="copySingle()">
+              <img src="/links/icons/copy__Icon.svg" alt="copyicon" />
+              <img
+                src="/links/icons/hover__Copy.svg"
+                alt="hovercopy"
+                class="copyIconCreate"
+              />
+              <div class="hoverCopy">
+                <div class="triangleContainer">
+                  <span id="triangle-up"></span>
+                </div>
+                <div class="hoverCopyContainer">
+                  <span class="copyHoverSquare">copy</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </span>
+        </span>
 
-      <li class="container__submit">
-        {{ form.submit(class='formInput', id='submit')}}
-      </li>
-    </ul>
-  </form>
+        <li class="container__submit">
+          {{ form.submit(class='formInput', id='submit')}}
+        </li>
+      </ul>
+    </form>
+  </div>
+  {% endblock %}
 </div>
-{% endblock %}

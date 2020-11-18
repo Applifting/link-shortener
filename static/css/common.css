@@ -101,14 +101,12 @@
   transition: transform 0.3s linear;
 }
 .backBtn {
-  display: block;
-  margin: 2.5rem 0;
-  margin-left: 34%;
-  color: var(--primary-black);
+  display: flex;
+  color: white;
   text-decoration: none;
 }
 .backBtn:hover {
-  color: black;
+  color: white;
 }
 .fueled {
   color: var(--primary-grey);
@@ -173,4 +171,10 @@ a:hover {
 #advSettings {
   margin-top: 20px;
   margin-bottom: 0;
+}
+.back_btn {
+  color: white;
+}
+.arrow_icon {
+  margin-right: 6px;
 }

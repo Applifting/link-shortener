@@ -316,7 +316,6 @@ input:checked + .slider:before {
   line-height: 160%;
 }
 #tableContainer {
-  width: 1340px;
   overflow-x: scroll;
   padding: 0 30px 30px 30px;
   margin: 0 -30px;

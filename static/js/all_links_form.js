@@ -167,3 +167,17 @@ switch (valuess) {
     )[0].style.display = "block";
     break;
 }
+
+function copied(s) {
+  var range = document.createRange();
+  range.selectNode(
+    document
+      .getElementsByClassName("all-links-table")[0]
+      .rows.item(1)
+      .cells.item(3)
+  );
+  window.getSelection().removeAllRanges(); // clear current selection
+  window.getSelection().addRange(range); // to select text
+  document.execCommand("copy");
+  window.getSelection().removeAllRanges();
+}

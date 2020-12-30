@@ -1,4 +1,13 @@
 {% extends 'base.html' %} {% block content %}
+<form class="" action="" method="POST">
+  <h1>Quick create</h1>
+  {{ '<br />'.join(form.csrf_token.errors) }}
+  {{ form.csrf_token }}
+  {{ '<br />'.join(form.url.errors)}}
+  {{ form.url(size=20) }}
+  {{ form.submit() }}
+</form>
+
 <div id="pop"></div>
 <div class="container">
   <form name="form" class="tableForm" id="forms" method="GET" action="#">

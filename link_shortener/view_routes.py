@@ -61,21 +61,21 @@ async def landing_page(request):
     return redirect('/links/all', status=301)
 
 
-@view_blueprint.route('/links/all', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def all_active_links(request, user):
-    filters = get_filter_dict(request)
-    link_data = await retrieve_links(
-        request,
-        {'is_active': filters['is_active']}
-    )
-    filtered_data = filter_links(link_data, filters)
-    return html(template_loader(
-                    template_file='all_links.html',
-                    domain_name=config('DOMAIN_NAME'),
-                    data=filtered_data
-                ), status=200)
+# @view_blueprint.route('/links/all', methods=['GET'])
+# @login_required
+# @credential_whitelist_check
+# async def all_active_links(request, user):
+#     filters = get_filter_dict(request)
+#     link_data = await retrieve_links(
+#         request,
+#         {'is_active': filters['is_active']}
+#     )
+#     filtered_data = filter_links(link_data, filters)
+#     return html(template_loader(
+#                     template_file='all_links.html',
+#                     domain_name=config('DOMAIN_NAME'),
+#                     data=filtered_data
+#                 ), status=200)
 
 
 @view_blueprint.route('/delete/<link_id>', methods=['GET'])

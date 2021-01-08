@@ -54,28 +54,6 @@ async def redirect_link_view(request, link_endpoint):
         return html(template_loader('message.html'), status=404)
 
 
-@view_blueprint.route('/', methods=['GET'])
-async def landing_page(request):
-    return redirect('/links/all', status=301)
-
-
-@view_blueprint.route('/links/all', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def all_active_links(request, user):
-    filters = get_filter_dict(request)
-    link_data = await retrieve_links(
-        request,
-        {'is_active': filters['is_active']}
-    )
-    filtered_data = filter_links(link_data, filters)
-    return html(template_loader(
-                    template_file='all_links.html',
-                    domain_name=config('DOMAIN_NAME'),
-                    data=filtered_data
-                ), status=200)
-
-
 @view_blueprint.route('/<category>/<link_endpoint>', methods=['GET'])
 async def redirect_categorised_link_view(request, category, link_endpoint):
     try:
@@ -90,6 +68,11 @@ async def redirect_categorised_link_view(request, category, link_endpoint):
                     ), status=307)
     except NotFoundException:
         return html(template_loader('message.html'), status=404)
+
+
+@view_blueprint.route('/', methods=['GET'])
+async def landing_page(request):
+    return redirect('/links/all', status=301)
 
 
 @view_blueprint.route('/delete/<link_id>', methods=['GET'])

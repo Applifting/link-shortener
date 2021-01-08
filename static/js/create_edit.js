@@ -21,6 +21,7 @@ function toggleAdvSettings() {
     });
 }
 // button disable
+/*
 function disableBtn() {
   let orgLink = document.getElementById("orgUrl");
   let shortLink = document.getElementById("shortlink");
@@ -40,6 +41,7 @@ function disableBtn() {
       });
   }
 }
+*/
 // dynamic text update
 
 function txtUpdateOnChange() {

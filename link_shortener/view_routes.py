@@ -75,8 +75,6 @@ async def landing_page(request):
     return redirect('/links/all', status=301)
 
 
-<<<<<<< HEAD
-=======
 @view_blueprint.route('/links/all', methods=['GET'])
 @login_required
 @credential_whitelist_check
@@ -110,7 +108,6 @@ async def redirect_categorised_link_view(request, category, link_endpoint):
         return html(template_loader('message.html'), status=404)
 
 
->>>>>>> 932a6774b822723783cf3adb213d81b803681b27
 @view_blueprint.route('/delete/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check

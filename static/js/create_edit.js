@@ -42,6 +42,25 @@ function disableBtn() {
   }
 }
 */
+function disableBtn() {
+  let orgLink = document.getElementById("orgUrl");
+  let shortLink = document.getElementById("shortlink");
+  let formInput = document.getElementsByClassName("formRequiredField");
+  let shortLinks = document.getElementById("shortlink");
+  for (i = 0; i < formInput.length; i++) {
+    submit.disabled = true;
+    formInput &&
+      formInput[i].addEventListener("keyup", function () {
+        if (shortLink.value === "" || orgLink.value === "") {
+          submit.disabled = true;
+        } else if (shortLinks.value.split("/").length > 2) {
+          submit.disabled = true;
+        } else {
+          submit.disabled = false;
+        }
+      });
+  }
+}
 // dynamic text update
 
 function txtUpdateOnChange() {
@@ -50,7 +69,7 @@ function txtUpdateOnChange() {
     shortLink.addEventListener("keyup", function () {
       let printout = document.getElementsByClassName("fueledEndPoint")[0];
       printout.innerHTML = "/" + shortLink.value;
-      if (shortLink.value.includes("/")) {
+      if (shortLink.value.split("/").length > 2) {
         document
           .getElementsByClassName("formInput")[1]
           .classList.replace("formInput", "border__red");

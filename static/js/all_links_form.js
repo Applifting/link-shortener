@@ -113,6 +113,7 @@ switch (values) {
   case "created":
     popUp.style.display = "flex";
     popUp.innerHTML += "shortlink created";
+    document.getElementsByClassName("copy_created")[0].style.display = "block";
     break;
   case "deleted":
     popUp.style.display = "flex";

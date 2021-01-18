@@ -5,13 +5,18 @@
     ><!-- ss --><span class="shortener_logo">Shortener</span>
   </div>
   <div class="link_shorten_container">
-    <input placeholder="URL to shorten" type="text" class="input_shortlink" />
-  </div>
+    <form  action="" method="POST">
+      {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.url.errors)}}
+      {{ form.url(size=20, placeholder='Url to shorten') }} 
+    </div>
+    {{ form.submit() }}
+  </form>
 </div>
-<button onclick="copied()">copy</button>
-<div id="pop">
+<div id='pop'>
   <img src="/links/icons/info.svg" alt="info" class="info_icon" />
+  <button class='copy_created'onclick="copied()">copy to clipboard</button>
 </div>
+
 <div class="container">
   <form name="form" class="tableForm" id="forms" method="GET" action="#">
     <div class="tbHead">
@@ -51,11 +56,7 @@
       <div onclick="clearFilters()" id="clearFilter" value="Clear Filters">
         Clear Filters
       </div>
-      <div>
-        <a href="/create" id="createShort">
-          <img src="/links/icons/plus.svg" alt="" /> Create Shortlink</a
-        >
-      </div>
+     
     </div>
   </form>
   <div id="tableContainer">

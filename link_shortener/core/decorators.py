@@ -10,7 +10,8 @@ from sanic.response import json
 
 whitelist = [
     config('WHITELISTED_EMAIL_1'),
-    config('WHITELISTED_EMAIL_2')
+    config('WHITELISTED_EMAIL_2'),
+    config('WHITELISTED_EMAIL_3'),
 ]
 
 

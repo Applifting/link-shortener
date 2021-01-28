@@ -54,22 +54,6 @@ async def redirect_link_view(request, link_endpoint):
         return html(template_loader('message.html'), status=404)
 
 
-@view_blueprint.route('/<category>/<link_endpoint>', methods=['GET'])
-async def redirect_categorised_link_view(request, category, link_endpoint):
-    try:
-        endpoint = category + '/' + link_endpoint
-        target = await redirect_link(request, endpoint)
-        if (target[:10] == '/authorize/'):
-            return redirect(target)
-
-        return html(template_loader(
-                        template_file='redirect.html',
-                        link=target,
-                    ), status=307)
-    except NotFoundException:
-        return html(template_loader('message.html'), status=404)
-
-
 @view_blueprint.route('/', methods=['GET'])
 async def landing_page(request):
     return redirect('/links/all', status=301)

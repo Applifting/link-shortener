@@ -18,6 +18,7 @@ from link_shortener.core.authentication import auth_blueprint
 
 from link_shortener.form_routes import form_blueprint
 from link_shortener.view_routes import view_blueprint
+from link_shortener.extra_routes import extra_blueprint
 
 from link_shortener.api.api_retrieve import api_retrieve_blueprint
 from link_shortener.api.api_create import api_create_blueprint
@@ -66,13 +67,14 @@ def create_app():
     app.blueprint(oauth_blueprint)
     app.blueprint(auth_blueprint)
     app.blueprint(form_blueprint)
-    app.blueprint(view_blueprint)
     app.blueprint(api_retrieve_blueprint)
     app.blueprint(api_create_blueprint)
     app.blueprint(api_update_blueprint)
     app.blueprint(api_delete_blueprint)
     app.blueprint(api_switch_blueprint)
     app.blueprint(api_redirect_blueprint)
+    app.blueprint(view_blueprint)
+    app.blueprint(extra_blueprint)
 
     app.static('/links/', './static/')
     app.config.WTF_CSRF_SECRET_KEY = config('WTF_CSRF_SECRET_KEY')

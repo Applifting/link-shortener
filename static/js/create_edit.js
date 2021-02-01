@@ -32,7 +32,7 @@ function disableBtn() {
       formInput[i].addEventListener("keyup", function () {
         if (shortLink.value === "" || orgLink.value === "") {
           submit.disabled = true;
-        } else if (shortLinks.value.includes("/")) {
+        } else if (shortLinks.value.split("/").length > 2) {
           submit.disabled = true;
         } else {
           submit.disabled = false;
@@ -48,7 +48,7 @@ function txtUpdateOnChange() {
     shortLink.addEventListener("keyup", function () {
       let printout = document.getElementsByClassName("fueledEndPoint")[0];
       printout.innerHTML = "/" + shortLink.value;
-      if (shortLink.value.includes("/")) {
+      if (shortLink.value.split("/").length > 2) {
         document
           .getElementsByClassName("formInput")[1]
           .classList.replace("formInput", "border__red");

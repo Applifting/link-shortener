@@ -38,6 +38,7 @@
                 {{ form.password(size=20, type='password', class='formInput') }}
               </div>
 
+
               <span onclick="toggleShow()" class="image__container">
                 <img
                   class="container1__image"
@@ -45,6 +46,30 @@
                   alt=""
                 />
               </span>
+
+        <label class="formLabel">Suffix *</label>
+        <li>
+          {{ form.endpoint(size=30, placeholder="suffix", id="shortlink",
+          class='formRequiredField formInput') }}
+        </li>
+        <div class="invalid_end invalid_endpoint_none">
+          Suffix cannot include multiple slashes ('/')
+        </div>
+        <label class="formLabel" id="advSettings">
+          <span>
+            <img
+              id="icon"
+              class="rotate"
+              src="/links/icons/openArrow.svg"
+              alt="" /></span
+          >Advanced Settings</label
+        >
+        <div id="advRequirements">
+          <label class="formLabel">Password to visit shortlink</label>
+          <div class="container1__border">
+            <div class="container1__password">
+              {{ form.password(size=20, type='password', class='formInput') }}
+
             </div>
             <label class="formLabel">Shortlink valid until</label>
             <li>

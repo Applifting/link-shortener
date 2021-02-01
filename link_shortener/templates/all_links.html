@@ -5,7 +5,7 @@
     ><!-- ss --><span class="shortener_logo">Shortener</span>
   </div>
   <div class="link_shorten_container">
-    <form  action="" method="POST">
+    <form id='form1' onpaste="myfunction()" action="" method="POST">
       {{ '<br />'.join(form.csrf_token.errors) }} {{ form.csrf_token }} {{ '<br />'.join(form.url.errors)}}
       {{ form.url(size=20, placeholder='Url to shorten') }} 
     </div>
@@ -14,7 +14,8 @@
 </div>
 <div id='pop'>
   <img src="/links/icons/info.svg" alt="info" class="info_icon" />
-  <button class='copy_created'onclick="copied()">copy to clipboard</button>
+  <div class='created'></div>
+  <button class='copy_created'onclick="copied()"></button>
 </div>
 
 <div class="container">

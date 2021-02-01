@@ -355,10 +355,10 @@ input:checked + .slider:before {
   background: rgba(255, 255, 255, 0.1);
   color: #c7c6ec;
   height: 40px;
-  width: 1108px;
   outline: none;
   background: url(/links/icons/link_to_shorten.svg) no-repeat scroll 7px 7px;
   padding-left: 40px;
+  width: 100%;
 }
 #input_shortlink::placeholder {
   color: #c7c6ec;
@@ -377,11 +377,11 @@ input:checked + .slider:before {
 
 .link_shorten_container {
   background: rgba(255, 255, 255, 0.1);
+  width: 70%;
 }
 .copy_created {
   color: #1f7a78;
   border: none;
   background-color: transparent;
   text-decoration: underline;
-  display: none;
 }

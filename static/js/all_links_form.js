@@ -112,8 +112,10 @@ switch (values) {
     break;
   case "created":
     popUp.style.display = "flex";
-    popUp.innerHTML += "shortlink created";
-    document.getElementsByClassName("copy_created")[0].style.display = "block";
+    document.getElementsByClassName("created")[0].innerHTML +=
+      "shortlink created";
+    document.getElementsByClassName("copy_created")[0].innerHTML +=
+      "copy to clipboard";
     break;
   case "deleted":
     popUp.style.display = "flex";
@@ -139,6 +141,7 @@ switch (value) {
   case "activated":
     pop.style.display = "flex";
     pop.innerHTML += "shortlink activated";
+
     break;
   case "deactivated":
     pop.style.display = "flex";

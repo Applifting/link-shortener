@@ -147,7 +147,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   display: none;
-  animation: flickerAnimation 5s ease-out;
+  animation: flickerAnimation 20s ease-out;
   opacity: 0;
   margin-bottom: -64px;
 }

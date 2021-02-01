@@ -108,27 +108,30 @@ let values = filter.status;
 switch (values) {
   case "updated":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Link updated";
+    popUp.innerHTML += "shortlink updated";
     break;
   case "created":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Link created";
+    document.getElementsByClassName("created")[0].innerHTML +=
+      "shortlink created";
+    document.getElementsByClassName("copy_created")[0].innerHTML +=
+      "copy to clipboard";
     break;
   case "deleted":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Link deleted";
+    popUp.innerHTML += "shortlink deleted";
     break;
   case "duplicate":
     popUp.style.display = "flex";
-    popUp.innerHTML = "This shortlink already exists";
+    popUp.innerHTML += "This shortlink already exists";
     break;
   case "form-invalid":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Form invalid";
+    popUp.innerHTML += "Form invalid";
     break;
   case "not-allowed":
     popUp.style.display = "flex";
-    popUp.innerHTML = "Name in URL is not allowed";
+    popUp.innerHTML += "Name in URL is not allowed";
     break;
 }
 
@@ -137,23 +140,24 @@ let value = filter.status;
 switch (value) {
   case "activated":
     pop.style.display = "flex";
-    pop.innerHTML = "Link activated";
+    pop.innerHTML += "shortlink activated";
+
     break;
   case "deactivated":
     pop.style.display = "flex";
-    pop.innerHTML = "Link disabled";
+    pop.innerHTML += "shortlink disabled";
     break;
   case "form-invalid":
     pop.style.display = "flex";
-    pop.innerHTML = "Form Invalid";
+    pop.innerHTML += "Form Invalid";
     break;
   case "reset":
     pop.style.display = "flex";
-    pop.innerHTML = "Password reset";
+    pop.innerHTML += "Password reset";
     break;
   case "not-allowed":
     pop.style.display = "flex";
-    pop.innerHTML = "Name in URL is not allowed";
+    pop.innerHTML += "Name in URL is not allowed";
     break;
 }
 
@@ -166,4 +170,18 @@ switch (valuess) {
       "container1__incorrectPass"
     )[0].style.display = "block";
     break;
+}
+
+function copied(s) {
+  var range = document.createRange();
+  range.selectNode(
+    document
+      .getElementsByClassName("all-links-table")[0]
+      .rows.item(1)
+      .cells.item(3)
+  );
+  window.getSelection().removeAllRanges(); // clear current selection
+  window.getSelection().addRange(range); // to select text
+  document.execCommand("copy");
+  window.getSelection().removeAllRanges();
 }

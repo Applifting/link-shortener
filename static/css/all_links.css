@@ -118,10 +118,10 @@ input:checked + .slider:before {
   border: 1px solid var(--form-grey);
   border-radius: 4px;
   display: grid;
-  grid-template-columns: 10% 90%;
+  grid-template-columns: 5% 95%;
 }
 #search {
-  width: 220px;
+  width: 500px;
   height: 2.5rem;
   border: none;
   border-radius: 4px;
@@ -336,4 +336,52 @@ input:checked + .slider:before {
 .table_box_shadow {
   width: 100%;
   box-shadow: 0px 0px 6px rgba(46, 46, 46, 0.2);
+}
+
+.info_icon {
+  margin-right: 5px;
+}
+
+.quick_shortlink {
+  background-color: var(--primary-purple);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#input_shortlink {
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #c7c6ec;
+  height: 40px;
+  outline: none;
+  background: url(/links/icons/link_to_shorten.svg) no-repeat scroll 7px 7px;
+  padding-left: 40px;
+  width: 100%;
+}
+#input_shortlink::placeholder {
+  color: #c7c6ec;
+}
+.link_logo {
+  color: white;
+  border-bottom: 2px white solid;
+  font-size: 20px;
+  font-weight: 600;
+}
+.shortener_logo {
+  color: #c7c6ec;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.link_shorten_container {
+  background: rgba(255, 255, 255, 0.1);
+  width: 70%;
+}
+.copy_created {
+  color: #1f7a78;
+  border: none;
+  background-color: transparent;
+  text-decoration: underline;
 }

@@ -44,7 +44,7 @@ class CreateForm(SanicForm):
 
 
 class QuickCreateForm(SanicForm):
-    url = StringField('URL', validators=[DataRequired()])
+    url = StringField('URL', validators=[DataRequired()], id= 'input_shortlink')
     submit = SubmitField('Create')
 
 

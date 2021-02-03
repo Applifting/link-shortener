@@ -147,13 +147,13 @@ a:hover {
   justify-content: center;
   align-items: center;
   display: none;
-  animation: flickerAnimation 20s ease-out;
+  animation: flickerAnimation 6s ease-in-out;
   opacity: 0;
   margin-bottom: -64px;
 }
 @keyframes flickerAnimation {
   0% {
-    opacity: 0;
+    opacity: 1;
   }
   50% {
     opacity: 1;

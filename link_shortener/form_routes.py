@@ -32,17 +32,6 @@ from link_shortener.core.generics import generate_random_suffix
 form_blueprint = Blueprint('forms')
 
 
-class CreateForm(SanicForm):
-    endpoint = StringField(
-        'Endpoint',
-        validators=[DataRequired(), NoneOf('/')]
-    )
-    url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[])
-    switch_date = DateField('Status switch date')
-    submit = SubmitField('Create')
-
-
 class QuickCreateForm(SanicForm):
     url = StringField('URL', validators=[DataRequired()], id= 'input_shortlink')
     submit = SubmitField('Create')

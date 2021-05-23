@@ -32,17 +32,6 @@ from link_shortener.core.generics import generate_random_suffix
 form_blueprint = Blueprint('forms')
 
 
-class CreateForm(SanicForm):
-    endpoint = StringField(
-        'Endpoint',
-        validators=[DataRequired(), NoneOf('/')]
-    )
-    url = StringField('URL', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[])
-    switch_date = DateField('Status switch date')
-    submit = SubmitField('Create')
-
-
 class QuickCreateForm(SanicForm):
     url = StringField('URL', validators=[DataRequired()], id= 'input_shortlink')
     submit = SubmitField('Create')
@@ -145,47 +134,6 @@ async def quick_create_form(request, user):
         message = 'not-allowed'  # status = 400
     finally:
         params = f'?origin=create&status={message}&created={endpoint}'
-        return redirect(f'/links/all{params}')
-
-
-@form_blueprint.route('/create', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def create_link_form(request, user):
-    form = CreateForm(request)
-    return html(template_loader(
-                    template_file='create_form.html',
-                    form=form
-                ), status=200)
-
-
-@form_blueprint.route('/create', methods=['POST'])
-@login_required
-@credential_whitelist_check
-async def create_link_save(request, user):
-    try:
-        form = CreateForm(request)
-        if not form.validate():
-            raise FormInvalidException
-
-        form_data = {
-            'owner': user.email,
-            'owner_id': user.id,
-            'password': form.password.data,
-            'endpoint': form.endpoint.data,
-            'url': form.url.data,
-            'switch_date': form.switch_date.data
-        }
-        await create_link(request, data=form_data)
-        message = 'created'  # status = 201
-    except FormInvalidException:
-        message = 'invalid-form'  # status = 400
-    except DuplicateActiveLinkForbidden:
-        message = 'duplicate'  # status = 409
-    except LinkNotAllowed:
-        message = 'not-allowed'  # status = 400
-    finally:
-        params = f'?origin=create&status={message}'
         return redirect(f'/links/all{params}')
 
 

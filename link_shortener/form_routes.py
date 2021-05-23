@@ -148,47 +148,6 @@ async def quick_create_form(request, user):
         return redirect(f'/links/all{params}')
 
 
-@form_blueprint.route('/create', methods=['GET'])
-@login_required
-@credential_whitelist_check
-async def create_link_form(request, user):
-    form = CreateForm(request)
-    return html(template_loader(
-                    template_file='create_form.html',
-                    form=form
-                ), status=200)
-
-
-@form_blueprint.route('/create', methods=['POST'])
-@login_required
-@credential_whitelist_check
-async def create_link_save(request, user):
-    try:
-        form = CreateForm(request)
-        if not form.validate():
-            raise FormInvalidException
-
-        form_data = {
-            'owner': user.email,
-            'owner_id': user.id,
-            'password': form.password.data,
-            'endpoint': form.endpoint.data,
-            'url': form.url.data,
-            'switch_date': form.switch_date.data
-        }
-        await create_link(request, data=form_data)
-        message = 'created'  # status = 201
-    except FormInvalidException:
-        message = 'invalid-form'  # status = 400
-    except DuplicateActiveLinkForbidden:
-        message = 'duplicate'  # status = 409
-    except LinkNotAllowed:
-        message = 'not-allowed'  # status = 400
-    finally:
-        params = f'?origin=create&status={message}'
-        return redirect(f'/links/all{params}')
-
-
 @form_blueprint.route('/edit/<link_id>', methods=['GET'])
 @login_required
 @credential_whitelist_check
